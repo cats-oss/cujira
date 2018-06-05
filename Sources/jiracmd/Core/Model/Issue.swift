@@ -7,14 +7,6 @@
 
 import Foundation
 
-struct IssueResponse: Decodable {
-    let expand: String
-    let total: Int
-    let maxResults: Int
-    let startAt: Int
-    let issues: [Issue]
-}
-
 struct Issue: Decodable {
     let id: String
     let key: String

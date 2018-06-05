@@ -20,8 +20,8 @@ struct ListResponse<T: ListableResponse> {
 }
 
 extension ListResponse: Decodable {
-    fileprivate enum ValuesCodingKey {
-        case key(String)
+    fileprivate struct ValuesCodingKey: CodingKey {
+        var stringValue: String
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -42,23 +42,12 @@ extension ListResponse: Decodable {
 
         do {
             let container = try decoder.container(keyedBy: ValuesCodingKey.self)
-            self.values = try container.decode([T].self, forKey: .key(T.key))
+            self.values = try container.decode([T].self, forKey: ValuesCodingKey(stringValue: T.key))
         }
     }
 }
 
-extension ListResponse.ValuesCodingKey: CodingKey {
-    var stringValue: String {
-        if case .key(let value) = self {
-            return value
-        }
-        fatalError("ListResponse.ValuesCodingKey does not have other cases.")
-    }
-
-    init?(stringValue: String) {
-        self = .key(stringValue)
-    }
-
+extension ListResponse.ValuesCodingKey {
     var intValue: Int? {
         return nil
     }
@@ -67,4 +56,3 @@ extension ListResponse.ValuesCodingKey: CodingKey {
         return nil
     }
 }
-
