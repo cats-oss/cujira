@@ -24,7 +24,7 @@ enum Root {
             try Boards.run(parser)
 
         case .sprints:
-            break
+            try Sprints.run(parser)
         }
     }
 

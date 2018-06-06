@@ -25,6 +25,7 @@ protocol Request {
     var endpoint: Endpoint { get }
     var headerField: [String: String] { get }
     var bodyParameter: BodyParameter? { get }
+    var queryParameter: [String: String]? { get }
 
     static func object(from data: Data) throws -> Response
 }
@@ -39,6 +40,10 @@ extension Request {
     }
 
     var bodyParameter: BodyParameter? {
+        return nil
+    }
+
+    var queryParameter: [String: String]? {
         return nil
     }
 }

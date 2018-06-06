@@ -14,7 +14,7 @@ protocol ListableResponse: Decodable {
 struct ListResponse<T: ListableResponse> {
     let expand: String?
     let isLast: Bool?
-    let total: Int
+    let total: Int?
     let maxResults: Int
     let startAt: Int
     let values: [T]
@@ -38,7 +38,7 @@ extension ListResponse: Decodable {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.expand = try container.decodeIfPresent(String.self, forKey: .expand)
             self.isLast = try container.decodeIfPresent(Bool.self, forKey: .isLast)
-            self.total = try container.decode(Int.self, forKey: .total)
+            self.total = try container.decodeIfPresent(Int.self, forKey: .total)
             self.maxResults = try container.decode(Int.self, forKey: .maxResults)
             self.startAt = try container.decode(Int.self, forKey: .startAt)
         }

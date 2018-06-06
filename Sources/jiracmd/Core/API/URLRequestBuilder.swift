@@ -8,9 +8,30 @@
 import Foundation
 
 enum URLRequestBuilder {
-    static func build<T: Request>(_ proxy: RequestProxy<T>) throws -> URLRequest {
-        var request = URLRequest(url: proxy.baseURL.appendingPathComponent(proxy.path))
+    enum Error: Swift.Error {
+        case noURLCompponets(URL)
+        case addingQueryFaild(url: URL, query: [String: String])
+    }
 
+    static func build<T: Request>(_ proxy: RequestProxy<T>) throws -> URLRequest {
+        let baseURL = proxy.baseURL.appendingPathComponent(proxy.path)
+
+        let url: URL
+        if let queryParameter = proxy.queryParameter {
+            var components = try URLComponents(string: baseURL.absoluteString) ?? {
+                throw Error.noURLCompponets(baseURL)
+            }()
+            components.queryItems = queryParameter.map {
+                URLQueryItem(name: $0.key, value: $0.value)
+            }
+            url = try components.url ?? {
+                throw Error.addingQueryFaild(url: baseURL, query: queryParameter)
+            }()
+        } else {
+            url = baseURL
+        }
+
+        var request = URLRequest(url: url)
         proxy.headerField.forEach { key, value in
             request.addValue(value, forHTTPHeaderField: key)
         }

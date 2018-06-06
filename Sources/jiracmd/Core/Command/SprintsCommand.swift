@@ -1,5 +1,5 @@
 //
-//  BoardsCommand.swift
+//  SprintsCommand.swift
 //  jiracmd
 //
 //  Created by marty-suzuki on 2018/06/06.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Boards {
+enum Sprints {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
         switch command {
@@ -31,8 +31,12 @@ enum Boards {
 
     enum All {
         static func run(_ parser: ArgumentParser, session: JIRASession = .init()) throws {
-            func recursiveFetch(startAt: Int, list: [Board]) throws -> [Board] {
-                let response = try session.send(GetAllBoardsRequest(startAt: startAt))
+            guard let boardId = parser.shift().flatMap(Int.init) else {
+                return
+            }
+
+            func recursiveFetch(startAt: Int, list: [Sprint]) throws -> [Sprint] {
+                let response = try session.send(GetAllSprintsRequest(boardId: boardId, startAt: startAt))
                 let values = response.values
                 let isLast = values.isEmpty ? true : response.isLast ?? true
                 let newList = list + values
@@ -43,20 +47,18 @@ enum Boards {
                 }
             }
 
-            let boards = try recursiveFetch(startAt: 0, list: [])
+            let sprints = try recursiveFetch(startAt: 0, list: [])
 
             print("Results:\n")
-            if boards.isEmpty {
+            if sprints.isEmpty {
                 print("\tEmpty")
             } else {
-                let sorted = boards.sorted { $0.id < $1.id }
+                let sorted = sprints.sorted { $0.id < $1.id }
                 sorted.forEach {
                     print("\tid: \($0.id)")
                     print("\tname: \($0.name)")
-                    if case let .project(project) = $0.location {
-                        print("\tproject - id: \(project.projectId)")
-                        print("\tproject - name: \(project.name)")
-                    }
+                    print("\tstartDate: \($0.startDate ?? "--")")
+                    print("\tendDate: \($0.endDate ?? "--")")
                     print("")
                 }
             }
