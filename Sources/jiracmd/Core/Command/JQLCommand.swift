@@ -8,6 +8,18 @@
 import Foundation
 
 enum JQL {
+    static func run(_ parser: ArgumentParser) throws {
+        let command: Command = try parser.parse()
+        switch command {
+        case .add:
+            try Add.run(parser)
+        case .remove:
+            try Remove.run(parser)
+        case .list:
+            try List.run(parser)
+        }
+    }
+
     enum Command: String, CommandList {
         static var usageDescription: String {
             let values = elements.map { element -> String in

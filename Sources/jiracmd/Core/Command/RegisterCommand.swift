@@ -8,6 +8,20 @@
 import Foundation
 
 enum Register {
+    static func run(_ parser: ArgumentParser) throws {
+        let command: Command = try parser.parse()
+        switch command {
+        case .domain:
+            try Domain.run(parser)
+        case .username:
+            try Username.run(parser)
+        case .apikey:
+            try ApiKey.run(parser)
+        case .info:
+            try Info.run(parser)
+        }
+    }
+    
     enum Command: String, CommandList {
         static var usageDescription: String {
             let values = elements.map { element -> String in

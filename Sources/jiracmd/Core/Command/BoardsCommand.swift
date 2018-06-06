@@ -1,5 +1,5 @@
 //
-//  BoardCommand.swift
+//  BoardsCommand.swift
 //  jiracmd
 //
 //  Created by marty-suzuki on 2018/06/06.
@@ -8,6 +8,14 @@
 import Foundation
 
 enum Boards {
+    static func run(_ parser: ArgumentParser) throws {
+        let command: Command = try parser.parse()
+        switch command {
+        case .all:
+            try All.run(parser)
+        }
+    }
+
     enum Command: String, CommandList {
         static var usageDescription: String {
             let values = elements.map { element -> String in

@@ -23,46 +23,7 @@ if arguments.first(where: { $0.contains("-h") || $0.contains("--help") }) != nil
 }
 
 do {
-    let rootCommand: Root.Command = try parser.parse()
-
-    switch rootCommand {
-    case .register:
-        let subCommand: Register.Command = try parser.parse()
-        switch subCommand {
-        case .domain:
-            try Register.Domain.run(parser)
-        case .username:
-            try Register.Username.run(parser)
-        case .apikey:
-            try Register.ApiKey.run(parser)
-        case .info:
-            try Register.Info.run(parser)
-        }
-
-    case .jql:
-        let subCommand: JQL.Command = try parser.parse()
-        switch subCommand {
-        case .add:
-            try JQL.Add.run(parser)
-        case .remove:
-            try JQL.Remove.run(parser)
-        case .list:
-            try JQL.List.run(parser)
-        }
-
-    case .search:
-        try Root.Search.run(parser)
-
-    case .boards:
-        let subCommand: Boards.Command = try parser.parse()
-        switch subCommand {
-        case .all:
-            try Boards.All.run(parser)
-        }
-        
-    case .sprints:
-        break
-    }
+    try Root.run(parser)
 } catch {
     print(error.localizedDescription)
 }

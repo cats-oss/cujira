@@ -8,6 +8,26 @@
 import Foundation
 
 enum Root {
+    static func run(_ parser: ArgumentParser) throws {
+        let command: Command = try parser.parse()
+        switch command {
+        case .register:
+            try Register.run(parser)
+
+        case .jql:
+            try JQL.run(parser)
+
+        case .search:
+            try Search.run(parser)
+
+        case .boards:
+            try Boards.run(parser)
+
+        case .sprints:
+            break
+        }
+    }
+
     enum Command: String, CommandList {
         static var usageDescription: String {
             let values = elements.map { element -> String in
