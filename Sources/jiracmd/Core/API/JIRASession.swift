@@ -19,6 +19,10 @@ final class JIRASession {
         case unknown
     }
 
+    struct ErrorMessage: Swift.Error, Decodable {
+        let errorMessages: [String]
+    }
+
     private let session: URLSession
     private let configManager: ConfigManager
 
@@ -52,7 +56,11 @@ final class JIRASession {
                     let object = try T.object(from: data)
                     result = .success(object)
                 } catch {
-                    result = .failure(error)
+                    if let errorMessage = try? JSONDecoder().decode(ErrorMessage.self, from: data) {
+                        result = .failure(errorMessage)
+                    } else {
+                        result = .failure(error)
+                    }
                 }
             } else if let response = response as? HTTPURLResponse {
                 result = .failure(Error.invalidResopnse(response))
@@ -71,4 +79,8 @@ final class JIRASession {
     }
 }
 
-
+extension JIRASession.ErrorMessage: LocalizedError {
+    var errorDescription: String? {
+        return errorMessages.first
+    }
+}

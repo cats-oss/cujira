@@ -52,6 +52,7 @@ extension Request where Response: Decodable {
     }
 }
 
+/// - seealso: https://developer.atlassian.com/cloud/jira/software/rest/#introduction
 protocol AgileRequest: Request {}
 
 extension AgileRequest {
@@ -60,10 +61,11 @@ extension AgileRequest {
     }
 }
 
+/// - seealso: https://developer.atlassian.com/cloud/jira/platform/rest/
 protocol ApiRequest: Request {}
 
 extension ApiRequest {
     var endpoint: Endpoint {
-        return .agile
+        return .api
     }
 }

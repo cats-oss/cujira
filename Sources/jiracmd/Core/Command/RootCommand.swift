@@ -17,8 +17,8 @@ enum Root {
         case .jql:
             try JQL.run(parser)
 
-        case .search:
-            try Search.run(parser)
+        case .issues:
+            try Issues.run(parser)
 
         case .boards:
             try Boards.run(parser)
@@ -34,7 +34,7 @@ enum Root {
                 switch element {
                 case .register:
                     return ""
-                case .search:
+                case .issues:
                     return ""
                 case .jql:
                     return ""
@@ -49,35 +49,8 @@ enum Root {
 
         case register
         case jql
-        case search
+        case issues
         case boards
         case sprints
-    }
-
-    enum Search {
-        static func run(_ parser: ArgumentParser, manager: JQLManager = .shared, session: JIRASession = .init()) throws {
-            guard let first = parser.shift(), !first.isEmpty else {
-                return
-            }
-
-            let jql: String
-            if first == "-r" || first == "--registered" {
-                guard let name = parser.shift(), !name.isEmpty else {
-                    return
-                }
-                jql = try manager.getJQL(name: name).jql
-            } else {
-                jql = first
-            }
-
-            do {
-                let request = SearchRequest(jql: jql)
-                print(try session.send(request))
-            } catch let e as JQLTrait.Error {
-                throw e
-            } catch _ {
-                return
-            }
-        }
     }
 }
