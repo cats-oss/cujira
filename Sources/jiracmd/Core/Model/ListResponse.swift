@@ -49,10 +49,10 @@ extension ListResponse: Decodable {
 
 extension ListResponse.ValuesCodingKey {
     var intValue: Int? {
-        return nil
+        return Int(stringValue)
     }
 
     init?(intValue: Int) {
-        return nil
+        self.stringValue = String(intValue)
     }
 }

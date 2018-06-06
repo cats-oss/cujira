@@ -11,5 +11,8 @@ struct SearchRequest: Request {
     typealias Response = ListResponse<Issue>
     let path = "/search"
     let method: HttpMethod = .post
-    let bodyParameter: BodyParameter? = DictionaryBodyParameter(dictionary: ["jql": "project = API AND fixVersion = v1.0.0 AND labels = 正常系"])
+    let bodyParameter: BodyParameter?
+    init(jql: String) {
+        self.bodyParameter = DictionaryBodyParameter(dictionary: ["jql": jql])
+    }
 }
