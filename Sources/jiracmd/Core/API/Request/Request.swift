@@ -12,11 +12,17 @@ enum HttpMethod: String {
     case post = "POST"
 }
 
+enum Endpoint: String {
+    case agile = "/agile/1.0"
+    case api = "/api/2"
+}
+
 protocol Request {
     associatedtype Response
     var baseURL: URL { get }
     var path: String { get }
     var method: HttpMethod { get }
+    var endpoint: Endpoint { get }
     var headerField: [String: String] { get }
     var bodyParameter: BodyParameter? { get }
 
@@ -43,5 +49,21 @@ extension Request where Response: Decodable {
         print(try JSONSerialization.jsonObject(with: data, options: .allowFragments))
 
         return try JSONDecoder().decode(Response.self, from: data)
+    }
+}
+
+protocol AgileRequest: Request {}
+
+extension AgileRequest {
+    var endpoint: Endpoint {
+        return .agile
+    }
+}
+
+protocol ApiRequest: Request {}
+
+extension ApiRequest {
+    var endpoint: Endpoint {
+        return .agile
     }
 }

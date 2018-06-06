@@ -14,7 +14,7 @@ enum Register {
                 switch element {
                 case .domain:
                     return "domain"
-                case .apiKey:
+                case .apikey:
                     return ""
                 case .username:
                     return ""
@@ -26,7 +26,7 @@ enum Register {
         }
 
         case domain
-        case apiKey
+        case apikey
         case username
         case info
     }

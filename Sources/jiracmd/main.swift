@@ -33,13 +33,12 @@ do {
             try Register.Domain.run(parser)
         case .username:
             try Register.Username.run(parser)
-        case .apiKey:
+        case .apikey:
             try Register.ApiKey.run(parser)
         case .info:
             try Register.Info.run(parser)
         }
-    case .search:
-        try Root.Search.run(parser)
+
     case .jql:
         let subCommand: JQL.Command = try parser.parse()
         switch subCommand {
@@ -50,6 +49,19 @@ do {
         case .list:
             try JQL.List.run(parser)
         }
+
+    case .search:
+        try Root.Search.run(parser)
+
+    case .boards:
+        let subCommand: Boards.Command = try parser.parse()
+        switch subCommand {
+        case .all:
+            try Boards.All.run(parser)
+        }
+        
+    case .sprints:
+        break
     }
 } catch {
     print(error.localizedDescription)

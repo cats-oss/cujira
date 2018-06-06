@@ -12,7 +12,8 @@ protocol ListableResponse: Decodable {
 }
 
 struct ListResponse<T: ListableResponse> {
-    let expand: String
+    let expand: String?
+    let isLast: Bool?
     let total: Int
     let maxResults: Int
     let startAt: Int
@@ -26,6 +27,7 @@ extension ListResponse: Decodable {
 
     private enum CodingKeys: String, CodingKey {
         case expand
+        case isLast
         case total
         case maxResults
         case startAt
@@ -34,7 +36,8 @@ extension ListResponse: Decodable {
     init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.expand = try container.decode(String.self, forKey: .expand)
+            self.expand = try container.decodeIfPresent(String.self, forKey: .expand)
+            self.isLast = try container.decodeIfPresent(Bool.self, forKey: .isLast)
             self.total = try container.decode(Int.self, forKey: .total)
             self.maxResults = try container.decode(Int.self, forKey: .maxResults)
             self.startAt = try container.decode(Int.self, forKey: .startAt)

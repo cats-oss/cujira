@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SearchRequest: Request {
+struct SearchRequest: ApiRequest {
     typealias Response = ListResponse<Issue>
     let path = "/search"
     let method: HttpMethod = .post

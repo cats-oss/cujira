@@ -18,13 +18,12 @@ struct RequestProxy<T: Request>: Request {
     let baseURL: URL
     let path: String
     let method: HttpMethod
+    let endpoint: Endpoint
     let headerField: [String: String]
     let bodyParameter: BodyParameter?
 
-    private let request: T
-
     init(request: T, config: Config) throws {
-        let urlString = "https://\(config.domain).atlassian.net/rest/api/2"
+        let urlString = "https://\(config.domain).atlassian.net/rest/\(request.endpoint.rawValue)"
         self.baseURL = try URL(string: urlString) ?? {
             throw RequestProxyError.invalidURL(urlString)
         }()
@@ -39,8 +38,8 @@ struct RequestProxy<T: Request>: Request {
 
         self.path = request.path
         self.method = request.method
+        self.endpoint = request.endpoint
         self.bodyParameter = request.bodyParameter
-        self.request = request
     }
 
     static func object(from data: Data) throws -> Response {

@@ -18,14 +18,20 @@ enum Root {
                     return ""
                 case .jql:
                     return ""
+                case .boards:
+                    return ""
+                case .sprints:
+                    return ""
                 }
             }
             return "Usage:\n"
         }
 
         case register
-        case search
         case jql
+        case search
+        case boards
+        case sprints
     }
 
     enum Search {

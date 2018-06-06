@@ -28,9 +28,15 @@ final class JIRASession {
         self.configManager = configManager
     }
 
-    func send<T: Request>(_ request: T) throws -> Result<T.Response> {
+    func send<T: Request>(_ request: T) throws -> T.Response {
         let proxy = try RequestProxy(request: request, config: configManager.loadConfig())
-        return try sendSync(proxy)
+        let result = try sendSync(proxy)
+        switch result {
+        case .success(let value):
+            return value
+        case .failure(let error):
+            throw error
+        }
     }
 
     private func sendSync<T: Request>(_ proxy: RequestProxy<T>) throws -> Result<T.Response> {
