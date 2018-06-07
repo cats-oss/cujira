@@ -5,8 +5,6 @@
 //  Created by marty-suzuki on 2018/06/06.
 //
 
-import Foundation
-
 struct GetAllSprintsRequest: AgileRequest {
     typealias Response = ListResponse<Sprint>
     var path: String {

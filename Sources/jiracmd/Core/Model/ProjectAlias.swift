@@ -5,8 +5,6 @@
 //  Created by marty-suzuki on 2018/06/07.
 //
 
-import Foundation
-
 struct ProjectAlias: Codable {
     let name: String
     let projectID: Int

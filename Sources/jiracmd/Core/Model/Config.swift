@@ -5,8 +5,6 @@
 //  Created by marty-suzuki on 2018/06/04.
 //
 
-import Foundation
-
 struct Config {
     struct Raw: Codable {
         var domain: String?

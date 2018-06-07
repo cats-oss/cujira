@@ -5,8 +5,6 @@
 //  Created by marty-suzuki on 2018/06/05.
 //
 
-import Foundation
-
 protocol ListableResponse: Decodable {
     static var key: String { get }
 }

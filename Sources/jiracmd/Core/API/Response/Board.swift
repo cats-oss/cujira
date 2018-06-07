@@ -5,8 +5,6 @@
 //  Created by marty-suzuki on 2018/06/06.
 //
 
-import Foundation
-
 struct Board: ListableResponse {
     static let key: String = "values"
 
