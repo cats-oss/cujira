@@ -14,9 +14,6 @@ enum Root {
         case .register:
             try Register.run(parser)
 
-        case .jql:
-            try JQL.run(parser)
-
         case .issues:
             try Issues.run(parser)
 
@@ -25,6 +22,9 @@ enum Root {
 
         case .sprints:
             try Sprints.run(parser)
+
+        case .alias:
+            try Alias.run(parser)
         }
     }
 
@@ -36,11 +36,11 @@ enum Root {
                     return ""
                 case .issues:
                     return ""
-                case .jql:
-                    return ""
                 case .boards:
                     return ""
                 case .sprints:
+                    return ""
+                case .alias:
                     return ""
                 }
             }
@@ -48,7 +48,7 @@ enum Root {
         }
 
         case register
-        case jql
+        case alias
         case issues
         case boards
         case sprints

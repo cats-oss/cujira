@@ -30,7 +30,7 @@ enum Issues {
     }
 
     enum Search {
-        static func run(_ parser: ArgumentParser, manager: JQLManager = .shared, session: JIRASession = .init()) throws {
+        static func run(_ parser: ArgumentParser, manager: JQLAliasManager = .shared, session: JIRASession = .init()) throws {
             guard let first = parser.shift(), !first.isEmpty else {
                 return
             }
@@ -40,7 +40,7 @@ enum Issues {
                 guard let name = parser.shift(), !name.isEmpty else {
                     return
                 }
-                jql = try manager.getJQL(name: name).jql
+                jql = try manager.getAlias(name: name).jql
             } else {
                 jql = first
             }
