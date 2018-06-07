@@ -13,6 +13,8 @@ enum Issues {
         switch command {
         case .search:
             try Search.run(parser)
+        case .jql:
+            try JQL.run(parser)
         }
     }
 
@@ -22,11 +24,14 @@ enum Issues {
                 switch element {
                 case .search:
                     return ""
+                case .jql:
+                    return ""
                 }
             }
             return "Usage:\n\(values.joined())"
         }
         case search
+        case jql
     }
 
     enum Search {
@@ -45,12 +50,29 @@ enum Issues {
                 jql = first
             }
 
-            do {
-                let request = SearchRequest(jql: jql)
-                print(try session.send(request))
-            } catch let e {
-                throw e
+            let request = SearchRequest(jql: jql)
+            print(try session.send(request))
+        }
+    }
+
+    enum JQL {
+        static func run(_ parser: ArgumentParser, manager: JQLAliasManager = .shared, session: JIRASession = .init()) throws {
+            guard let first = parser.shift(), !first.isEmpty else {
+                return
             }
+
+            let jql: String
+            if first == "-r" || first == "--registered" {
+                guard let name = parser.shift(), !name.isEmpty else {
+                    return
+                }
+                jql = try manager.getAlias(name: name).jql
+            } else {
+                jql = first
+            }
+
+            let request = SearchRequest(jql: jql)
+            print(try session.send(request))
         }
     }
 }

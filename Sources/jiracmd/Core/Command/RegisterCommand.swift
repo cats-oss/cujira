@@ -51,13 +51,7 @@ enum Register {
                 return
             }
 
-            do {
-                try manager.update(\.domain, domain)
-            } catch let e as ConfigTrait.Error {
-                throw e
-            } catch _ {
-                return
-            }
+            try manager.update(\.domain, domain)
         }
     }
 
@@ -67,13 +61,7 @@ enum Register {
                 return
             }
 
-            do {
-                try manager.update(\.apiKey, apiKey)
-            } catch let e as ConfigTrait.Error {
-                throw e
-            } catch _ {
-                return
-            }
+            try manager.update(\.apiKey, apiKey)
         }
     }
 
@@ -83,13 +71,7 @@ enum Register {
                 return
             }
 
-            do {
-                try manager.update(\.username, username)
-            } catch let e as ConfigTrait.Error {
-                throw e
-            } catch _ {
-                return
-            }
+            try manager.update(\.username, username)
         }
     }
 
@@ -98,9 +80,4 @@ enum Register {
             try manager.showConfig()
         }
     }
-}
-
-protocol CommandList: Enumerable {
-    static var usageDescription: String { get }
-    init?(rawValue: String)
 }

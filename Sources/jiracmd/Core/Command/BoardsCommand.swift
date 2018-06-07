@@ -45,19 +45,18 @@ enum Boards {
 
             let boards = try recursiveFetch(startAt: 0, list: [])
 
-            print("Results:\n")
+            print("Results:")
             if boards.isEmpty {
-                print("\tEmpty")
+                print("\n\tEmpty")
             } else {
                 let sorted = boards.sorted { $0.id < $1.id }
                 sorted.forEach {
-                    print("\tid: \($0.id)")
+                    print("\n\tid: \($0.id)")
                     print("\tname: \($0.name)")
                     if case let .project(project) = $0.location {
                         print("\tproject - id: \(project.projectId)")
                         print("\tproject - name: \(project.name)")
                     }
-                    print("")
                 }
             }
         }

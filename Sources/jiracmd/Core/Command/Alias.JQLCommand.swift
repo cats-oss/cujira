@@ -50,7 +50,7 @@ extension Alias {
                     return
                 }
 
-               try manager.addAlias(name: name, jql: jql)
+                try manager.addAlias(name: name, jql: jql)
             }
         }
 
