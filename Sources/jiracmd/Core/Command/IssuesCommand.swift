@@ -23,12 +23,21 @@ enum Issues {
             let values = elements.map { element -> String in
                 switch element {
                 case .list:
-                    return "\n\tjiracmd issues list [project_alias] [today | sprint_name] (-t | --type [issue_type]) (-l | --label [issue_label])"
+                    return """
+                    \t$ jiracmd issues list [project_alias] [today | sprint_name]
+                    \n\tOptions:
+                    \t\t-t | --type [issue_type]
+                    \t\t-l | --label [issue_label]
+                    """
                 case .jql:
-                    return ""
+                    return """
+                    \t$ jiracmd issues jql (jql_string)
+                    \n\tOptions:
+                    \t\t-r | --registered [jql_alias]
+                    """
                 }
             }
-            return "Usage:\n\(values.joined())"
+            return "Usage:\n\(values.joined(separator: "\n\n"))"
         }
         case list
         case jql
@@ -87,20 +96,17 @@ enum Issues {
 
             let jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(option1)\(option2)"
 
-            print("JQL: \(jql)")
-
-            let request = SearchRequest(jql: jql)
-            let issues = try session.send(request).values
-
-            issues.forEach { issues in
-                print("\nSummary: \(issues.fields.summary)")
-                print("URL: https://\(config.domain).atlassian.net/browse/\(issues.key)")
-            }
+            try search(jql: jql, session: session, config: config)
         }
     }
 
     enum JQL {
-        static func run(_ parser: ArgumentParser, manager: JQLAliasManager = .shared, session: JIRASession = .init()) throws {
+        static func run(_ parser: ArgumentParser,
+                        configManager: ConfigManager = .shared,
+                        manager: JQLAliasManager = .shared,
+                        session: JIRASession = .init()) throws {
+            let config = try configManager.loadConfig()
+
             guard let first = parser.shift(), !first.isEmpty else {
                 return
             }
@@ -115,8 +121,19 @@ enum Issues {
                 jql = first
             }
 
-            let request = SearchRequest(jql: jql)
-            print(try session.send(request))
+            try search(jql: jql, session: session, config: config)
+        }
+    }
+
+    private static func search(jql: String, session: JIRASession, config: Config) throws {
+        print("JQL: \(jql)")
+
+        let request = SearchRequest(jql: jql)
+        let issues = try session.send(request).values
+
+        issues.forEach { issues in
+            print("\nSummary: \(issues.fields.summary)")
+            print("URL: https://\(config.domain).atlassian.net/browse/\(issues.key)")
         }
     }
 }
