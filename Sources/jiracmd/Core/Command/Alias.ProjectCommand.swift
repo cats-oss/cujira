@@ -48,7 +48,11 @@ extension Alias {
                     return
                 }
 
-                try manager.addAlias(name: name, projectID: projectID)
+                guard let boardID = parser.shift().flatMap(Int.init) else {
+                    return
+                }
+
+                try manager.addAlias(name: name, projectID: projectID, boardID: boardID)
             }
         }
 

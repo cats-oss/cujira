@@ -10,7 +10,7 @@ import Foundation
 typealias ProjectAliasManager = DataManager<ProjectAliasTrait>
 
 enum ProjectAliasTrait: DataTrait {
-    typealias RawObject = [ProjectAlias]
+    typealias RawObject = [ProjectAlias.Raw]
     static let filename = "project_aliases"
 
     enum Error: Swift.Error {
@@ -24,12 +24,19 @@ extension DataManager where Trait == ProjectAliasTrait {
     static let shared = ProjectAliasManager()
 
     func loadAliases() throws -> [ProjectAlias] {
-        let aliases = try getRawModel() ?? {
+        let rawAliases = try getRawModel() ?? {
             throw Trait.Error.noProjectAliases
             }()
 
-        if aliases.isEmpty {
+        if rawAliases.isEmpty {
             throw Trait.Error.noProjectAliases
+        }
+
+        let aliases: [ProjectAlias] = rawAliases.compactMap {
+            guard let name = $0.name, let projectID = $0.projectID, let boardID = $0.boardID else {
+                return nil
+            }
+            return ProjectAlias(name: name, projectID: projectID, boardID: boardID)
         }
 
         return aliases
@@ -39,7 +46,7 @@ extension DataManager where Trait == ProjectAliasTrait {
         let aliases = try loadAliases()
         print("Registered Project Aliases:\n")
         aliases.forEach {
-            print("\tname: \($0.name), projectID: \($0.projectID)")
+            print("\tname: \($0.name), projectID: \($0.projectID), boardID: \($0.boardID)")
         }
     }
 
@@ -51,14 +58,19 @@ extension DataManager where Trait == ProjectAliasTrait {
         return aliases[index]
     }
 
-    func addAlias(name: String, projectID: Int) throws {
-        let alias = ProjectAlias(name: name, projectID: projectID)
-        var aliases = try getRawModel() ?? [ProjectAlias]()
+    func addAlias(name: String, projectID: Int, boardID: Int) throws {
+        let alias = ProjectAlias(name: name, projectID: projectID, boardID: boardID)
+        var aliases: [ProjectAlias]
+        do {
+            aliases = try loadAliases()
+        } catch {
+            aliases = []
+        }
         if aliases.contains(alias) {
             throw Trait.Error.nameExists(name)
         }
         aliases.append(alias)
-        try write(aliases)
+        try write(aliases.map { $0.toRaw() })
     }
 
     func removeAlias(name: String) throws {
@@ -67,6 +79,6 @@ extension DataManager where Trait == ProjectAliasTrait {
             throw Trait.Error.nameNotFound(name)
         }
         aliases.remove(at: index)
-        try write(aliases)
+        try write(aliases.map { $0.toRaw() })
     }
 }

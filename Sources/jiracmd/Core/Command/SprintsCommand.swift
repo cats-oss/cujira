@@ -35,30 +35,19 @@ enum Sprints {
                 return
             }
 
-            func recursiveFetch(startAt: Int, list: [Sprint]) throws -> [Sprint] {
-                let response = try session.send(GetAllSprintsRequest(boardId: boardId, startAt: startAt))
-                let values = response.values
-                let isLast = values.isEmpty ? true : response.isLast ?? true
-                let newList = list + values
-                if isLast {
-                    return newList
-                } else {
-                    return try recursiveFetch(startAt: values.count, list: newList)
-                }
-            }
-
-            let sprints = try recursiveFetch(startAt: 0, list: [])
+            let sprints = try Utils.fetchAllSprints(boardId: boardId, session: session)
 
             print("Results:")
             if sprints.isEmpty {
                 print("\n\tEmpty")
             } else {
+                let dateFormatter = Utils.yyyyMMddDateFormatter()
                 let sorted = sprints.sorted { $0.id < $1.id }
                 sorted.forEach {
                     print("\n\tid: \($0.id)")
                     print("\tname: \($0.name)")
-                    print("\tstartDate: \($0.startDate ?? "--")")
-                    print("\tendDate: \($0.endDate ?? "--")")
+                    print("\tstartDate: \($0.startDate.map { dateFormatter.string(from: $0) } ?? "--")")
+                    print("\tendDate: \($0.endDate.map { dateFormatter.string(from: $0) } ?? "--")")
                 }
             }
         }
