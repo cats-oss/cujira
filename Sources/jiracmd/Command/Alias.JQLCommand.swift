@@ -5,7 +5,7 @@
 //  Created by marty-suzuki on 2018/06/06.
 //
 
-import Foundation
+import Core
 
 extension Alias {
     enum JQL {

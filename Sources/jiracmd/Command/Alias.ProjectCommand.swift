@@ -5,6 +5,8 @@
 //  Created by marty-suzuki on 2018/06/07.
 //
 
+import Core
+
 extension Alias {
     enum Project {
         static func run(_ parser: ArgumentParser) throws {

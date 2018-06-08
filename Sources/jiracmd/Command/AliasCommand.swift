@@ -5,7 +5,7 @@
 //  Created by marty-suzuki on 2018/06/07.
 //
 
-import Foundation
+import Core
 
 enum Alias {
     static func run(_ parser: ArgumentParser) throws {

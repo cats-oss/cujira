@@ -5,7 +5,7 @@
 //  Created by marty-suzuki on 2018/06/05.
 //
 
-import Foundation
+import Core
 
 enum Register {
     static func run(_ parser: ArgumentParser) throws {
