@@ -53,6 +53,15 @@ final class ArgumentParser {
             return false
         }
     }
+
+    func runVersion(_ version: String) -> Bool {
+        if remainder.first == "--version" {
+            print("Current version: \(version)")
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 extension ArgumentParser.Error: LocalizedError {

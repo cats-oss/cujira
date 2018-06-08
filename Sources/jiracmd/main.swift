@@ -7,9 +7,15 @@
 
 import Foundation
 
+let version = "0.1.0"
+
 let parser = ArgumentParser(args: CommandLine.arguments)
 
 if parser.runHelp() {
+    exit(0)
+}
+
+if parser.runVersion(version) {
     exit(0)
 }
 
