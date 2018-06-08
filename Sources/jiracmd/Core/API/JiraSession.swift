@@ -1,5 +1,5 @@
 //
-//  JIRASession.swift
+//  JiraSession.swift
 //  jiracmd
 //
 //  Created by marty-suzuki on 2018/06/05.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class JIRASession {
+final class JiraSession {
     enum Result<T> {
         case success(T)
         case failure(Swift.Error)
@@ -79,7 +79,7 @@ final class JIRASession {
     }
 }
 
-extension JIRASession.ErrorMessage: LocalizedError {
+extension JiraSession.ErrorMessage: LocalizedError {
     var errorDescription: String? {
         return errorMessages.first
     }

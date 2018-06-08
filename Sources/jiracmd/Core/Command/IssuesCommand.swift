@@ -47,7 +47,7 @@ enum Issues {
         static func run(_ parser: ArgumentParser,
                         configManager: ConfigManager = .shared,
                         projectmanager: ProjectAliasManager = .shared,
-                        session: JIRASession = .init()) throws {
+                        session: JiraSession = .init()) throws {
             let config = try configManager.loadConfig()
 
             guard let projectAliasName = parser.shift(), !projectAliasName.isEmpty else {
@@ -104,7 +104,7 @@ enum Issues {
         static func run(_ parser: ArgumentParser,
                         configManager: ConfigManager = .shared,
                         manager: JQLAliasManager = .shared,
-                        session: JIRASession = .init()) throws {
+                        session: JiraSession = .init()) throws {
             let config = try configManager.loadConfig()
 
             guard let first = parser.shift(), !first.isEmpty else {
@@ -125,7 +125,7 @@ enum Issues {
         }
     }
 
-    private static func search(jql: String, session: JIRASession, config: Config) throws {
+    private static func search(jql: String, session: JiraSession, config: Config) throws {
         print("JQL: \(jql)")
 
         let request = SearchRequest(jql: jql)

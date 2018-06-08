@@ -59,6 +59,8 @@ extension Request where Response: Decodable {
     }
 }
 
+/// Request for Jira Software Cloud Developer REST APIs
+///
 /// - seealso: https://developer.atlassian.com/cloud/jira/software/rest/#introduction
 protocol AgileRequest: Request {}
 
@@ -68,6 +70,8 @@ extension AgileRequest {
     }
 }
 
+/// Request for Jira Cloud platform Developer REST APIs
+///
 /// - seealso: https://developer.atlassian.com/cloud/jira/platform/rest/
 protocol ApiRequest: Request {}
 

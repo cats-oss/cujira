@@ -30,7 +30,7 @@ enum Sprints {
     }
 
     enum All {
-        static func run(_ parser: ArgumentParser, session: JIRASession = .init()) throws {
+        static func run(_ parser: ArgumentParser, session: JiraSession = .init()) throws {
             guard let boardId = parser.shift().flatMap(Int.init) else {
                 return
             }

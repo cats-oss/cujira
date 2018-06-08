@@ -12,7 +12,7 @@ enum Utils {
         case invalidDate(String)
     }
 
-    static func fetchAllSprints(boardId: Int, session: JIRASession) throws -> [Sprint] {
+    static func fetchAllSprints(boardId: Int, session: JiraSession) throws -> [Sprint] {
         func recursiveFetch(startAt: Int, list: [Sprint]) throws -> [Sprint] {
             let response = try session.send(GetAllSprintsRequest(boardId: boardId, startAt: startAt))
             let values = response.values
