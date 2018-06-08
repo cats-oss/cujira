@@ -62,3 +62,16 @@ extension DataManager where Trait == JQLAliasTrait {
         try write(aliases)
     }
 }
+
+extension JQLAliasTrait.Error: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .noJQLAliases:
+            return "Can not load JQL aliaces."
+        case .nameExists(let value):
+            return "\(value) is already exists."
+        case .nameNotFound(let value):
+            return "\(value) not found."
+        }
+    }
+}

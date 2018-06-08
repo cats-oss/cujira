@@ -41,7 +41,7 @@ final class ArgumentParser {
             throw Error.shiftFailed(T.usageDescription(root))
         }
         return try T(rawValue: string)
-            ?? { throw Error.unreadString("該当のコマンドは存在しません\n\n" + T.usageDescription(root)) }()
+            ?? { throw Error.unreadString("Command not found.\n\n" + T.usageDescription(root)) }()
     }
 
     func runHelp() -> Bool {

@@ -95,3 +95,16 @@ extension JiraSession.ErrorMessage: LocalizedError {
         return errorMessages.first
     }
 }
+
+extension JiraSession.Error: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .emptyResult:
+            return "Empty Result."
+        case .invalidResopnse(let resposne):
+            return "Invalid response (status code: \(resposne.statusCode)"
+        case .unknown:
+            return "Unknown error occured."
+        }
+    }
+}

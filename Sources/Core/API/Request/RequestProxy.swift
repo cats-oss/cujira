@@ -47,3 +47,14 @@ public struct RequestProxy<T: Request>: Request {
         return try T.object(from: data)
     }
 }
+
+extension RequestProxyError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .invalidURL(let url):
+            return "\(url) is invalid URL."
+        case .createAuthDataFaild(let username, let apiKey):
+            return "Failed to create auth date from \(username) and \(apiKey)."
+        }
+    }
+}

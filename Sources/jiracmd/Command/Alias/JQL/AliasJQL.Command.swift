@@ -6,6 +6,7 @@
 //
 
 import Core
+import Foundation
 
 enum AliasJQL {
     static func run(_ parser: ArgumentParser) throws {
@@ -26,14 +27,19 @@ enum AliasJQL {
         case list
     }
 
+    enum Error: Swift.Error {
+        case noName
+        case noJQL
+    }
+
     enum Add {
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let name = parser.shift(), !name.isEmpty else {
-                return
+                throw Error.noName
             }
 
             guard let jql = parser.shift(), !jql.isEmpty else {
-                return
+                throw Error.noJQL
             }
 
             try facade.jqlService.addAlias(name: name, jql: jql)
@@ -43,7 +49,7 @@ enum AliasJQL {
     enum Remove {
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let name = parser.shift(), !name.isEmpty else {
-                return
+                throw Error.noName
             }
 
             try facade.jqlService.removeAlias(name: name)
@@ -58,6 +64,17 @@ enum AliasJQL {
             aliases.forEach {
                 print("\tname: \($0.name), jql: \($0.jql)")
             }
+        }
+    }
+}
+
+extension AliasJQL.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .noName:
+            return "NAME is required parameter."
+        case .noJQL:
+            return "JQL is required parameter."
         }
     }
 }

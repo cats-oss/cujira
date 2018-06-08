@@ -57,13 +57,25 @@ extension ConfigTrait.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .noApiKey:
-            return ""
+            return """
+            apikey not found.
+            Please register apikey.
+            """
         case .noConfig:
-            return ""
+            return """
+            Config file not found.
+            Please register domain, apikey, username.
+            """
         case .noDomain:
-            return ""
+            return """
+            domain not found.
+            Please register domain.
+            """
         case .noUsername:
-            return ""
+            return """
+            username not found.
+            Please register username.
+            """
         }
     }
 }

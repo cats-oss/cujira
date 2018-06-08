@@ -65,3 +65,14 @@ public final class DataManager<Trait: DataTrait> {
         }
     }
 }
+
+extension DataManagerError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .invalidURL(let url):
+            return "\(url) is invalid URL."
+        case .createFileFailed(let url):
+            return "Faild to create file to \(url)."
+        }
+    }
+}

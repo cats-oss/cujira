@@ -22,9 +22,13 @@ enum Sprint {
     }
 
     enum All {
+        enum Error: Swift.Error {
+            case noBoardID
+        }
+
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let boardId = parser.shift().flatMap(Int.init) else {
-                return
+                throw Error.noBoardID
             }
 
             let sprints = try facade.sprintService.fetchAllSprints(boardId: boardId)
@@ -42,6 +46,15 @@ enum Sprint {
                     print("\tendDate: \($0.endDate.map { dateFormatter.string(from: $0) } ?? "--")")
                 }
             }
+        }
+    }
+}
+
+extension Sprint.All.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .noBoardID:
+            return "BOARD_ID is required parameter."
         }
     }
 }

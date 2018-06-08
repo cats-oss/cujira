@@ -41,3 +41,14 @@ public enum URLRequestBuilder {
         return request
     }
 }
+
+extension URLRequestBuilder.Error: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .noURLCompponets(let url):
+            return "Failed to create URLCompponets from \(url.absoluteString)"
+        case .addingQueryFaild(let url, let query):
+            return "Failed adding \(query) to \(url)"
+        }
+    }
+}

@@ -24,6 +24,14 @@ enum Issue {
         case jql
     }
 
+    enum Error: Swift.Error {
+        case noProjectAlias
+        case noDateRange
+        case notFoundSprint(String)
+        case noParameter
+        case noJQLAlias
+    }
+
     enum List {
         private enum Option {
             case type(String)
@@ -85,13 +93,13 @@ enum Issue {
             let config = try facade.configService.loadConfig()
 
             guard let projectAliasName = parser.shift(), !projectAliasName.isEmpty else {
-                return
+                throw Error.noProjectAlias
             }
 
             let projectAlias = try facade.projectService.getAlias(name: projectAliasName)
 
             guard let second = parser.shift(), !second.isEmpty else {
-                return
+                throw Error.noDateRange
             }
 
             let dateRangeJQL: String
@@ -100,20 +108,20 @@ enum Issue {
             } else {
                 let sprints = try facade.sprintService.fetchAllSprints(boardId: projectAlias.boardID)
                 guard let sprint = sprints.first(where: { $0.name.contains(second) }) else {
-                    return
+                    throw Error.notFoundSprint(second)
                 }
                 dateRangeJQL = "sprint = \'\(sprint.name)\'"
             }
 
             let options = (0..<3).compactMap { _ in Option(parser) }
-            let typeJQL = self.typeJQL(from: options)
-            let labelJQL = self.labelJQL(from: options)
-            let isJson = self.isJson(from: options)
+            let _typeJQL = typeJQL(from: options)
+            let _labelJQL = labelJQL(from: options)
+            let _isJson = isJson(from: options)
 
-            let jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(typeJQL)\(labelJQL)"
+            let jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(_typeJQL)\(_labelJQL)"
             let issues = try facade.issueService.search(jql: jql)
 
-            try printIssues(issues, jql: jql, config: config, isJson: isJson)
+            try printIssues(issues, jql: jql, config: config, isJson: _isJson)
         }
     }
 
@@ -122,13 +130,13 @@ enum Issue {
             let config = try facade.configService.loadConfig()
 
             guard let first = parser.shift(), !first.isEmpty else {
-                return
+                throw Error.noParameter
             }
 
             let jql: String
             if first == "-r" || first == "--registered" {
                 guard let name = parser.shift(), !name.isEmpty else {
-                    return
+                    throw Error.noJQLAlias
                 }
                 jql = try facade.jqlService.getAlias(name: name).jql
             } else {
@@ -160,6 +168,23 @@ enum Issue {
                 print("\nSummary: \(issues.fields.summary)")
                 print("URL: https://\(config.domain).atlassian.net/browse/\(issues.key)")
             }
+        }
+    }
+}
+
+extension Issue.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .noDateRange:
+            return "[today] or [SPRINT_NAME] is required parameter."
+        case .noProjectAlias:
+            return "PROJECT_ALIAS is required parameter."
+        case .notFoundSprint(let param):
+            return "\(param) is not found in sprints."
+        case .noParameter:
+            return "JQL or --registered [JQL_ALIAS] is required parameter."
+        case .noJQLAlias:
+            return "JQL_ALIAS is required paramter."
         }
     }
 }

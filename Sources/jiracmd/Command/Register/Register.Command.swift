@@ -6,6 +6,7 @@
 //
 
 import Core
+import Foundation
 
 enum Register {
     static func run(_ parser: ArgumentParser) throws {
@@ -29,10 +30,16 @@ enum Register {
         case username
     }
 
+    enum Error: Swift.Error {
+        case noDomain
+        case noApiKey
+        case noUsername
+    }
+
     enum Domain {
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let domain = parser.shift(), !domain.isEmpty else {
-                return
+                throw Error.noDomain
             }
 
             try facade.configService.update(domain: domain)
@@ -42,7 +49,7 @@ enum Register {
     enum ApiKey {
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let apiKey = parser.shift(), !apiKey.isEmpty else {
-                return
+                throw Error.noApiKey
             }
 
             try facade.configService.update(apiKey: apiKey)
@@ -52,7 +59,7 @@ enum Register {
     enum Username {
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let username = parser.shift(), !username.isEmpty else {
-                return
+                throw Error.noUsername
             }
 
             try facade.configService.update(username: username)
@@ -67,6 +74,19 @@ enum Register {
             print("\tdomain: \(config.domain)")
             print("\tapiKey: \(config.apiKey)")
             print("\tusername: \(config.username)")
+        }
+    }
+}
+
+extension Register.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .noDomain:
+            return "ATLASSIAN_DOMAIN is required parameter."
+        case .noApiKey:
+            return "API_KEY is required parameter."
+        case .noUsername:
+            return "USER_NAME is required parameter."
         }
     }
 }
