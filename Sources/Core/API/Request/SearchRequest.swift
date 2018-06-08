@@ -11,8 +11,12 @@ public struct SearchRequest: ApiRequest {
     public let path = "/search"
     public let method: HttpMethod = .post
     public let bodyParameter: BodyParameter?
-    
-    public init(jql: String) {
-        self.bodyParameter = DictionaryBodyParameter(dictionary: ["jql": jql])
+
+    public init(jql: String, startAt: Int?) {
+        var dict = ["jql": jql]
+        if let startAt = startAt {
+            dict["startAt"] = "\(startAt)"
+        }
+        self.bodyParameter = DictionaryBodyParameter(dictionary: dict)
     }
 }

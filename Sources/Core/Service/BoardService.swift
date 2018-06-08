@@ -23,7 +23,7 @@ public final class BoardService {
             if isLast {
                 return newList
             } else {
-                return try recursiveFetch(startAt: values.count, list: newList)
+                return try recursiveFetch(startAt: newList.count, list: newList)
             }
         }
 
