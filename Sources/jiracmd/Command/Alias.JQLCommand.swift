@@ -1,12 +1,14 @@
 //
-//  Alias.ProjectCommand.swift
+//  JQLCommand.swift
 //  jiracmd
 //
-//  Created by marty-suzuki on 2018/06/07.
+//  Created by marty-suzuki on 2018/06/06.
 //
 
+import Foundation
+
 extension Alias {
-    enum Project {
+    enum JQL {
         static func run(_ parser: ArgumentParser) throws {
             let command: Command = try parser.parse()
             switch command {
@@ -39,38 +41,38 @@ extension Alias {
         }
 
         enum Add {
-            static func run(_ parser: ArgumentParser, manager: ProjectAliasManager = .shared) throws {
+            static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
                 guard let name = parser.shift(), !name.isEmpty else {
                     return
                 }
 
-                guard let projectID = parser.shift().flatMap(Int.init) else {
+                guard let jql = parser.shift(), !jql.isEmpty else {
                     return
                 }
 
-                guard let boardID = parser.shift().flatMap(Int.init) else {
-                    return
-                }
-
-                try manager.addAlias(name: name, projectID: projectID, boardID: boardID)
+                try facade.jqlService.addAlias(name: name, jql: jql)
             }
         }
 
         enum Remove {
-            static func run(_ parser: ArgumentParser, manager: ProjectAliasManager = .shared) throws {
+            static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
                 guard let name = parser.shift(), !name.isEmpty else {
                     return
                 }
 
-                try manager.removeAlias(name: name)
+                try facade.jqlService.removeAlias(name: name)
             }
         }
 
         enum List {
-            static func run(_ parser: ArgumentParser, manager: ProjectAliasManager = .shared) throws {
-                try manager.showAliases()
+            static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+                let aliases = try facade.jqlService.loadAliases()
+
+                print("Registered Jira Query Language Aliases:\n")
+                aliases.forEach {
+                    print("\tname: \($0.name), jql: \($0.jql)")
+                }
             }
         }
     }
-
 }

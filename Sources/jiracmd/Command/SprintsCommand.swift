@@ -30,12 +30,12 @@ enum Sprints {
     }
 
     enum All {
-        static func run(_ parser: ArgumentParser, session: JiraSession = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let boardId = parser.shift().flatMap(Int.init) else {
                 return
             }
 
-            let sprints = try Utils.fetchAllSprints(boardId: boardId, session: session)
+            let sprints = try facade.sprintService.fetchAllSprints(boardId: boardId)
 
             print("Results:")
             if sprints.isEmpty {

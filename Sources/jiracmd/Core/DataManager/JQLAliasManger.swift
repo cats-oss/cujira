@@ -35,14 +35,6 @@ extension DataManager where Trait == JQLAliasTrait {
         return aliases
     }
 
-    func showAliases() throws {
-        let aliases = try loadAliases()
-        print("Registered Jira Query Language Aliases:\n")
-        aliases.forEach {
-            print("\tname: \($0.name), jql: \($0.jql)")
-        }
-    }
-
     func getAlias(name: String) throws -> JQLAlias {
         let aliases = try loadAliases()
         guard let index = aliases.index(where: { $0.name == name }) else {

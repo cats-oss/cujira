@@ -42,14 +42,6 @@ extension DataManager where Trait == ProjectAliasTrait {
         return aliases
     }
 
-    func showAliases() throws {
-        let aliases = try loadAliases()
-        print("Registered Project Aliases:\n")
-        aliases.forEach {
-            print("\tname: \($0.name), projectID: \($0.projectID), boardID: \($0.boardID)")
-        }
-    }
-
     func getAlias(name: String) throws -> ProjectAlias {
         let aliases = try loadAliases()
         guard let index = aliases.index(where: { $0.name == name }) else {

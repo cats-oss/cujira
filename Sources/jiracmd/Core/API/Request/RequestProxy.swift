@@ -23,13 +23,13 @@ struct RequestProxy<T: Request>: Request {
     let bodyParameter: BodyParameter?
     let queryParameter: [String : String]?
 
-    init(request: T, config: Config) throws {
-        let urlString = "https://\(config.domain).atlassian.net/rest/\(request.endpoint.rawValue)"
+    init(request: T, domain: String, apiKey: String, username: String) throws {
+        let urlString = "https://\(domain).atlassian.net/rest/\(request.endpoint.rawValue)"
         self.baseURL = try URL(string: urlString) ?? {
             throw RequestProxyError.invalidURL(urlString)
         }()
-        let authData = try "\(config.username):\(config.apiKey)".data(using: .utf8) ?? {
-            throw RequestProxyError.createAuthDataFaild(username: config.username, apiKey: config.apiKey)
+        let authData = try "\(username):\(apiKey)".data(using: .utf8) ?? {
+            throw RequestProxyError.createAuthDataFaild(username: username, apiKey: apiKey)
         }()
         let base64AuthString = authData.base64EncodedString()
         self.headerField = [

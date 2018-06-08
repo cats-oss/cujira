@@ -46,14 +46,6 @@ extension DataManager where Trait == ConfigTrait {
                       username: username)
     }
 
-    func showConfig() throws {
-        let config = try getRawModel()
-        print("Config:\n")
-        print("\tdomain: \(config?.domain ?? "nil")")
-        print("\tapiKey: \(config?.apiKey ?? "nil")")
-        print("\tusername: \(config?.username ?? "nil")")
-    }
-
     func update<T>(_ keyPath: WritableKeyPath<Config.Raw, Optional<T>>, _ value: T) throws {
         var config = try getRawModel() ?? Config.Raw(domain: nil, apiKey: nil, username: nil)
         config[keyPath: keyPath] = value

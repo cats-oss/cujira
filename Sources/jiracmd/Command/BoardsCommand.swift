@@ -30,20 +30,8 @@ enum Boards {
     }
 
     enum All {
-        static func run(_ parser: ArgumentParser, session: JiraSession = .init()) throws {
-            func recursiveFetch(startAt: Int, list: [Board]) throws -> [Board] {
-                let response = try session.send(GetAllBoardsRequest(startAt: startAt))
-                let values = response.values
-                let isLast = values.isEmpty ? true : response.isLast ?? true
-                let newList = list + values
-                if isLast {
-                    return newList
-                } else {
-                    return try recursiveFetch(startAt: values.count, list: newList)
-                }
-            }
-
-            let boards = try recursiveFetch(startAt: 0, list: [])
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+            let boards = try facade.boardService.fetchAllBoards()
 
             print("Results:")
             if boards.isEmpty {

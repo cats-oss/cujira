@@ -46,38 +46,43 @@ enum Register {
     }
 
     enum Domain {
-        static func run(_ parser: ArgumentParser, manager: ConfigManager = .shared) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let domain = parser.shift(), !domain.isEmpty else {
                 return
             }
 
-            try manager.update(\.domain, domain)
+            try facade.configService.update(domain: domain)
         }
     }
 
     enum ApiKey {
-        static func run(_ parser: ArgumentParser, manager: ConfigManager = .shared) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let apiKey = parser.shift(), !apiKey.isEmpty else {
                 return
             }
 
-            try manager.update(\.apiKey, apiKey)
+            try facade.configService.update(apiKey: apiKey)
         }
     }
 
     enum Username {
-        static func run(_ parser: ArgumentParser, manager: ConfigManager = .shared) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
             guard let username = parser.shift(), !username.isEmpty else {
                 return
             }
 
-            try manager.update(\.username, username)
+            try facade.configService.update(username: username)
         }
     }
 
     enum Info {
-        static func run(_ parser: ArgumentParser, manager: ConfigManager = .shared) throws {
-            try manager.showConfig()
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+            let config = try facade.configService.loadConfig(unsafe: true)
+
+            print("Config:\n")
+            print("\tdomain: \(config.domain)")
+            print("\tapiKey: \(config.apiKey)")
+            print("\tusername: \(config.username)")
         }
     }
 }

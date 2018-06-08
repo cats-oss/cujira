@@ -44,17 +44,14 @@ enum Issues {
     }
 
     enum List {
-        static func run(_ parser: ArgumentParser,
-                        configManager: ConfigManager = .shared,
-                        projectmanager: ProjectAliasManager = .shared,
-                        session: JiraSession = .init()) throws {
-            let config = try configManager.loadConfig()
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+            let config = try facade.configService.loadConfig()
 
             guard let projectAliasName = parser.shift(), !projectAliasName.isEmpty else {
                 return
             }
 
-            let projectAlias = try projectmanager.getAlias(name: projectAliasName)
+            let projectAlias = try facade.projectService.getAlias(name: projectAliasName)
 
             guard let second = parser.shift(), !second.isEmpty else {
                 return
@@ -64,7 +61,7 @@ enum Issues {
             if second == "today" {
                 dateRangeJQL = "created >= startOfDay()"
             } else {
-                let sprints = try Utils.fetchAllSprints(boardId: projectAlias.boardID, session: session)
+                let sprints = try facade.sprintService.fetchAllSprints(boardId: projectAlias.boardID)
                 guard let sprint = sprints.first(where: { $0.name.contains(second) }) else {
                     return
                 }
@@ -95,17 +92,15 @@ enum Issues {
             let option2 = try parseOption(parser)
 
             let jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(option1)\(option2)"
+            let issues = try facade.issueService.search(jql: jql)
 
-            try search(jql: jql, session: session, config: config)
+            printIssues(issues, jql: jql, config: config)
         }
     }
 
     enum JQL {
-        static func run(_ parser: ArgumentParser,
-                        configManager: ConfigManager = .shared,
-                        manager: JQLAliasManager = .shared,
-                        session: JiraSession = .init()) throws {
-            let config = try configManager.loadConfig()
+        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+            let config = try facade.configService.loadConfig()
 
             guard let first = parser.shift(), !first.isEmpty else {
                 return
@@ -116,20 +111,19 @@ enum Issues {
                 guard let name = parser.shift(), !name.isEmpty else {
                     return
                 }
-                jql = try manager.getAlias(name: name).jql
+                jql = try facade.jqlService.getAlias(name: name).jql
             } else {
                 jql = first
             }
 
-            try search(jql: jql, session: session, config: config)
+            let issues = try facade.issueService.search(jql: jql)
+
+            printIssues(issues, jql: jql, config: config)
         }
     }
 
-    private static func search(jql: String, session: JiraSession, config: Config) throws {
+    private static func printIssues(_ issues: [Issue], jql: String, config: Config) {
         print("JQL: \(jql)")
-
-        let request = SearchRequest(jql: jql)
-        let issues = try session.send(request).values
 
         issues.forEach { issues in
             print("\nSummary: \(issues.fields.summary)")

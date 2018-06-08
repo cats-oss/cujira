@@ -1,14 +1,12 @@
 //
-//  JQLCommand.swift
+//  Alias.ProjectCommand.swift
 //  jiracmd
 //
-//  Created by marty-suzuki on 2018/06/06.
+//  Created by marty-suzuki on 2018/06/07.
 //
 
-import Foundation
-
 extension Alias {
-    enum JQL {
+    enum Project {
         static func run(_ parser: ArgumentParser) throws {
             let command: Command = try parser.parse()
             switch command {
@@ -41,33 +39,43 @@ extension Alias {
         }
 
         enum Add {
-            static func run(_ parser: ArgumentParser, manager: JQLAliasManager = .shared) throws {
+            static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
                 guard let name = parser.shift(), !name.isEmpty else {
                     return
                 }
 
-                guard let jql = parser.shift(), !jql.isEmpty else {
+                guard let projectID = parser.shift().flatMap(Int.init) else {
                     return
                 }
 
-                try manager.addAlias(name: name, jql: jql)
+                guard let boardID = parser.shift().flatMap(Int.init) else {
+                    return
+                }
+
+                try facade.projectService.addAlias(name: name, projectID: projectID, boardID: boardID)
             }
         }
 
         enum Remove {
-            static func run(_ parser: ArgumentParser, manager: JQLAliasManager = .shared) throws {
+            static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
                 guard let name = parser.shift(), !name.isEmpty else {
                     return
                 }
 
-                try manager.removeAlias(name: name)
+                try facade.projectService.removeAlias(name: name)
             }
         }
 
         enum List {
-            static func run(_ parser: ArgumentParser, manager: JQLAliasManager = .shared) throws {
-                try manager.showAliases()
+            static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+                let aliases = try facade.projectService.loadAliases()
+                
+                print("Registered Project Aliases:\n")
+                aliases.forEach {
+                    print("\tname: \($0.name), projectID: \($0.projectID), boardID: \($0.boardID)")
+                }
             }
         }
     }
+
 }

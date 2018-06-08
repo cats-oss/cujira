@@ -23,17 +23,28 @@ final class JiraSession {
         let errorMessages: [String]
     }
 
+    private let domain: () throws -> (String)
+    private let apiKey: () throws -> (String)
+    private let username: () throws -> (String)
+
+
     private let session: URLSession
-    private let configManager: ConfigManager
 
     init(session: URLSession = .shared,
-         configManager: ConfigManager = .shared) {
+         domain: @escaping () throws -> (String),
+         apiKey: @escaping () throws -> (String),
+         username: @escaping () throws -> (String)) {
         self.session = session
-        self.configManager = configManager
+        self.domain = domain
+        self.apiKey = apiKey
+        self.username = username
     }
 
     func send<T: Request>(_ request: T) throws -> T.Response {
-        let proxy = try RequestProxy(request: request, config: configManager.loadConfig())
+        let proxy = try RequestProxy(request: request,
+                                     domain: domain(),
+                                     apiKey: apiKey(),
+                                     username: username())
         let result = try sendSync(proxy)
         switch result {
         case .success(let value):
