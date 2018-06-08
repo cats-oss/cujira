@@ -1,5 +1,5 @@
 //
-//  IssuesCommand.swift
+//  Issue.Command.swift
 //  jiracmd
 //
 //  Created by marty-suzuki on 2018/06/06.
@@ -7,7 +7,7 @@
 
 import Core
 
-enum Issues {
+enum Issue {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
         switch command {
@@ -19,26 +19,6 @@ enum Issues {
     }
 
     enum Command: String, CommandList {
-        static var usageDescription: String {
-            let values = elements.map { element -> String in
-                switch element {
-                case .list:
-                    return """
-                    \t$ jiracmd issues list [project_alias] [today | sprint_name]
-                    \n\tOptions:
-                    \t\t-t | --type [issue_type]
-                    \t\t-l | --label [issue_label]
-                    """
-                case .jql:
-                    return """
-                    \t$ jiracmd issues jql (jql_string)
-                    \n\tOptions:
-                    \t\t-r | --registered [jql_alias]
-                    """
-                }
-            }
-            return "Usage:\n\(values.joined(separator: "\n\n"))"
-        }
         case list
         case jql
     }
@@ -122,7 +102,7 @@ enum Issues {
         }
     }
 
-    private static func printIssues(_ issues: [Issue], jql: String, config: Config) {
+    private static func printIssues(_ issues: [Core.Issue], jql: String, config: Config) {
         print("JQL: \(jql)")
 
         issues.forEach { issues in

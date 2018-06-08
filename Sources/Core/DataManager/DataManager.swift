@@ -21,7 +21,7 @@ public final class DataManager<Trait: DataTrait> {
     private let fileManager: FileManager
     private let workingDirectory: String
 
-    init(fileManager: FileManager = .default) {
+    public init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
         self.workingDirectory = "/usr/local/etc/jiracmd"
     }

@@ -1,0 +1,38 @@
+//
+//  Alias.Command.Usage.swift
+//  jiracmd
+//
+//  Created by marty-suzuki on 2018/06/08.
+//
+
+import Core
+
+extension Alias.Command {
+    static func usageDescription(_ cmd: String) -> String {
+        let values = elements.map { element -> String in
+            switch element {
+            case .project:
+                return AliasProject.usageDescription(element.rawValue)
+            case .jql:
+                return AliasJQL.usageDescription(element.rawValue)
+            }
+        }
+        return usageFormatted(root: cmd, cmd: Root.Command.alias, values: values, separator: "\n")
+    }
+}
+
+extension AliasProject: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd)
+        """
+    }
+}
+
+extension AliasJQL: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd)
+        """
+    }
+}

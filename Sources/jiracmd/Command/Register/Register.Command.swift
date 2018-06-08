@@ -1,5 +1,5 @@
 //
-//  RegisterCommand.swift
+//  Register.Command.swift
 //  jiracmd
 //
 //  Created by marty-suzuki on 2018/06/05.
@@ -23,26 +23,10 @@ enum Register {
     }
     
     enum Command: String, CommandList {
-        static var usageDescription: String {
-            let values = elements.map { element -> String in
-                switch element {
-                case .domain:
-                    return "domain"
-                case .apikey:
-                    return ""
-                case .username:
-                    return ""
-                case .info:
-                    return ""
-                }
-            }
-            return "Usage:\n\(values.joined())"
-        }
-
-        case domain
         case apikey
-        case username
+        case domain
         case info
+        case username
     }
 
     enum Domain {

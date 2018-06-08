@@ -54,7 +54,7 @@ extension Request where Response: Decodable {
         //print(try JSONSerialization.jsonObject(with: data, options: .allowFragments))
 
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = Utils.iso8601DateDecodingStrategy()
+        decoder.dateDecodingStrategy = JSONDecoder.DateDecodingStrategy.core.iso8601
         return try decoder.decode(Response.self, from: data)
     }
 }

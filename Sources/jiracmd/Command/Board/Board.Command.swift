@@ -1,5 +1,5 @@
 //
-//  BoardsCommand.swift
+//  Board.Command.swift
 //  jiracmd
 //
 //  Created by marty-suzuki on 2018/06/06.
@@ -7,7 +7,7 @@
 
 import Core
 
-enum Boards {
+enum Board {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
         switch command {
@@ -17,15 +17,6 @@ enum Boards {
     }
 
     enum Command: String, CommandList {
-        static var usageDescription: String {
-            let values = elements.map { element -> String in
-                switch element {
-                case .all:
-                    return ""
-                }
-            }
-            return "Usage:\n\(values.joined())"
-        }
         case all
     }
 

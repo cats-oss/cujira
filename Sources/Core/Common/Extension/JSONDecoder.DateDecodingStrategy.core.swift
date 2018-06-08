@@ -1,18 +1,20 @@
 //
-//  Utils.swift
-//  jiracmd
+//  JSONDecoder.DateDecodingStrategy.core.swift
+//  Core
 //
-//  Created by marty-suzuki on 2018/06/07.
+//  Created by marty-suzuki on 2018/06/08.
 //
 
 import Foundation
 
-public enum Utils {
+extension JSONDecoder.DateDecodingStrategy: CoreCompatible {}
+
+extension CoreExtension where Base == JSONDecoder.DateDecodingStrategy {
     public enum Error: Swift.Error {
         case invalidDate(String)
     }
-
-    public static func iso8601DateDecodingStrategy() -> JSONDecoder.DateDecodingStrategy {
+    
+    public static var iso8601: JSONDecoder.DateDecodingStrategy {
         return .custom({ decoder -> Date in
             let container = try decoder.singleValueContainer()
             let string = try container.decode(String.self)
@@ -29,13 +31,7 @@ public enum Utils {
             if let date = formatter.date(from: string) {
                 return date
             }
-            throw Error.invalidDate(string)
+            throw CoreExtension.Error.invalidDate(string)
         })
-    }
-
-    public static func yyyyMMddDateFormatter() -> DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy/MM/dd"
-        return dateFormatter
     }
 }

@@ -14,9 +14,11 @@ final class ArgumentParser {
     }
 
     private var remainder: [String]
+    private let root: String
 
     init(args: [String]) {
-        self.remainder = args
+        self.root = args[0]
+        self.remainder = args.dropFirst().map { $0 }
     }
 
     @discardableResult
@@ -36,10 +38,20 @@ final class ArgumentParser {
 
     func parse<T: CommandList>() throws -> T {
         guard let string = shift() else {
-            throw Error.shiftFailed(T.usageDescription)
+            throw Error.shiftFailed(T.usageDescription(root))
         }
         return try T(rawValue: string)
-            ?? { throw Error.unreadString("該当のコマンドは存在しません\n\n" + T.usageDescription) }()
+            ?? { throw Error.unreadString("該当のコマンドは存在しません\n\n" + T.usageDescription(root)) }()
+    }
+
+    func runHelp() -> Bool {
+        let isHelp = remainder.first(where: { $0.contains("-h") || $0.contains("--help") }) != nil
+        if remainder.isEmpty || isHelp {
+            print(Root.Command.usageDescription(root))
+            return true
+        } else {
+            return false
+        }
     }
 }
 

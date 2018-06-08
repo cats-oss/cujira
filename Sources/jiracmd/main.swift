@@ -7,18 +7,9 @@
 
 import Foundation
 
-let arguments = CommandLine.arguments.dropFirst().map { $0 }
+let parser = ArgumentParser(args: CommandLine.arguments)
 
-if arguments.isEmpty {
-    print(Root.Command.usageDescription)
-    exit(0)
-}
-
-let parser = ArgumentParser(args: arguments)
-
-if arguments.first(where: { $0.contains("-h") || $0.contains("--help") }) != nil {
-    parser.shiftAll()
-    print(Root.Command.usageDescription)
+if parser.runHelp() {
     exit(0)
 }
 
