@@ -36,35 +36,24 @@ extension DataManager where Trait == BoardTrait {
         return boards
     }
 
-    func getBoard(boardID: Int) throws -> Board {
-        let boards = try loadBoards()
-        let board = boards.first { $0.id == boardID }
-        return try board ?? {
-            throw Trait.Error.noBoardFromBoardID(boardID)
-        }()
-    }
-
-    func getBoard(projectID: Int) throws -> Board {
-        let boards = try loadBoards()
-
-        let board = boards.first {
-            if case .project(let value) = $0.location {
-                return value.projectId == projectID
-            } else {
-                return false
-            }
-        }
-
-        return try board ?? {
-            throw Trait.Error.noBoardFromProjectID(projectID)
-        }()
-    }
-
     func saveBoards(_ boards: [Board]) throws {
         if boards.isEmpty {
             throw Trait.Error.noBoards
         }
 
         try write(boards)
+    }
+}
+
+extension BoardTrait.Error: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .noBoards:
+            return "Boards not found."
+        case .noBoardFromBoardID(let boardID):
+            return "BoardID: \(boardID) not found in Boards."
+        case .noBoardFromProjectID(let projectID):
+            return "ProjectID: \(projectID) not found in Boards."
+        }
     }
 }

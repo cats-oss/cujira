@@ -46,4 +46,28 @@ public final class BoardService {
             throw error
         }
     }
+
+    public func getBoard(boardID: Int) throws -> Board {
+        let boards = try getBoards()
+        let board = boards.first { $0.id == boardID }
+        return try board ?? {
+            throw BoardTrait.Error.noBoardFromBoardID(boardID)
+        }()
+    }
+
+    public func getBoard(projectID: Int) throws -> Board {
+        let boards = try getBoards()
+
+        let board = boards.first {
+            if case .project(let value) = $0.location {
+                return value.projectId == projectID
+            } else {
+                return false
+            }
+        }
+
+        return try board ?? {
+            throw BoardTrait.Error.noBoardFromProjectID(projectID)
+        }()
+    }
 }

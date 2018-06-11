@@ -27,7 +27,8 @@ extension AliasProject.Command {
 extension AliasProject.Add: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
-            + \(cmd) [NAME] [PROJECT_ID] [BOARD_ID]
+            + \(cmd) [NAME] [-p | --project-id] [PROJECT_ID]
+            + \(cmd) [NAME] [-b | --board-id] [BOARD_ID]
         """
     }
 }

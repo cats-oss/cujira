@@ -51,3 +51,19 @@ public enum Location: Codable {
         }
     }
 }
+
+extension Location {
+    public var project: Project? {
+        if case .project(let value) = self {
+            return value
+        }
+        return nil
+    }
+
+    public var user: User? {
+        if case .user(let value) = self {
+            return value
+        }
+        return nil
+    }
+}

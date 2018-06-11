@@ -31,6 +31,7 @@ enum AliasProject {
         case noName
         case noProjectID
         case noBoardID
+        case invalidParameter
     }
 
     enum Add {
@@ -39,12 +40,34 @@ enum AliasProject {
                 throw Error.noName
             }
 
-            guard let projectID = parser.shift().flatMap(Int.init) else {
-                throw Error.noProjectID
+            guard let second = parser.shift(), !second.isEmpty else {
+                return
             }
 
-            guard let boardID = parser.shift().flatMap(Int.init) else {
-                throw Error.noBoardID
+            let projectID: Int
+            let boardID: Int
+            switch second {
+            case "-p", "--project-id":
+                guard let _projectID = parser.shift().flatMap(Int.init) else {
+                    throw Error.noBoardID
+                }
+                projectID = _projectID
+                boardID = try facade.boardService.getBoard(projectID: _projectID).id
+
+            case "-b", "--board-id":
+                guard let _boardID = parser.shift().flatMap(Int.init) else {
+                    throw Error.noBoardID
+                }
+                boardID = _boardID
+
+                let board = try facade.boardService.getBoard(boardID: _boardID)
+                guard let _projectID = board.location.project?.projectId else {
+                    throw Error.noProjectID
+                }
+                projectID = _projectID
+
+            default:
+                throw Error.invalidParameter
             }
 
             try facade.projectService.addAlias(name: name, projectID: projectID, boardID: boardID)
@@ -82,6 +105,8 @@ extension AliasProject.Error: LocalizedError {
             return "BOARD_ID is required parameter."
         case .noProjectID:
             return "PROJECT_ID is required parameter."
+        case .invalidParameter:
+            return ""
         }
     }
 }
