@@ -14,7 +14,7 @@ final class ArgumentParser {
     }
 
     private var remainder: [String]
-    private let root: String
+    let root: String
 
     init(args: [String]) {
         self.root = args[0]

@@ -11,9 +11,13 @@ import Foundation
 enum Sprint {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
-        switch command {
-        case .list:
-            try List.run(parser)
+        do {
+            switch command {
+            case .list:
+                try List.run(parser)
+            }
+        } catch {
+            throw Root.Error(inner: error, usage: Sprint.Command.usageDescription(parser.root))
         }
     }
 

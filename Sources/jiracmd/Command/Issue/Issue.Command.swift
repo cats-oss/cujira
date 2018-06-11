@@ -11,11 +11,16 @@ import Foundation
 enum Issue {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
-        switch command {
-        case .list:
-            try List.run(parser)
-        case .jql:
-            try JQL.run(parser)
+
+        do {
+            switch command {
+            case .list:
+                try List.run(parser)
+            case .jql:
+                try JQL.run(parser)
+            }
+        } catch {
+            throw Root.Error(inner: error, usage: Issue.Command.usageDescription(parser.root))
         }
     }
 
@@ -184,7 +189,7 @@ extension Issue.Error: LocalizedError {
         case .noProjectAlias:
             return "PROJECT_ALIAS is required parameter."
         case .notFoundSprint(let param):
-            return "\(param) is not found in sprints."
+            return "\(param) not found in sprints."
         case .noParameter:
             return "JQL or --registered [JQL_ALIAS] is required parameter."
         case .noJQLAlias:

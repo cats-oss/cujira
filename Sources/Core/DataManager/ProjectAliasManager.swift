@@ -84,7 +84,7 @@ extension ProjectAliasTrait.Error: LocalizedError {
         case .nameExists(let value):
             return "\(value) is already exists."
         case .nameNotFound(let value):
-            return "\(value) not found."
+            return "\(value) not found in project aliases."
         }
     }
 }

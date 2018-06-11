@@ -6,6 +6,7 @@
 //
 
 import Core
+import Foundation
 
 enum Root {
     static func run(_ parser: ArgumentParser) throws {
@@ -34,5 +35,21 @@ enum Root {
         case issue
         case register
         case sprint
+    }
+
+    struct Error: Swift.Error {
+        let inner: Swift.Error
+        let usage: String
+    }
+}
+
+extension Root.Error: LocalizedError {
+    var errorDescription: String? {
+        let error = (inner as? LocalizedError)?.errorDescription ?? "\(inner)"
+        return """
+        \(error)
+
+        \(usage)
+        """
     }
 }

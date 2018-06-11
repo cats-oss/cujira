@@ -11,13 +11,18 @@ import Foundation
 enum AliasProject {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
-        switch command {
-        case .add:
-            try Add.run(parser)
-        case .remove:
-            try Remove.run(parser)
-        case .list:
-            try List.run(parser)
+
+        do {
+            switch command {
+            case .add:
+                try Add.run(parser)
+            case .remove:
+                try Remove.run(parser)
+            case .list:
+                try List.run(parser)
+            }
+        } catch {
+            throw Root.Error(inner: error, usage: AliasProject.Command.usageDescription(parser.root))
         }
     }
 
@@ -31,6 +36,7 @@ enum AliasProject {
         case noName
         case noProjectID
         case noBoardID
+        case missingParameterAfterName
         case invalidParameter
     }
 
@@ -41,7 +47,7 @@ enum AliasProject {
             }
 
             guard let second = parser.shift(), !second.isEmpty else {
-                return
+                throw Error.missingParameterAfterName
             }
 
             let projectID: Int
@@ -107,6 +113,8 @@ extension AliasProject.Error: LocalizedError {
             return "PROJECT_ID is required parameter."
         case .invalidParameter:
             return "Invalid Parameter."
+        case .missingParameterAfterName:
+            return "[-p | --project-id] or [-b | --board-id] are required."
         }
     }
 }
