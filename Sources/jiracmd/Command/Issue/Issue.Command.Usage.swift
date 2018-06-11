@@ -39,11 +39,11 @@ extension Issue.List: UsageDescribable {
 extension Issue.JQL: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
-            + \(cmd) (JQL_STRING)
+            + \(cmd) [JQL_STRING]
+            + \(cmd) [-r | --registered] [JQL_ALIAS]
 
             Options:
 
-                -r | --registered [JQL_ALIAS]
                 -j | --json
         """
     }
