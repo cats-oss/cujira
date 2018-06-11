@@ -105,6 +105,10 @@ enum Issue {
             let dateRangeJQL: String
             if second == "today" {
                 dateRangeJQL = "created >= startOfDay()"
+            } else if let fromDate = DateFormatter.core.yyyyMMdd.date(from: second) {
+                let toDate = fromDate.addingTimeInterval(60 * 60 * 24)
+                let toDateString = DateFormatter.core.yyyyMMdd.string(from: toDate)
+                dateRangeJQL = "created >= \'\(second)\' and created <= \'\(toDateString)\'"
             } else {
                 let sprints = try facade.sprintService.fetchAllSprints(boardId: projectAlias.boardID)
                 guard let sprint = sprints.first(where: { $0.name.contains(second) }) else {
@@ -176,7 +180,7 @@ extension Issue.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noDateRange:
-            return "[today] or [SPRINT_NAME] is required parameter."
+            return "[today], [yyyy/mm/dd] or [SPRINT_NAME] is required parameter."
         case .noProjectAlias:
             return "PROJECT_ALIAS is required parameter."
         case .notFoundSprint(let param):

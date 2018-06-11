@@ -25,7 +25,7 @@ extension Issue.Command {
 extension Issue.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
-            + \(cmd) [PROJECT_ALIAS] [today | SPRINT_NAME]
+            + \(cmd) [PROJECT_ALIAS] [today | yyyy/mm/dd | SPRINT_NAME]
 
             Options:
 
