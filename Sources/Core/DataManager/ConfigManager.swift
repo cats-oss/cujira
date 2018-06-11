@@ -12,12 +12,14 @@ public typealias ConfigManager = DataManager<ConfigTrait>
 public enum ConfigTrait: DataTrait {
     public typealias RawObject = Config.Raw
     public static let filename = "config"
+    public static let path = DataManagerConst.currentPath
 
     public enum Error: Swift.Error {
         case noConfig
         case noDomain
         case noApiKey
         case noUsername
+        case updateSameValue(Any)
     }
 }
 
@@ -46,8 +48,11 @@ extension DataManager where Trait == ConfigTrait {
                       username: username)
     }
 
-    func update<T>(_ keyPath: WritableKeyPath<Config.Raw, Optional<T>>, _ value: T) throws {
+    func update<T: Equatable>(_ keyPath: WritableKeyPath<Config.Raw, Optional<T>>, _ value: T) throws {
         var config = try getRawModel() ?? Config.Raw(domain: nil, apiKey: nil, username: nil)
+        if config[keyPath: keyPath] == value {
+            throw Trait.Error.updateSameValue(value)
+        }
         config[keyPath: keyPath] = value
         try write(config)
     }
@@ -75,6 +80,10 @@ extension ConfigTrait.Error: LocalizedError {
             return """
             username not found.
             Please register username.
+            """
+        case .updateSameValue(let value):
+            return """
+            Value is not changed because trying update same value (\(value))
             """
         }
     }

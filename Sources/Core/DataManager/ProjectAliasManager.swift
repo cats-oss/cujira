@@ -12,6 +12,7 @@ public typealias ProjectAliasManager = DataManager<ProjectAliasTrait>
 public enum ProjectAliasTrait: DataTrait {
     public typealias RawObject = [ProjectAlias.Raw]
     public static let filename = "project_aliases"
+    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noProjectAliases
@@ -79,7 +80,7 @@ extension ProjectAliasTrait.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .noProjectAliases:
-            return "Can not load JQL aliaces."
+            return "Can not load Project aliases."
         case .nameExists(let value):
             return "\(value) is already exists."
         case .nameNotFound(let value):

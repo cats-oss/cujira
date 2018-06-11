@@ -12,6 +12,7 @@ public typealias JQLAliasManager = DataManager<JQLAliasTrait>
 public enum JQLAliasTrait: DataTrait {
     public typealias RawObject = [JQLAlias]
     public static let filename = "jql_aliaes"
+    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noJQLAliases
@@ -67,7 +68,7 @@ extension JQLAliasTrait.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .noJQLAliases:
-            return "Can not load JQL aliaces."
+            return "Can not load JQL aliases."
         case .nameExists(let value):
             return "\(value) is already exists."
         case .nameNotFound(let value):

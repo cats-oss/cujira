@@ -10,11 +10,18 @@ import Foundation
 public protocol DataTrait {
     associatedtype RawObject: Codable
     static var filename: String { get }
+    static var path: String { get }
 }
 
 public enum DataManagerError: Error {
     case invalidURL(String)
     case createFileFailed(URL)
+}
+
+enum DataManagerConst {
+    static let jiracmdDir = "/usr/local/etc/jiracmd"
+    static let domainRelationalPath = "/domain_relational"
+    static let currentPath = "/./"
 }
 
 public final class DataManager<Trait: DataTrait> {
@@ -23,7 +30,7 @@ public final class DataManager<Trait: DataTrait> {
 
     public init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
-        self.workingDirectory = "/usr/local/etc/jiracmd"
+        self.workingDirectory = "\(DataManagerConst.jiracmdDir)\(Trait.path)"
     }
 
     private func workingDirectoryURL() throws -> URL {
@@ -74,5 +81,15 @@ extension DataManagerError: LocalizedError {
         case .createFileFailed(let url):
             return "Faild to create file to \(url)."
         }
+    }
+}
+
+extension DataManager where Trait == ConfigTrait {
+    func removeDomainRelationalDirectory() throws {
+        let urlString = "file://\(DataManagerConst.jiracmdDir)\(DataManagerConst.domainRelationalPath)"
+        let url = try URL(string: urlString) ?? {
+            throw DataManagerError.invalidURL(urlString)
+        }()
+        try fileManager.removeItem(at: url)
     }
 }

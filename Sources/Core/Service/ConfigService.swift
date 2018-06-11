@@ -27,6 +27,7 @@ public final class ConfigService {
 
     public func update(domain: String) throws {
         try manager.update(\.domain, domain)
+        try manager.removeDomainRelationalDirectory()
     }
 
     public func update(apiKey: String) throws {
