@@ -33,22 +33,26 @@ public final class DataManager<Trait: DataTrait> {
         self.workingDirectory = "\(DataManagerConst.jiracmdDir)\(Trait.path)"
     }
 
-    private func workingDirectoryURL() throws -> URL {
-        let urlString = "file://\(workingDirectory)"
+    private func baseURLString(extraPath: String) -> String {
+        return "file://\(workingDirectory)\(extraPath)"
+    }
+
+    private func workingDirectoryURL(extraPath: String) throws -> URL {
+        let urlString = baseURLString(extraPath: extraPath)
         return try URL(string: urlString) ?? {
             throw DataManagerError.invalidURL(urlString)
         }()
     }
 
-    private func getURL() throws -> URL {
-        let urlString = "file://\(workingDirectory)/\(Trait.filename).dat"
+    private func getURL(extraPath: String) throws -> URL {
+        let urlString = "\(baseURLString(extraPath: extraPath))/\(Trait.filename).dat"
         return try URL(string: urlString) ?? {
             throw DataManagerError.invalidURL(urlString)
         }()
     }
 
-    func getRawModel() throws -> Trait.RawObject? {
-        let url = try getURL()
+    func getRawModel(extraPath: String = "") throws -> Trait.RawObject? {
+        let url = try getURL(extraPath: extraPath)
         if fileManager.fileExists(atPath: url.path) {
             let data = try Data(contentsOf: url)
             return try JSONDecoder().decode(Trait.RawObject.self, from: data)
@@ -57,14 +61,14 @@ public final class DataManager<Trait: DataTrait> {
         }
     }
 
-    func write(_ object: Trait.RawObject) throws {
+    func write(_ object: Trait.RawObject, extraPath: String = "") throws {
         let data = try JSONEncoder().encode(object)
-        let fileURL = try getURL()
+        let fileURL = try getURL(extraPath: extraPath)
 
         if fileManager.fileExists(atPath: fileURL.path) {
             try data.write(to: fileURL)
         } else {
-            let dirURL = try workingDirectoryURL()
+            let dirURL = try workingDirectoryURL(extraPath: extraPath)
             try fileManager.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
             if !fileManager.createFile(atPath: fileURL.path, contents: data, attributes: [.posixPermissions: 0o755]) {
                 throw DataManagerError.createFileFailed(fileURL)

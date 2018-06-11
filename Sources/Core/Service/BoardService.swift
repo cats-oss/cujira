@@ -47,27 +47,29 @@ public final class BoardService {
         }
     }
 
-    public func getBoard(boardID: Int) throws -> Board {
-        let boards = try getBoards()
-        let board = boards.first { $0.id == boardID }
-        return try board ?? {
-            throw BoardTrait.Error.noBoardFromBoardID(boardID)
-        }()
+    public func getBoard(boardID: Int, useCache: Bool = true) throws -> Board {
+        if useCache {
+            let boards = try getBoards()
+            return try boards.first { $0.id == boardID } ??
+                getBoard(boardID: boardID, useCache: false)
+        } else {
+            let boards = try fetchAllBoards()
+            return try boards.first { $0.id == boardID } ?? {
+                throw BoardTrait.Error.noBoardFromBoardID(boardID)
+            }()
+        }
     }
 
-    public func getBoard(projectID: Int) throws -> Board {
-        let boards = try getBoards()
-
-        let board = boards.first {
-            if case .project(let value) = $0.location {
-                return value.projectId == projectID
-            } else {
-                return false
-            }
+    public func getBoard(projectID: Int, useCache: Bool = true) throws -> Board {
+        if useCache {
+            let boards = try getBoards()
+            return try boards.first { $0.location.project?.projectId == projectID } ??
+                getBoard(projectID: projectID, useCache: false)
+        } else {
+            let boards = try fetchAllBoards()
+            return try boards.first { $0.location.project?.projectId == projectID } ?? {
+                throw BoardTrait.Error.noBoardFromProjectID(projectID)
+            }()
         }
-
-        return try board ?? {
-            throw BoardTrait.Error.noBoardFromProjectID(projectID)
-        }()
     }
 }

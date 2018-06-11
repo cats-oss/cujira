@@ -27,11 +27,16 @@ enum Sprint {
         }
 
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
-            guard let boardId = parser.shift().flatMap(Int.init) else {
+            guard let boardID = parser.shift().flatMap(Int.init) else {
                 throw Error.noBoardID
             }
 
-            let sprints = try facade.sprintService.fetchAllSprints(boardId: boardId)
+            let sprints: [Core.Sprint]
+            if let option = parser.shift(), option == "-f" || option == "--fetch" {
+                sprints = try facade.sprintService.fetchAllSprints(boardID: boardID)
+            } else {
+                sprints = try facade.sprintService.getSprints(boardID: boardID)
+            }
 
             print("Results:")
             if sprints.isEmpty {

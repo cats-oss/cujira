@@ -24,6 +24,10 @@ extension Sprint.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [BOARD_ID]
+
+            Options:
+
+                -f | --fetch
         """
     }
 }

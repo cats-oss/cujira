@@ -110,7 +110,7 @@ enum Issue {
                 let toDateString = DateFormatter.core.yyyyMMdd.string(from: toDate)
                 dateRangeJQL = "created >= \'\(second)\' and created <= \'\(toDateString)\'"
             } else {
-                let sprints = try facade.sprintService.fetchAllSprints(boardId: projectAlias.boardID)
+                let sprints = try facade.sprintService.getSprints(boardID: projectAlias.boardID)
                 guard let sprint = sprints.first(where: { $0.name.contains(second) }) else {
                     throw Error.notFoundSprint(second)
                 }

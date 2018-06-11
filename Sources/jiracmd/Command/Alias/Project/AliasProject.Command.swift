@@ -106,7 +106,7 @@ extension AliasProject.Error: LocalizedError {
         case .noProjectID:
             return "PROJECT_ID is required parameter."
         case .invalidParameter:
-            return ""
+            return "Invalid Parameter."
         }
     }
 }
