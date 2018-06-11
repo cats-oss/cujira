@@ -11,8 +11,8 @@ extension Board.Command {
     static func usageDescription(_ cmd: String) -> String {
         let values = elements.map { element -> String in
             switch element {
-            case .all:
-                return Board.All.usageDescription(element.rawValue)
+            case .list:
+                return Board.List.usageDescription(element.rawValue)
             }
         }
 
@@ -20,10 +20,14 @@ extension Board.Command {
     }
 }
 
-extension Board.All: UsageDescribable {
+extension Board.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+
+            Options:
+
+                -f | --fetch
         """
     }
 }

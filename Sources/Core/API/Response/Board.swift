@@ -15,18 +15,18 @@ public struct Board: ListableResponse {
     public let type: String
 }
 
-public enum Location: Decodable {
+public enum Location: Codable {
     case project(Project)
     case user(User)
 
-    public struct Project: Decodable {
+    public struct Project: Codable {
         public let avatarURI: String
         public let name: String
         public let projectId: Int
         public let projectTypeKey: String
     }
 
-    public struct User: Decodable {
+    public struct User: Codable {
         public let avatarURI: String
         public let name: String
         public let userId: Int
@@ -38,6 +38,16 @@ public enum Location: Decodable {
             self = .project(try container.decode(Project.self))
         } catch {
             self = .user(try container.decode(User.self))
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .project(let value):
+            try container.encode(value)
+        case .user(let value):
+            try container.encode(value)
         }
     }
 }

@@ -11,18 +11,24 @@ enum Board {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
         switch command {
-        case .all:
-            try All.run(parser)
+        case .list:
+            try List.run(parser)
         }
     }
 
     enum Command: String, CommandList {
-        case all
+        case list
     }
 
-    enum All {
+    enum List {
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
-            let boards = try facade.boardService.fetchAllBoards()
+            
+            let boards: [Core.Board]
+            if let option = parser.shift(), option == "-f" || option == "--fetch" {
+                boards = try facade.boardService.fetchAllBoards()
+            } else {
+                boards = try facade.boardService.getBoards()
+            }
 
             print("Results:")
             if boards.isEmpty {

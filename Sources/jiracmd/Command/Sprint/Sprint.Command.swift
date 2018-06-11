@@ -12,16 +12,16 @@ enum Sprint {
     static func run(_ parser: ArgumentParser) throws {
         let command: Command = try parser.parse()
         switch command {
-        case .all:
-            try All.run(parser)
+        case .list:
+            try List.run(parser)
         }
     }
 
     enum Command: String, CommandList {
-        case all
+        case list
     }
 
-    enum All {
+    enum List {
         enum Error: Swift.Error {
             case noBoardID
         }
@@ -50,7 +50,7 @@ enum Sprint {
     }
 }
 
-extension Sprint.All.Error: LocalizedError {
+extension Sprint.List.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noBoardID:

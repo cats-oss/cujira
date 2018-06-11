@@ -5,7 +5,7 @@
 //  Created by marty-suzuki on 2018/06/05.
 //
 
-public protocol ListableResponse: Decodable {
+public protocol ListableResponse: Codable {
     static var key: String { get }
 }
 

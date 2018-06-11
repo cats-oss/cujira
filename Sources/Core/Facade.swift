@@ -19,13 +19,15 @@ public final class Facade {
         self.init(session: .shared,
                   configManager: .shared,
                   projectAliasManager: .shared,
-                  jqlAliasManager: .shared)
+                  jqlAliasManager: .shared,
+                  boardDataManager: .shared)
     }
 
     public init(session: URLSession,
                 configManager: ConfigManager,
                 projectAliasManager: ProjectAliasManager,
-                jqlAliasManager: JQLAliasManager) {
+                jqlAliasManager: JQLAliasManager,
+                boardDataManager: BoardDataManager) {
         let configService = ConfigService(manager: configManager)
         let jiraSession = JiraSession(session: session,
                                       domain: { try configService.loadConfig().domain },
@@ -36,6 +38,6 @@ public final class Facade {
         self.projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
         self.jqlService = JQLService(aliasManager: jqlAliasManager)
         self.configService = configService
-        self.boardService = BoardService(session: jiraSession)
+        self.boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)
     }
 }

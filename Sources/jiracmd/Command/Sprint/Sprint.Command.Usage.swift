@@ -11,8 +11,8 @@ extension Sprint.Command {
     static func usageDescription(_ cmd: String) -> String {
         let values = elements.map { element -> String in
             switch element {
-            case .all:
-                return Sprint.All.usageDescription(element.rawValue)
+            case .list:
+                return Sprint.List.usageDescription(element.rawValue)
             }
         }
 
@@ -20,7 +20,7 @@ extension Sprint.Command {
     }
 }
 
-extension Sprint.All: UsageDescribable {
+extension Sprint.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [BOARD_ID]
