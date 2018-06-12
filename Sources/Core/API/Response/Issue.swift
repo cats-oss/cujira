@@ -32,14 +32,3 @@ extension Issue {
         public let fixVersions: [Version]
     }
 }
-
-extension Issue.Fields {
-    public struct IssueType: Codable {
-        public let description: String
-        public let iconUrl: URL
-        public let id: String
-        public let name: String
-        public let `self`: URL
-        public let subtask: Bool
-    }
-}

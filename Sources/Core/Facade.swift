@@ -21,7 +21,8 @@ public final class Facade {
                   projectAliasManager: .shared,
                   jqlAliasManager: .shared,
                   boardDataManager: .shared,
-                  sprintDataManager: .shared)
+                  sprintDataManager: .shared,
+                  issueTypeDataManager: .shared)
     }
 
     public init(session: URLSession,
@@ -29,14 +30,15 @@ public final class Facade {
                 projectAliasManager: ProjectAliasManager,
                 jqlAliasManager: JQLAliasManager,
                 boardDataManager: BoardDataManager,
-                sprintDataManager: SprintDataManager) {
+                sprintDataManager: SprintDataManager,
+                issueTypeDataManager: IssueTypeDataManager) {
         let configService = ConfigService(manager: configManager)
         let jiraSession = JiraSession(session: session,
                                       domain: { try configService.loadConfig().domain },
                                       apiKey: { try configService.loadConfig().apiKey },
                                       username: { try configService.loadConfig().username })
         self.sprintService = SprintService(session: jiraSession, sprintDataManager: sprintDataManager)
-        self.issueService = IssueService(session: jiraSession)
+        self.issueService = IssueService(session: jiraSession, issueTypeDataManager: issueTypeDataManager)
         self.projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
         self.jqlService = JQLService(aliasManager: jqlAliasManager)
         self.configService = configService

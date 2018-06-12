@@ -50,7 +50,6 @@ extension Request {
 
 extension Request where Response: Decodable {
     public static func object(from data: Data) throws -> Response {
-
         //print(try JSONSerialization.jsonObject(with: data, options: .allowFragments))
 
         let decoder = JSONDecoder()

@@ -26,7 +26,7 @@ extension DataManager where Trait == SprintTrait {
     func loadSprints(boardID: Int) throws -> [Sprint] {
         let sprints = try getRawModel(extraPath: "/\(boardID)") ?? {
             throw Trait.Error.noSprintsFromBoardID(boardID)
-            }()
+        }()
 
         if sprints.isEmpty {
             throw Trait.Error.noSprintsFromBoardID(boardID)

@@ -53,6 +53,8 @@ enum Issue {
             case label(String)
             case json
             case aggregate
+            case status(String)
+            case user(String)
 
             init?(_ parser: ArgumentParser) {
                 if let option = parser.shift(), !option.isEmpty {
@@ -75,6 +77,16 @@ enum Issue {
                         self = .aggregate
                         return
 
+                    case "-s", "--status":
+                        if let s = parser.shift(), !s.isEmpty {
+                            self = .status(s)
+                            return
+                        }
+                    case "-u", "--user":
+                        if let u = parser.shift(), !u.isEmpty {
+                            self = .user(u)
+                            return
+                        }
                     default:
                         break
                     }
@@ -198,7 +210,7 @@ enum Issue {
 
         typealias Aggregation = IssueAggregation.Aggregation
 
-        func countInfoList(issues: [Core.Issue], aggregateParameters: [AggregateParameter]) -> [Aggregation] {
+        func aggregations(issues: [Core.Issue], aggregateParameters: [AggregateParameter]) -> [Aggregation] {
             return aggregateParameters.map {
                 switch $0 {
                 case .total:
@@ -222,8 +234,8 @@ enum Issue {
             if aggregateParameters.isEmpty {
                 data = try JSONEncoder().encode(issues)
             } else {
-                let aggregations = countInfoList(issues: issues, aggregateParameters: aggregateParameters)
-                let aggregation = IssueAggregation(aggregations: aggregations)
+                let _aggregations = aggregations(issues: issues, aggregateParameters: aggregateParameters)
+                let aggregation = IssueAggregation(aggregations: _aggregations)
                 data = try JSONEncoder().encode(aggregation)
             }
 
@@ -258,8 +270,8 @@ enum Issue {
 
                 print("")
 
-                let aggregations = countInfoList(issues: issues, aggregateParameters: aggregateParameters)
-                aggregations.forEach {
+                let _aggregations = aggregations(issues: issues, aggregateParameters: aggregateParameters)
+                _aggregations.forEach {
                     print("Number of \($0.name): \($0.count) (\(String(format: "%.1lf", $0.percentage * 100))%)")
                 }
             }
