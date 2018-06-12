@@ -214,6 +214,8 @@ extension Issue.List: UsageDescribable {
 
                 -t | --type [ISSUE_TYPE]
                 -l | --label [ISSUE_LABEL]
+                -s | --status [STATUS_NAME]
+                -u | --user [USER_NAME]
                 -a | --aggregate
                 --output-json
         """
