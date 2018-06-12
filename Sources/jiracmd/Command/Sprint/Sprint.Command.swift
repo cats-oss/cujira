@@ -28,11 +28,26 @@ enum Sprint {
     enum List {
         enum Error: Swift.Error {
             case noBoardID
+            case noParameter
+            case noProjectAlias
         }
 
         static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
-            guard let boardID = parser.shift().flatMap(Int.init) else {
-                throw Error.noBoardID
+            guard let first = parser.shift(), !first.isEmpty else {
+                throw Error.noParameter
+            }
+
+            let boardID: Int
+            if first == "-r" || first == "-registered" {
+                guard let name = parser.shift(), !name.isEmpty else {
+                    throw Error.noProjectAlias
+                }
+                boardID = try facade.projectService.getAlias(name: name).boardID
+            } else {
+                guard let _boardID = Int(first) else {
+                    throw Error.noBoardID
+                }
+                boardID = _boardID
             }
 
             let sprints: [Core.Sprint]
@@ -64,6 +79,10 @@ extension Sprint.List.Error: LocalizedError {
         switch self {
         case .noBoardID:
             return "BOARD_ID is required parameter."
+        case .noParameter:
+            return "BOARD_ID or --registered [PROJECT_ALIAS] is required parameter."
+        case .noProjectAlias:
+            return "PROJECT_ALIAS is required paramter."
         }
     }
 }

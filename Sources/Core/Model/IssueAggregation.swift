@@ -12,13 +12,11 @@ public struct IssueAggregation: Codable {
         public let issues: [Issue]
         public let name: String
         public let count: Int
-        public let percentage: Double
 
-        public init(issues: [Issue], name: String, count: Int, percentage: Double) {
+        public init(issues: [Issue], name: String, count: Int) {
             self.issues = issues
             self.name = name
             self.count = count
-            self.percentage = percentage
         }
     }
 

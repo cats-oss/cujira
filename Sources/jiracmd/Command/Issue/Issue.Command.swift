@@ -47,27 +47,23 @@ enum Issue {
         return aggregateParameters.map {
             switch $0 {
             case .total:
-                return Aggregation(issues: issues, name: "Issues", count: issues.count, percentage: 1)
+                return Aggregation(issues: issues, name: "Issues", count: issues.count)
             case .label(let name):
                 let filteredIssues = issues.filter { $0.fields.labels.first { $0 == name } != nil }
                 let count = filteredIssues.count
-                let percentage = Double(count) / Double(issues.count)
-                return Aggregation(issues: filteredIssues, name: name, count: count, percentage: percentage)
+                return Aggregation(issues: filteredIssues, name: name, count: count)
             case .type(let name):
                 let filteredIssues = issues.filter { $0.fields.issuetype.name == name }
                 let count = filteredIssues.count
-                let percentage = Double(count) / Double(issues.count)
-                return Aggregation(issues: filteredIssues, name: name, count: count, percentage: percentage)
+                return Aggregation(issues: filteredIssues, name: name, count: count)
             case .user(let name):
                 let filteredIssues = issues.filter { $0.fields.assignee?.name == name }
                 let count = filteredIssues.count
-                let percentage = Double(count) / Double(issues.count)
-                return Aggregation(issues: filteredIssues, name: name, count: count, percentage: percentage)
+                return Aggregation(issues: filteredIssues, name: name, count: count)
             case .status(let name):
                 let filteredIssues = issues.filter { $0.fields.status.name == name }
                 let count = filteredIssues.count
-                let percentage = Double(count) / Double(issues.count)
-                return Aggregation(issues: filteredIssues, name: name, count: count, percentage: percentage)
+                return Aggregation(issues: filteredIssues, name: name, count: count)
             }
         }
     }
@@ -126,7 +122,7 @@ enum Issue {
 
                 let _aggregations = aggregations(issues: issues, aggregateParameters: aggregateParameters)
                 _aggregations.forEach {
-                    print("Number of \($0.name): \($0.count) (\(String(format: "%.1lf", $0.percentage * 100))%)")
+                    print("Number of \($0.name): \($0.count)")
                 }
             }
         }
