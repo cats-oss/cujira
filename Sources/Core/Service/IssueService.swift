@@ -10,11 +10,14 @@ import Foundation
 public final class IssueService {
     private let session: JiraSession
     private let issueTypeDataManager: IssueTypeDataManager
+    private let statusDataManager: StatusDataManager
 
     public init(session: JiraSession,
-                issueTypeDataManager: IssueTypeDataManager) {
+                issueTypeDataManager: IssueTypeDataManager,
+                statusDataManager: StatusDataManager) {
         self.session = session
         self.issueTypeDataManager = issueTypeDataManager
+        self.statusDataManager = statusDataManager
     }
 
     public func search(jql: String, limit: Int = 500) throws -> [Issue] {
@@ -72,5 +75,39 @@ public final class IssueService {
     public func fetchAllFields() throws -> [Field] {
         let request = GetAllFieldsRequest()
         return try session.send(request)
+    }
+
+    // MARK: - Status
+
+    public func fetchAllStatuses() throws -> [Status] {
+        let request = GetAllStatusesRequest()
+        let statues = try session.send(request)
+
+        try statusDataManager.saveStatuses(statues)
+
+        return statues
+    }
+
+    public func getStatuses() throws -> [Status] {
+        do {
+            return try statusDataManager.loadStatuses()
+        } catch StatusTrait.Error.noStatuses {
+            return try fetchAllStatuses()
+        } catch {
+            throw error
+        }
+    }
+
+    public func getStatus(name: String, useCache: Bool = true) throws -> Status {
+        if useCache {
+            let statuses = try getStatuses()
+            return try statuses.first { $0.name == name } ??
+                getStatus(name: name, useCache: false)
+        } else {
+            let statuses = try fetchAllStatuses()
+            return try statuses.first { $0.name == name } ?? {
+                throw StatusTrait.Error.noStatus(name)
+            }()
+        }
     }
 }

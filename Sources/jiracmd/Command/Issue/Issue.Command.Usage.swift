@@ -21,31 +21,3 @@ extension Issue.Command {
         return usageFormatted(root: cmd, cmd: Root.Command.issue, values: values, separator: "\n\n")
     }
 }
-
-extension Issue.List: UsageDescribable {
-    static func usageDescription(_ cmd: String) -> String {
-        return """
-            + \(cmd) [PROJECT_ALIAS] [today | yyyy/mm/dd | SPRINT_NAME]
-
-            Options:
-
-                -t | --type [ISSUE_TYPE]
-                -l | --label [ISSUE_LABEL]
-                -a | --aggregate
-                --output-json
-        """
-    }
-}
-
-extension Issue.JQL: UsageDescribable {
-    static func usageDescription(_ cmd: String) -> String {
-        return """
-            + \(cmd) [JQL_STRING]
-            + \(cmd) [-r | --registered] [JQL_ALIAS]
-
-            Options:
-
-                --output-json
-        """
-    }
-}
