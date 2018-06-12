@@ -70,9 +70,9 @@ extension JQLAliasTrait.Error: LocalizedError {
         case .noJQLAliases:
             return "Can not load JQL aliases."
         case .nameExists(let value):
-            return "\(value) is already exists."
+            return "\'\(value)\' is already exists."
         case .nameNotFound(let value):
-            return "\(value) not found in jql aliases."
+            return "\'\(value)\' not found in jql aliases."
         }
     }
 }

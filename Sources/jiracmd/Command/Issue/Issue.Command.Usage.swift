@@ -31,7 +31,8 @@ extension Issue.List: UsageDescribable {
 
                 -t | --type [ISSUE_TYPE]
                 -l | --label [ISSUE_LABEL]
-                -j | --json
+                -a | --aggregate
+                --output-json
         """
     }
 }
@@ -44,7 +45,7 @@ extension Issue.JQL: UsageDescribable {
 
             Options:
 
-                -j | --json
+                --output-json
         """
     }
 }
