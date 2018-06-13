@@ -25,6 +25,7 @@ extension AliasProject: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+                ... Manage project aliases.
         """
     }
 }
@@ -33,6 +34,7 @@ extension AliasJQL: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+                ... Manage JQL aliases.
         """
     }
 }

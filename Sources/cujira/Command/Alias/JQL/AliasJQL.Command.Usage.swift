@@ -28,6 +28,7 @@ extension AliasJQL.Add: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [NAME] [JQL]
+                ... Add JQL alias with `JQL`.
         """
     }
 }
@@ -36,6 +37,7 @@ extension AliasJQL.Remove: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [NAME]
+                ... Remove JQL alias with `NAME`.
         """
     }
 }
@@ -44,6 +46,7 @@ extension AliasJQL.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+                ... Show all JQL aliases.
         """
     }
 }

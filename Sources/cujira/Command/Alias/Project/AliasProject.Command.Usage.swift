@@ -28,7 +28,9 @@ extension AliasProject.Add: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [NAME] [-p | --project-id] [PROJECT_ID]
+                ... Add project alias with `PROJECT_ID`. Please check ProjectIDs with `cujira board list`.
             + \(cmd) [NAME] [-b | --board-id] [BOARD_ID]
+                ... Add project alias with `BOARD_ID`. Please check BoardIDs with `cujira board list`.
         """
     }
 }
@@ -37,6 +39,7 @@ extension AliasProject.Remove: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [NAME]
+                ... Remove project alias with `NAME`.
         """
     }
 }
@@ -45,6 +48,7 @@ extension AliasProject.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+                ... Show all project aliases.
         """
     }
 }
