@@ -10,7 +10,6 @@ import Foundation
 public protocol DataTrait {
     associatedtype RawObject: Codable
     static var filename: String { get }
-    static var path: String { get }
 }
 
 public enum DataManagerError: Error {
@@ -20,32 +19,31 @@ public enum DataManagerError: Error {
 
 enum DataManagerConst {
     static let workingDir = "/usr/local/etc/cujira"
-    static let domainRelationalPath = "/domain_relational"
-    static let currentPath = "/./"
 }
 
 public final class DataManager<Trait: DataTrait> {
     private let fileManager: FileManager
-    private let workingDirectory: String
+    private let workingDirectory: () throws -> String
 
-    public init(fileManager: FileManager = .default) {
+    public init(workingDirectory: @escaping () throws -> String,
+                fileManager: FileManager = .default) {
         self.fileManager = fileManager
-        self.workingDirectory = "\(DataManagerConst.workingDir)\(Trait.path)"
+        self.workingDirectory = workingDirectory
     }
 
-    private func baseURLString(extraPath: String) -> String {
-        return "file://\(workingDirectory)\(extraPath)"
+    private func baseURLString(extraPath: String) throws -> String {
+        return try "file://\(workingDirectory())\(extraPath)"
     }
 
     private func workingDirectoryURL(extraPath: String) throws -> URL {
-        let urlString = baseURLString(extraPath: extraPath)
+        let urlString = try baseURLString(extraPath: extraPath)
         return try URL(string: urlString) ?? {
             throw DataManagerError.invalidURL(urlString)
         }()
     }
 
     private func getURL(extraPath: String) throws -> URL {
-        let urlString = "\(baseURLString(extraPath: extraPath))/\(Trait.filename).dat"
+        let urlString = try "\(baseURLString(extraPath: extraPath))/\(Trait.filename).dat"
         return try URL(string: urlString) ?? {
             throw DataManagerError.invalidURL(urlString)
         }()
@@ -85,15 +83,5 @@ extension DataManagerError: LocalizedError {
         case .createFileFailed(let url):
             return "Faild to create file to \(url)."
         }
-    }
-}
-
-extension DataManager where Trait == ConfigTrait {
-    func removeDomainRelationalDirectory() throws {
-        let urlString = "file://\(DataManagerConst.workingDir)\(DataManagerConst.domainRelationalPath)"
-        let url = try URL(string: urlString) ?? {
-            throw DataManagerError.invalidURL(urlString)
-        }()
-        try fileManager.removeItem(at: url)
     }
 }

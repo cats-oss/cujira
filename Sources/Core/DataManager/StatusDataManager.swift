@@ -12,7 +12,6 @@ public typealias StatusDataManager = DataManager<StatusTrait>
 public enum StatusTrait: DataTrait {
     public typealias RawObject = [Status]
     public static let filename = "status_data"
-    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noStatuses
@@ -21,8 +20,6 @@ public enum StatusTrait: DataTrait {
 }
 
 extension DataManager where Trait == StatusTrait {
-    static let shared = StatusDataManager()
-
     func loadStatuses() throws -> [Status] {
         let statuses = try getRawModel() ?? {
             throw Trait.Error.noStatuses

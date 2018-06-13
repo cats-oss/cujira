@@ -29,21 +29,29 @@ public final class ConfigService {
                           apiKey: config?.apiKey ?? "nil",
                           username: config?.username ?? "nil")
         } else {
-            return try tempConfig ?? manager.loadConfig()
+            if let temp = tempConfig {
+                return temp
+            } else {
+                let temp = try manager.loadConfig()
+                tempConfig = temp
+                return temp
+            }
         }
     }
 
     public func update(domain: String) throws {
         try manager.update(\.domain, domain)
-        try manager.removeDomainRelationalDirectory()
+        tempConfig = nil
     }
 
     public func update(apiKey: String) throws {
         try manager.update(\.apiKey, apiKey)
+        tempConfig = nil
     }
 
     public func update(username: String) throws {
         try manager.update(\.username, username)
+        tempConfig = nil
     }
 
     public func setTempConfig(dictionay: [String: String]) {

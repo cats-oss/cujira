@@ -16,36 +16,56 @@ public final class Facade {
     public let boardService: BoardService
 
     public convenience init() {
-        self.init(session: .shared,
-                  configManager: .shared,
-                  projectAliasManager: .shared,
-                  jqlAliasManager: .shared,
-                  boardDataManager: .shared,
-                  sprintDataManager: .shared,
-                  issueTypeDataManager: .shared,
-                  statusDataManager: .shared)
+        self.init(baseDirectoryPath: DataManagerConst.workingDir)
     }
 
-    public init(session: URLSession,
-                configManager: ConfigManager,
-                projectAliasManager: ProjectAliasManager,
-                jqlAliasManager: JQLAliasManager,
-                boardDataManager: BoardDataManager,
-                sprintDataManager: SprintDataManager,
-                issueTypeDataManager: IssueTypeDataManager,
-                statusDataManager: StatusDataManager) {
+    public convenience init(baseDirectoryPath: String) {
+        let configManager = ConfigManager(workingDirectory: { "\(baseDirectoryPath)" })
         let configService = ConfigService(manager: configManager)
+
+        let subDirectoryPath: () throws -> String = {
+            try "\(baseDirectoryPath)/\(configService.loadConfig().domain)"
+        }
+
+        let projectAliasManager = ProjectAliasManager(workingDirectory: subDirectoryPath)
+        let jqlAliasManager = JQLAliasManager(workingDirectory: subDirectoryPath)
+        let boardDataManager = BoardDataManager(workingDirectory: subDirectoryPath)
+        let sprintDataManager = SprintDataManager(workingDirectory: subDirectoryPath)
+        let issueTypeDataManager = IssueTypeDataManager(workingDirectory: subDirectoryPath)
+        let statusDataManager = StatusDataManager(workingDirectory: subDirectoryPath)
+
+        let session = URLSession.shared
         let jiraSession = JiraSession(session: session,
                                       domain: { try configService.loadConfig().domain },
                                       apiKey: { try configService.loadConfig().apiKey },
                                       username: { try configService.loadConfig().username })
-        self.sprintService = SprintService(session: jiraSession, sprintDataManager: sprintDataManager)
-        self.issueService = IssueService(session: jiraSession,
-                                         issueTypeDataManager: issueTypeDataManager,
-                                         statusDataManager: statusDataManager)
-        self.projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
-        self.jqlService = JQLService(aliasManager: jqlAliasManager)
+        let sprintService = SprintService(session: jiraSession, sprintDataManager: sprintDataManager)
+        let issueService = IssueService(session: jiraSession,
+                                        issueTypeDataManager: issueTypeDataManager,
+                                        statusDataManager: statusDataManager)
+        let projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
+        let jqlService = JQLService(aliasManager: jqlAliasManager)
+        let boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)
+
+        self.init(sprintService: sprintService,
+                  issueService: issueService,
+                  projectService: projectService,
+                  jqlService: jqlService,
+                  configService: configService,
+                  boardService: boardService)
+    }
+
+    public init(sprintService: SprintService,
+                issueService: IssueService,
+                projectService: ProjectService,
+                jqlService: JQLService,
+                configService: ConfigService,
+                boardService: BoardService) {
+        self.sprintService = sprintService
+        self.issueService = issueService
+        self.projectService = projectService
+        self.jqlService = jqlService
         self.configService = configService
-        self.boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)
+        self.boardService = boardService
     }
 }

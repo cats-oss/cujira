@@ -12,7 +12,6 @@ public typealias IssueTypeDataManager = DataManager<IssueTypeTrait>
 public enum IssueTypeTrait: DataTrait {
     public typealias RawObject = [IssueType]
     public static let filename = "issue_type_data"
-    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noIssueTypes
@@ -21,8 +20,6 @@ public enum IssueTypeTrait: DataTrait {
 }
 
 extension DataManager where Trait == IssueTypeTrait {
-    static let shared = IssueTypeDataManager()
-
     func loadIssueTypes() throws -> [IssueType] {
         let issueTypes = try getRawModel() ?? {
             throw Trait.Error.noIssueTypes

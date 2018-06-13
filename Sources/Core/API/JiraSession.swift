@@ -23,17 +23,17 @@ public final class JiraSession {
         public let errorMessages: [String]
     }
 
-    private let domain: () throws -> (String)
-    private let apiKey: () throws -> (String)
-    private let username: () throws -> (String)
+    private let domain: () throws -> String
+    private let apiKey: () throws -> String
+    private let username: () throws -> String
 
 
     private let session: URLSession
 
     public init(session: URLSession = .shared,
-                domain: @escaping () throws -> (String),
-                apiKey: @escaping () throws -> (String),
-                username: @escaping () throws -> (String)) {
+                domain: @escaping () throws -> String,
+                apiKey: @escaping () throws -> String,
+                username: @escaping () throws -> String) {
         self.session = session
         self.domain = domain
         self.apiKey = apiKey

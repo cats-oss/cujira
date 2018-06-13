@@ -12,7 +12,6 @@ public typealias ProjectAliasManager = DataManager<ProjectAliasTrait>
 public enum ProjectAliasTrait: DataTrait {
     public typealias RawObject = [ProjectAlias.Raw]
     public static let filename = "project_aliases"
-    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noProjectAliases
@@ -22,8 +21,6 @@ public enum ProjectAliasTrait: DataTrait {
 }
 
 extension DataManager where Trait == ProjectAliasTrait {
-    static let shared = ProjectAliasManager()
-
     func loadAliases() throws -> [ProjectAlias] {
         let rawAliases = try getRawModel() ?? {
             throw Trait.Error.noProjectAliases

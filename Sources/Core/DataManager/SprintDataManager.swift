@@ -12,7 +12,6 @@ public typealias SprintDataManager = DataManager<SprintTrait>
 public enum SprintTrait: DataTrait {
     public typealias RawObject = [Sprint]
     public static let filename = "sprint_data"
-    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noSprintsFromBoardID(Int)
@@ -21,8 +20,6 @@ public enum SprintTrait: DataTrait {
 }
 
 extension DataManager where Trait == SprintTrait {
-    static let shared = SprintDataManager()
-
     func loadSprints(boardID: Int) throws -> [Sprint] {
         let sprints = try getRawModel(extraPath: "/\(boardID)") ?? {
             throw Trait.Error.noSprintsFromBoardID(boardID)

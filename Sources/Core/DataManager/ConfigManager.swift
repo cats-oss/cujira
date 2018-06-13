@@ -12,7 +12,6 @@ public typealias ConfigManager = DataManager<ConfigTrait>
 public enum ConfigTrait: DataTrait {
     public typealias RawObject = Config.Raw
     public static let filename = "config"
-    public static let path = DataManagerConst.currentPath
 
     public enum Error: Swift.Error {
         case noConfig
@@ -24,8 +23,6 @@ public enum ConfigTrait: DataTrait {
 }
 
 extension DataManager where Trait == ConfigTrait {
-    static let shared = ConfigManager()
-
     func loadConfig() throws -> Config {
         let config = try getRawModel() ?? {
             throw Trait.Error.noConfig

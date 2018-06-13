@@ -12,7 +12,6 @@ public typealias JQLAliasManager = DataManager<JQLAliasTrait>
 public enum JQLAliasTrait: DataTrait {
     public typealias RawObject = [JQLAlias]
     public static let filename = "jql_aliaes"
-    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noJQLAliases
@@ -22,8 +21,6 @@ public enum JQLAliasTrait: DataTrait {
 }
 
 extension DataManager where Trait == JQLAliasTrait {
-    static let shared = JQLAliasManager()
-
     func loadAliases() throws -> [JQLAlias] {
         let aliases = try getRawModel() ?? {
             throw Trait.Error.noJQLAliases

@@ -12,7 +12,6 @@ public typealias BoardDataManager = DataManager<BoardTrait>
 public enum BoardTrait: DataTrait {
     public typealias RawObject = [Board]
     public static let filename = "board_data"
-    public static let path = DataManagerConst.domainRelationalPath
 
     public enum Error: Swift.Error {
         case noBoards
@@ -22,8 +21,6 @@ public enum BoardTrait: DataTrait {
 }
 
 extension DataManager where Trait == BoardTrait {
-    static let shared = BoardDataManager()
-
     func loadBoards() throws -> [Board] {
         let boards = try getRawModel() ?? {
             throw Trait.Error.noBoards
