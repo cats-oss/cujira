@@ -30,6 +30,7 @@ extension Register.Domain: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [ATLASSIAN_DOMAIN]
+                ... Update `domain`. Please use string of `https://[ HERE ].atlassian.net/`.
         """
     }
 }
@@ -38,6 +39,7 @@ extension Register.ApiKey: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [API_KEY]
+                ... Update `apikey`.
         """
     }
 }
@@ -46,6 +48,7 @@ extension Register.Username: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [USER_NAME]
+                ... Update `username`.
         """
     }
 }
@@ -54,6 +57,7 @@ extension Register.Info: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+                ... Show current `domain`, `username` and `apikey`.
         """
     }
 }
