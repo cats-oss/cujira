@@ -24,7 +24,7 @@ extension Sprint.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [BOARD_ID]
-                ... Show sprints from cache with a BoardID. Please check BoardIDs with `cujira board list`.
+                ... Show sprints from cache with a `BOARD_ID`. Please check BoardIDs with `cujira board list`.
             + \(cmd) [-r | --registered] [PROJECT_ALIAS]
                 ... Show sprints from cache with a registered `PROJECT_ALIAS`. Please check aliases with `cujira alias project list`.
 

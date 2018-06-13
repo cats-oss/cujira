@@ -19,17 +19,17 @@ extension Root.Command {
             case .issue:
                 return """
                     + \(element.rawValue)
-                        ... Get issues from API or Cache.
+                        ... Show issues from API or Cache.
                 """
             case .board:
                 return """
                     + \(element.rawValue)
-                        ... Get boards from API or Cache.
+                        ... Show boards from API or Cache.
                 """
             case .sprint:
                 return """
                     + \(element.rawValue)
-                        ... Get sprints from API or Cache.
+                        ... Show sprints from API or Cache.
                 """
             case .alias:
                 return """

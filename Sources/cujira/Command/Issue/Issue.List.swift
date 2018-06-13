@@ -209,7 +209,7 @@ extension Issue.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [PROJECT_ALIAS] [today | yyyy/mm/dd | SPRINT_NAME]
-                ... Show list of issues with registered PROJECT_ALIAS.
+                ... Show list of issues with registered `PROJECT_ALIAS`.
 
             Options:
 
