@@ -38,7 +38,7 @@ enum Sprint {
             }
 
             let boardID: Int
-            if first == "-r" || first == "-registered" {
+            if first == "-r" || first == "--registered" {
                 guard let name = parser.shift(), !name.isEmpty else {
                     throw Error.noProjectAlias
                 }
