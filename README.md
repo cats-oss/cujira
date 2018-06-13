@@ -99,4 +99,41 @@ Results:
 	endDate: --
 ```
 
-After checking sprint name, you can get issues with `cujira issue list cujira-bug "Sprint 2"`. 
+After checking sprint name, you can get issues with `cujira issue list cujira-bug "Sprint 2"`.
+
+### Additional Usage for getting Issues.
+
+`cujira issue list` has some options.
+
+```
+Options:
+
+    -t | --type [ISSUE_TYPE]
+        ... Filter issues with a issueType.
+    -l | --label [ISSUE_LABEL]
+        ... Filter issues with a issue label.
+    -s | --status [STATUS_NAME]
+        ... Filter issues with a issue status.
+    -u | --user [USER_NAME]
+        ... Filter issues with a user who has assigned.
+    -a | --aggregate
+        ... Show every options issue counts.
+    --output-json
+        ... Print results as JSON format.
+```
+
+You can get aggregation of issues.
+
+```
+$ cujira issue list cujira-bug today --type "Critical Bug" --aggregate
+JQL: project = 10002 AND created >= startOfDay()
+
+Summary: All command responses are `Great Scott!!`.
+URL: https://XXX.atlassian.net/browse/BUG-1985
+IssueType: Critical Bug
+Status: Open
+User: doc-emmett-brown
+
+Number of Issues: 2
+Number of Critical Bug: 1
+```

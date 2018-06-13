@@ -220,7 +220,7 @@ extension Issue.List: UsageDescribable {
                 -s | --status [STATUS_NAME]
                     ... Filter issues with a issue status.
                 -u | --user [USER_NAME]
-                    ... Filter issues with a user who has assinged.
+                    ... Filter issues with a user who has assigned.
                 -a | --aggregate
                     ... Show every options issue counts.
                 --output-json
