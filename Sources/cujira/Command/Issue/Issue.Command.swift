@@ -17,13 +17,13 @@ enum Issue {
             do {
                 try List.run(parser, facade: facade)
             } catch {
-                throw Root.Error(inner: error, usage: Issue.List.usageDescription(parser.root))
+                throw Root.Error(inner: error, usage: Issue.List.usageDescription(command.rawValue))
             }
         case .jql:
             do {
                 try JQL.run(parser, facade: facade)
             } catch {
-                throw Root.Error(inner: error, usage: Issue.JQL.usageDescription(parser.root))
+                throw Root.Error(inner: error, usage: Issue.JQL.usageDescription(command.rawValue))
             }
         }
     }
