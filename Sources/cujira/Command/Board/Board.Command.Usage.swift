@@ -24,10 +24,12 @@ extension Board.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd)
+                ... Show boards from cache.
 
             Options:
 
                 -f | --fetch
+                    ... fetching from API.
         """
     }
 }
