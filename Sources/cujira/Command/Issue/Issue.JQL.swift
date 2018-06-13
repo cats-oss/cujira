@@ -50,11 +50,14 @@ extension Issue.JQL: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [JQL_STRING]
+                ... Show issues with a raw JQL like below. `cujira issue jql "project = 12345 AND issueType = BUG"`.
             + \(cmd) [-r | --registered] [JQL_ALIAS]
+                ... Show issues with a registered `JQL_ALIAS`. Please check aliases with `cujira alias jql list`.
 
             Options:
 
                 --output-json
+                    ... Print results as JSON format.
         """
     }
 }

@@ -209,15 +209,22 @@ extension Issue.List: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [PROJECT_ALIAS] [today | yyyy/mm/dd | SPRINT_NAME]
+                ... Show list of issues with registered PROJECT_ALIAS.
 
             Options:
 
                 -t | --type [ISSUE_TYPE]
+                    ... Filter issues with a issueType.
                 -l | --label [ISSUE_LABEL]
+                    ... Filter issues with a issue label.
                 -s | --status [STATUS_NAME]
+                    ... Filter issues with a issue status.
                 -u | --user [USER_NAME]
+                    ... Filter issues with a user who has assinged.
                 -a | --aggregate
+                    ... Show every options issue counts.
                 --output-json
+                    ... Print results as JSON format.
         """
     }
 }
