@@ -5,7 +5,10 @@
 //  Created by marty-suzuki on 2018/06/04.
 //
 
+/// A config object.
 public struct Config {
+
+    /// A config wrapper object that used loading and saving.
     public struct Raw: Codable {
         var domain: String?
         var apiKey: String?

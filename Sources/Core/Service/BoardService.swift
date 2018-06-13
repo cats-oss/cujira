@@ -17,6 +17,7 @@ public final class BoardService {
         self.boardDataManager = boardDataManager
     }
 
+    /// Fetch all boards recursively.
     public func fetchAllBoards() throws -> [Board] {
         func recursiveFetch(startAt: Int, list: [Board]) throws -> [Board] {
             let response = try session.send(GetAllBoardsRequest(startAt: startAt))
@@ -37,6 +38,10 @@ public final class BoardService {
         return boards
     }
 
+    /// Get all boards.
+    ///
+    /// - note: First, trying to get all boards from cache.
+    ///         When there are no boards, trying to fetch all boards from API.
     public func getBoards() throws -> [Board] {
         do {
             return try boardDataManager.loadBoards()
@@ -47,6 +52,7 @@ public final class BoardService {
         }
     }
 
+    /// Get a board with `boardID`.
     public func getBoard(boardID: Int, useCache: Bool = true) throws -> Board {
         if useCache {
             let boards = try getBoards()
@@ -60,6 +66,7 @@ public final class BoardService {
         }
     }
 
+    /// Get a board with `projectID`.
     public func getBoard(projectID: Int, useCache: Bool = true) throws -> Board {
         if useCache {
             let boards = try getBoards()

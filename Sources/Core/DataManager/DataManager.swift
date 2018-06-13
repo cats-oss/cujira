@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Trait for DataManager
 public protocol DataTrait {
     associatedtype RawObject: Codable
     static var filename: String { get }
@@ -21,6 +22,9 @@ enum DataManagerConst {
     static let workingDir = "/usr/local/etc/cujira"
 }
 
+/// Manage Data that used in services
+///
+/// - note: Behaviors of DataManager change with Trait.
 public final class DataManager<Trait: DataTrait> {
     private let fileManager: FileManager
     private let workingDirectory: () throws -> String

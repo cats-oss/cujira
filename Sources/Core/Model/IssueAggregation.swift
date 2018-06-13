@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// An issue aggregation result object.
 public struct IssueAggregation: Codable {
     public struct Aggregation: Codable {
         public let issues: [Issue]

@@ -5,7 +5,10 @@
 //  Created by marty-suzuki on 2018/06/07.
 //
 
+/// A poject alias object.
 public struct ProjectAlias: Codable {
+
+    /// A poject alias wrapper object that used loading and saving.
     public struct Raw: Codable {
         var name: String?
         var projectID: Int?
