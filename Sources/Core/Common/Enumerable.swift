@@ -1,6 +1,6 @@
 //
 //  Enumerable.swift
-//  jiracmd
+//  cujira
 //
 //  Created by marty-suzuki on 2018/06/05.
 //

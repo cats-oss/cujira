@@ -1,6 +1,6 @@
 //
 //  DataManager.swift
-//  jiracmd
+//  cujira
 //
 //  Created by marty-suzuki on 2018/06/04.
 //
@@ -19,7 +19,7 @@ public enum DataManagerError: Error {
 }
 
 enum DataManagerConst {
-    static let jiracmdDir = "/usr/local/etc/jiracmd"
+    static let workingDir = "/usr/local/etc/cujira"
     static let domainRelationalPath = "/domain_relational"
     static let currentPath = "/./"
 }
@@ -30,7 +30,7 @@ public final class DataManager<Trait: DataTrait> {
 
     public init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
-        self.workingDirectory = "\(DataManagerConst.jiracmdDir)\(Trait.path)"
+        self.workingDirectory = "\(DataManagerConst.workingDir)\(Trait.path)"
     }
 
     private func baseURLString(extraPath: String) -> String {
@@ -90,7 +90,7 @@ extension DataManagerError: LocalizedError {
 
 extension DataManager where Trait == ConfigTrait {
     func removeDomainRelationalDirectory() throws {
-        let urlString = "file://\(DataManagerConst.jiracmdDir)\(DataManagerConst.domainRelationalPath)"
+        let urlString = "file://\(DataManagerConst.workingDir)\(DataManagerConst.domainRelationalPath)"
         let url = try URL(string: urlString) ?? {
             throw DataManagerError.invalidURL(urlString)
         }()
