@@ -9,17 +9,17 @@ import Core
 import Foundation
 
 enum AliasProject {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
 
         do {
             switch command {
             case .add:
-                try Add.run(parser)
+                try Add.run(parser, facade: facade)
             case .remove:
-                try Remove.run(parser)
+                try Remove.run(parser, facade: facade)
             case .list:
-                try List.run(parser)
+                try List.run(parser, facade: facade)
             }
         } catch {
             throw Root.Error(inner: error, usage: AliasProject.Command.usageDescription(parser.root))
@@ -41,7 +41,7 @@ enum AliasProject {
     }
 
     enum Add {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let name = parser.shift(), !name.isEmpty else {
                 throw Error.noName
             }
@@ -81,7 +81,7 @@ enum AliasProject {
     }
 
     enum Remove {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let name = parser.shift(), !name.isEmpty else {
                 throw Error.noName
             }
@@ -91,7 +91,7 @@ enum AliasProject {
     }
 
     enum List {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let aliases = try facade.projectService.loadAliases()
 
             print("Registered Project Aliases:\n")

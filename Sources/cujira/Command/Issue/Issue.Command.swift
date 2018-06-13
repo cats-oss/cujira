@@ -9,19 +9,19 @@ import Core
 import Foundation
 
 enum Issue {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
 
         switch command {
         case .list:
             do {
-                try List.run(parser)
+                try List.run(parser, facade: facade)
             } catch {
                 throw Root.Error(inner: error, usage: Issue.List.usageDescription(parser.root))
             }
         case .jql:
             do {
-                try JQL.run(parser)
+                try JQL.run(parser, facade: facade)
             } catch {
                 throw Root.Error(inner: error, usage: Issue.JQL.usageDescription(parser.root))
             }

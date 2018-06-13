@@ -9,12 +9,12 @@ import Core
 import Foundation
 
 enum Sprint {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
         do {
             switch command {
             case .list:
-                try List.run(parser)
+                try List.run(parser, facade: facade)
             }
         } catch {
             throw Root.Error(inner: error, usage: Sprint.Command.usageDescription(parser.root))
@@ -32,7 +32,7 @@ enum Sprint {
             case noProjectAlias
         }
 
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let first = parser.shift(), !first.isEmpty else {
                 throw Error.noParameter
             }

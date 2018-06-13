@@ -104,7 +104,7 @@ extension Issue {
             return options.first { $0.isAggregate } != nil
         }
 
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let config = try facade.configService.loadConfig()
 
             guard let projectAliasName = parser.shift(), !projectAliasName.isEmpty else {

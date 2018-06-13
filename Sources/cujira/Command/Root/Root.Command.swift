@@ -9,23 +9,23 @@ import Core
 import Foundation
 
 enum Root {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
         switch command {
         case .register:
-            try Register.run(parser)
+            try Register.run(parser, facade: facade)
 
         case .issue:
-            try Issue.run(parser)
+            try Issue.run(parser, facade: facade)
 
         case .board:
-            try Board.run(parser)
+            try Board.run(parser, facade: facade)
 
         case .sprint:
-            try Sprint.run(parser)
+            try Sprint.run(parser, facade: facade)
 
         case .alias:
-            try Alias.run(parser)
+            try Alias.run(parser, facade: facade)
         }
     }
 

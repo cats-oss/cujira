@@ -8,7 +8,15 @@
 import Foundation
 
 public final class ConfigService {
+    private enum Key {
+        static let username = "CUJIRA_USER_NAME"
+        static let apikey = "CUJIRA_API_KEY"
+        static let domain = "CUJIRA_DOMAIN"
+    }
+
     private let manager: ConfigManager
+
+    private var tempConfig: Config?
 
     public init(manager: ConfigManager) {
         self.manager = manager
@@ -21,7 +29,7 @@ public final class ConfigService {
                           apiKey: config?.apiKey ?? "nil",
                           username: config?.username ?? "nil")
         } else {
-            return try manager.loadConfig()
+            return try tempConfig ?? manager.loadConfig()
         }
     }
 
@@ -36,5 +44,16 @@ public final class ConfigService {
 
     public func update(username: String) throws {
         try manager.update(\.username, username)
+    }
+
+    public func setTempConfig(dictionay: [String: String]) {
+        guard
+            let username = dictionay[Key.username], !username.isEmpty,
+            let apikey = dictionay[Key.apikey], !apikey.isEmpty,
+            let domain = dictionay[Key.domain], !domain.isEmpty
+        else {
+            return
+        }
+        tempConfig = Config(domain: domain, apiKey: apikey, username: username)
     }
 }

@@ -15,7 +15,7 @@ extension Issue {
             case noJQLAlias
         }
 
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let config = try facade.configService.loadConfig()
 
             guard let first = parser.shift(), !first.isEmpty else {

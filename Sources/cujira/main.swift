@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Core
 
 let version = "0.1.0"
 
@@ -19,8 +20,11 @@ if parser.runVersion(version) {
     exit(0)
 }
 
+let facade = Facade()
+facade.configService.setTempConfig(dictionay: ProcessInfo.processInfo.environment)
+
 do {
-    try Root.run(parser)
+    try Root.run(parser, facade: facade)
 } catch {
     print(error.localizedDescription)
 }

@@ -9,19 +9,19 @@ import Core
 import Foundation
 
 enum Register {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
 
         do {
             switch command {
             case .domain:
-                try Domain.run(parser)
+                try Domain.run(parser, facade: facade)
             case .username:
-                try Username.run(parser)
+                try Username.run(parser, facade: facade)
             case .apikey:
-                try ApiKey.run(parser)
+                try ApiKey.run(parser, facade: facade)
             case .info:
-                try Info.run(parser)
+                try Info.run(parser, facade: facade)
             }
         } catch {
             throw Root.Error(inner: error, usage: Register.Command.usageDescription(parser.root))
@@ -42,7 +42,7 @@ enum Register {
     }
 
     enum Domain {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let domain = parser.shift(), !domain.isEmpty else {
                 throw Error.noDomain
             }
@@ -52,7 +52,7 @@ enum Register {
     }
 
     enum ApiKey {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let apiKey = parser.shift(), !apiKey.isEmpty else {
                 throw Error.noApiKey
             }
@@ -62,7 +62,7 @@ enum Register {
     }
 
     enum Username {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let username = parser.shift(), !username.isEmpty else {
                 throw Error.noUsername
             }
@@ -72,7 +72,7 @@ enum Register {
     }
 
     enum Info {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let config = try facade.configService.loadConfig(unsafe: true)
 
             print("Config:\n")

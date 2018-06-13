@@ -8,13 +8,13 @@
 import Core
 
 enum Board {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
 
         do {
             switch command {
             case .list:
-                try List.run(parser)
+                try List.run(parser, facade: facade)
             }
         } catch {
             throw Root.Error(inner: error, usage: Board.Command.usageDescription(parser.root))
@@ -26,7 +26,7 @@ enum Board {
     }
 
     enum List {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             
             let boards: [Core.Board]
             if let option = parser.shift(), option == "-f" || option == "--fetch" {

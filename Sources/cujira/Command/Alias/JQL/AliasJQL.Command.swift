@@ -9,17 +9,17 @@ import Core
 import Foundation
 
 enum AliasJQL {
-    static func run(_ parser: ArgumentParser) throws {
+    static func run(_ parser: ArgumentParser, facade: Facade) throws {
         let command: Command = try parser.parse()
 
         do {
             switch command {
             case .add:
-                try Add.run(parser)
+                try Add.run(parser, facade: facade)
             case .remove:
-                try Remove.run(parser)
+                try Remove.run(parser, facade: facade)
             case .list:
-                try List.run(parser)
+                try List.run(parser, facade: facade)
             }
         } catch {
             throw Root.Error(inner: error, usage: AliasJQL.Command.usageDescription(parser.root))
@@ -38,7 +38,7 @@ enum AliasJQL {
     }
 
     enum Add {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let name = parser.shift(), !name.isEmpty else {
                 throw Error.noName
             }
@@ -52,7 +52,7 @@ enum AliasJQL {
     }
 
     enum Remove {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             guard let name = parser.shift(), !name.isEmpty else {
                 throw Error.noName
             }
@@ -62,7 +62,7 @@ enum AliasJQL {
     }
 
     enum List {
-        static func run(_ parser: ArgumentParser, facade: Facade = .init()) throws {
+        static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let aliases = try facade.jqlService.loadAliases()
 
             print("Registered Jira Query Language Aliases:\n")
