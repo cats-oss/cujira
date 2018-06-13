@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// An API Client for Jira Rest Cloud API and Jira Software Cloud API.
 public final class JiraSession {
     public enum Result<T> {
         case success(T)
@@ -30,6 +31,12 @@ public final class JiraSession {
 
     private let session: URLSession
 
+    /// JiraSession Initializer
+    ///
+    /// - parameter session: URLSession
+    ///             domain: it is called every request.
+    ///             apiKey: it is called every request.
+    ///             username: it is called every request.
     public init(session: URLSession = .shared,
                 domain: @escaping () throws -> String,
                 apiKey: @escaping () throws -> String,
@@ -40,6 +47,12 @@ public final class JiraSession {
         self.username = username
     }
 
+    /// Send an API request to Jira.
+    ///
+    /// - parameter request: Jira API request object.
+    /// - returns: A response that related to a request.
+    ///
+    /// - note: returns synchronously
     public func send<T: Request>(_ request: T) throws -> T.Response {
         let proxy = try RequestProxy(request: request,
                                      domain: domain(),

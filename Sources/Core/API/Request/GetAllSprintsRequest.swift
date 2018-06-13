@@ -5,6 +5,7 @@
 //  Created by marty-suzuki on 2018/06/06.
 //
 
+/// - seealso: https://developer.atlassian.com/cloud/jira/software/rest/#api-board-boardId-sprint-get
 public struct GetAllSprintsRequest: AgileRequest {
     public typealias Response = ListResponse<Sprint>
     public var path: String {

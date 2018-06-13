@@ -5,6 +5,7 @@
 //  Created by marty-suzuki on 2018/06/06.
 //
 
+/// - seealso: https://developer.atlassian.com/cloud/jira/software/rest/#api-board-get
 public struct GetAllBoardsRequest: AgileRequest {
     public typealias Response = ListResponse<Board>
     public let path = "/board"

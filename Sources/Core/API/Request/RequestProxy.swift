@@ -12,6 +12,9 @@ public enum RequestProxyError: Error {
     case createAuthDataFaild(username: String, apiKey: String)
 }
 
+/// 　A Request that inject API common required parameters (`domain`, `apikey` and `username`).
+///
+/// - note: All requests convert to RequestProxy in JiraSession.
 public struct RequestProxy<T: Request>: Request {
     public typealias Response = T.Response
 
@@ -28,10 +31,15 @@ public struct RequestProxy<T: Request>: Request {
         self.baseURL = try URL(string: urlString) ?? {
             throw RequestProxyError.invalidURL(urlString)
         }()
+
+        /// create auth data from `username` and `apikey`.
+        ///
+        /// - seealso: https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/
         let authData = try "\(username):\(apiKey)".data(using: .utf8) ?? {
             throw RequestProxyError.createAuthDataFaild(username: username, apiKey: apiKey)
         }()
         let base64AuthString = authData.base64EncodedString()
+
         self.headerField = [
             "Authorization": "Basic \(base64AuthString)", "Content-Type": "application/json"
         ].merging(request.headerField, uniquingKeysWith: +)
