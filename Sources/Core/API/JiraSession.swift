@@ -77,7 +77,7 @@ public final class JiraSession {
                 result = .failure(error)
             } else if let data = data {
                 do {
-                    let object = try T.object(from: data)
+                    let object = try proxy.object(from: data)
                     result = .success(object)
                 } catch {
                     if let errorMessage = try? JSONDecoder().decode(ErrorMessage.self, from: data) {

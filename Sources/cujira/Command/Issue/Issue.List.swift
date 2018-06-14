@@ -21,6 +21,7 @@ extension Issue {
             case label(String)
             case status(String)
             case assigned(String)
+            case epicLink(String)
             case json
             case aggregate
             case allIssues
@@ -28,7 +29,7 @@ extension Issue {
             init?(_ parser: ArgumentParser) {
                 if let option = parser.shift(), !option.isEmpty {
                     switch option {
-                    case "--issus-type":
+                    case "--issue-type":
                         if let t = parser.shift(), !t.isEmpty {
                             self = .issueType(t)
                             return
@@ -46,6 +47,11 @@ extension Issue {
                     case "--assigned":
                         if let u = parser.shift(), !u.isEmpty {
                             self = .assigned(u)
+                            return
+                        }
+                    case "--epic-link":
+                        if let e = parser.shift(), !e.isEmpty {
+                            self = .epicLink(e)
                             return
                         }
                     case "--output-json":
@@ -101,6 +107,11 @@ extension Issue {
                 .map { JQLContainer(name: $0, jql: " AND assignee WAS \'\($0)\'")  }
         }
 
+        private static func epicLinkJQL(from options: [Option]) -> JQLContainer? {
+            return options.lazy.compactMap { $0.epicLink }.first
+                .map { JQLContainer(name: $0, jql: " AND \'epic link\' = \'\($0)\'")  }
+        }
+
         private static func isJson(from options: [Option]) -> Bool {
             return options.first { $0 == .json } != nil
         }
@@ -146,6 +157,7 @@ extension Issue {
             let _labelJQL = labelJQL(from: options)
             let _statusJQL = try statusJQL(from: options, facade: facade)
             let _assignedJQL = assignedJQL(from: options)
+            let _epicLink = epicLinkJQL(from: options)
             let _isJson = isJson(from: options)
             let _isAggregate = isAggregate(from: options)
             let _isAllIssues = isAllIssues(from: options)
@@ -158,10 +170,16 @@ extension Issue {
                                        _issueTypeJQL.map { AggregateParameter.type($0.name) },
                                        _labelJQL.map { AggregateParameter.label($0.name) },
                                        _statusJQL.map { AggregateParameter.status($0.name) },
-                                       _assignedJQL.map { AggregateParameter.user($0.name) }]
+                                       _assignedJQL.map { AggregateParameter.user($0.name) },
+                                       _epicLink.map { AggregateParameter.epicLink($0.name) }]
                     .compactMap { $0 }
             } else {
-                jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(_issueTypeJQL?.jql ?? "")\(_labelJQL?.jql ?? "")\(_statusJQL?.jql ?? "")\(_assignedJQL?.jql ?? "")"
+                jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)" +
+                    "\(_issueTypeJQL?.jql ?? "")" +
+                    "\(_labelJQL?.jql ?? "")" +
+                    "\(_statusJQL?.jql ?? "")" +
+                    "\(_assignedJQL?.jql ?? "")" +
+                    "\(_epicLink?.jql ?? "")"
                 aggregateParameters = []
             }
             let issues = try facade.issueService.search(jql: jql)
@@ -180,7 +198,8 @@ extension Issue.List.Option: Equatable {
              (.issueType, .issueType),
              (.status, .status),
              (.assigned, .assigned),
-             (.allIssues, .allIssues):
+             (.allIssues, .allIssues),
+             (.epicLink, .epicLink):
             return true
         default:
             return false
@@ -214,6 +233,13 @@ extension Issue.List.Option: Equatable {
         }
         return nil
     }
+
+    var epicLink: String? {
+        if case .epicLink(let value) = self {
+            return value
+        }
+        return nil
+    }
 }
 
 extension Issue.List: UsageDescribable {
@@ -232,6 +258,8 @@ extension Issue.List: UsageDescribable {
                     ... Filter issues with a issue status.
                 --assigned [USER_NAME]
                     ... Filter issues with a user who has assigned.
+                --epic-link [EPIC_LINK]
+                    ...
                 --aggregate
                     ... Show every options issue counts.
                 --all-issues

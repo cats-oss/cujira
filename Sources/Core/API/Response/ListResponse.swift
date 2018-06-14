@@ -19,10 +19,6 @@ public struct ListResponse<T: ListableResponse> {
 }
 
 extension ListResponse: Decodable {
-    fileprivate struct ValuesCodingKey: CodingKey {
-        var stringValue: String
-    }
-
     private enum CodingKeys: String, CodingKey {
         case expand
         case isLast
@@ -42,18 +38,8 @@ extension ListResponse: Decodable {
         }
 
         do {
-            let container = try decoder.container(keyedBy: ValuesCodingKey.self)
-            self.values = try container.decode([T].self, forKey: ValuesCodingKey(stringValue: T.key))
+            let container = try decoder.container(keyedBy: AnyCodingKey.self)
+            self.values = try container.decode([T].self, forKey: AnyCodingKey(stringValue: T.key))
         }
-    }
-}
-
-extension ListResponse.ValuesCodingKey {
-    var intValue: Int? {
-        return Int(stringValue)
-    }
-
-    init?(intValue: Int) {
-        self.stringValue = String(intValue)
     }
 }

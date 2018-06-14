@@ -21,8 +21,14 @@ public final class IssueService {
     }
 
     public func search(jql: String, limit: Int = 500) throws -> [Issue] {
+        let feilds = try fetchAllFields()
+        let customFields = feilds.filter { $0.id.hasPrefix("customfield_") }.map { $0.id }
+
         func recursiveFetch(startAt: Int, list: [Issue]) throws -> [Issue] {
-            let response = try session.send(SearchRequest(jql: jql, startAt: startAt))
+            let response = try session.send(SearchRequest(jql: jql,
+                                                          fieldParameters: [.all, .exceptComment],
+                                                          startAt: startAt,
+                                                          customFields: customFields))
             let values = response.values
             let newList = list + values
             let isLast = values.isEmpty ? true : (response.total ?? 0) == newList.count

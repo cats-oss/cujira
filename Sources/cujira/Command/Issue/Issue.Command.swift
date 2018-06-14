@@ -39,6 +39,7 @@ enum Issue {
         case type(String)
         case user(String)
         case status(String)
+        case epicLink(String)
     }
 
     private typealias Aggregation = IssueAggregation.Aggregation
@@ -64,6 +65,10 @@ enum Issue {
                 let filteredIssues = issues.filter { $0.fields.status.name == name }
                 let count = filteredIssues.count
                 return Aggregation(issues: filteredIssues, name: name, count: count)
+            case .epicLink(let name):
+                let filteredIssues = issues.filter { $0.fields.status.name == name }
+                let count = filteredIssues.count
+                return Aggregation(issues: filteredIssues, name: name, count: count)
             }
         }
     }
@@ -80,6 +85,8 @@ enum Issue {
             case .user(let name):
                 return result.filter { $0.fields.assignee?.name == name }
             case .status(let name):
+                return result.filter { $0.fields.status.name == name }
+            case .epicLink(let name):
                 return result.filter { $0.fields.status.name == name }
             }
         }

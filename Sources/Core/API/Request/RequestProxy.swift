@@ -26,6 +26,8 @@ public struct RequestProxy<T: Request>: Request {
     public let bodyParameter: BodyParameter?
     public let queryParameter: [String : String]?
 
+    private let request: T
+
     public init(request: T, domain: String, apiKey: String, username: String) throws {
         let urlString = "https://\(domain).atlassian.net/rest/\(request.endpoint.rawValue)"
         self.baseURL = try URL(string: urlString) ?? {
@@ -49,10 +51,11 @@ public struct RequestProxy<T: Request>: Request {
         self.endpoint = request.endpoint
         self.bodyParameter = request.bodyParameter
         self.queryParameter = request.queryParameter
+        self.request = request
     }
 
-    public static func object(from data: Data) throws -> Response {
-        return try T.object(from: data)
+    public func object(from data: Data) throws -> Response {
+        return try request.object(from: data)
     }
 }
 
