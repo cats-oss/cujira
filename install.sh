@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USR_LOCAL_DIR="/usr/local"
+USR_LOCAL_DIR=${1:-"/usr/local"}
 USR_LOCAL_BIN_DIR="${USR_LOCAL_DIR}/bin"
 CMD_NAME="cujira"
 
