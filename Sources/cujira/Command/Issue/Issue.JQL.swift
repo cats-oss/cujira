@@ -41,7 +41,7 @@ extension Issue {
 
             let issues = try facade.issueService.search(jql: jql)
 
-            try printIssues(issues, jql: jql, config: config, isJson: isJson, aggregateParameters: [])
+            try printIssues(issues, jql: jql, config: config, isJson: isJson, aggregateParameters: [], isFilteredOnly: false)
         }
     }
 }

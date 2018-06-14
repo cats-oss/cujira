@@ -68,18 +68,38 @@ enum Issue {
         }
     }
 
+    private static func filteredIssues(_ issues: [Core.Issue], by aggregateParameters: [AggregateParameter]) -> [Core.Issue] {
+        return aggregateParameters.reduce(issues) { result, parameter -> [Core.Issue] in
+            switch parameter {
+            case .total:
+                return result
+            case .label(let name):
+                return result.filter { $0.fields.labels.first { $0 == name } != nil }
+            case .type(let name):
+                return result.filter { $0.fields.issuetype.name == name }
+            case .user(let name):
+                return result.filter { $0.fields.assignee?.name == name }
+            case .status(let name):
+                return result.filter { $0.fields.status.name == name }
+            }
+        }
+    }
+
     static func printIssues(_ issues: [Core.Issue],
                             jql: String,
                             config: Config,
                             isJson: Bool,
-                            aggregateParameters: [AggregateParameter]) throws {
+                            aggregateParameters: [AggregateParameter],
+                            isFilteredOnly: Bool) throws {
         if isJson {
             let data: Data
             if aggregateParameters.isEmpty {
                 data = try JSONEncoder().encode(issues)
             } else {
+                let _filteredIssues = filteredIssues(issues, by: aggregateParameters)
                 let _aggregations = aggregations(issues: issues, aggregateParameters: aggregateParameters)
-                let aggregation = IssueAggregation(aggregations: _aggregations)
+                let matched = Aggregation(issues: _filteredIssues, name: "Matched Issues", count: _filteredIssues.count)
+                let aggregation = IssueAggregation(aggregations: _aggregations + [matched])
                 data = try JSONEncoder().encode(aggregation)
             }
 
@@ -101,22 +121,13 @@ enum Issue {
             if aggregateParameters.isEmpty {
                 printIssues(issues)
             } else {
-                let filteredIssues = aggregateParameters.reduce(issues) { result, parameter -> [Core.Issue] in
-                    switch parameter {
-                    case .total:
-                        return result
-                    case .label(let name):
-                        return result.filter { $0.fields.labels.first { $0 == name } != nil }
-                    case .type(let name):
-                        return result.filter { $0.fields.issuetype.name == name }
-                    case .user(let name):
-                        return result.filter { $0.fields.assignee?.name == name }
-                    case .status(let name):
-                        return result.filter { $0.fields.status.name == name }
-                    }
-                }
+                let _filteredIssues = filteredIssues(issues, by: aggregateParameters)
 
-                printIssues(filteredIssues)
+                if isFilteredOnly {
+                    printIssues(_filteredIssues)
+                } else {
+                    printIssues(issues)
+                }
 
                 print("")
 
@@ -124,6 +135,7 @@ enum Issue {
                 _aggregations.forEach {
                     print("Number of \($0.name): \($0.count)")
                 }
+                print("Number of Matched Issues: \(_filteredIssues.count)")
             }
         }
     }

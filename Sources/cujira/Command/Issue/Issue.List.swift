@@ -23,6 +23,7 @@ extension Issue {
             case user(String)
             case json
             case aggregate
+            case filteredOnly
 
             init?(_ parser: ArgumentParser) {
                 if let option = parser.shift(), !option.isEmpty {
@@ -49,6 +50,10 @@ extension Issue {
                         }
                     case "--output-json":
                         self = .json
+                        return
+
+                    case "--filtered-only":
+                        self = .filteredOnly
                         return
 
                     case "-a", "--aggregate":
@@ -97,11 +102,15 @@ extension Issue {
         }
 
         private static func isJson(from options: [Option]) -> Bool {
-            return options.first { $0.isJson } != nil
+            return options.first { $0 == .json } != nil
         }
 
         private static func isAggregate(from options: [Option]) -> Bool {
-            return options.first { $0.isAggregate } != nil
+            return options.first { $0 == .aggregate } != nil
+        }
+
+        private static func isFilteredOnly(from options: [Option]) -> Bool {
+            return options.first { $0 == .filteredOnly } != nil
         }
 
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
@@ -139,6 +148,7 @@ extension Issue {
             let _userJQL = userJQL(from: options)
             let _isJson = isJson(from: options)
             let _isAggregate = isAggregate(from: options)
+            let _isFilteredOnly = isFilteredOnly(from: options)
 
             let jql: String
             let aggregateParameters: [AggregateParameter]
@@ -156,24 +166,25 @@ extension Issue {
             }
             let issues = try facade.issueService.search(jql: jql)
 
-            try printIssues(issues, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters)
+            try printIssues(issues, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters, isFilteredOnly: _isFilteredOnly)
         }
     }
 }
 
-extension Issue.List.Option {
-    var isJson: Bool {
-        if case .json = self {
+extension Issue.List.Option: Equatable {
+    static func == (lhs: Issue.List.Option, rhs: Issue.List.Option) -> Bool {
+        switch (lhs, rhs) {
+        case (.json, json),
+             (.aggregate, .aggregate),
+             (.label, .label),
+             (.type, .type),
+             (.status, .status),
+             (.user, .user),
+             (.filteredOnly, .filteredOnly):
             return true
+        default:
+            return false
         }
-        return false
-    }
-
-    var isAggregate: Bool {
-        if case .aggregate = self {
-            return true
-        }
-        return false
     }
 
     var label: String? {
@@ -223,6 +234,8 @@ extension Issue.List: UsageDescribable {
                     ... Filter issues with a user who has assigned.
                 -a | --aggregate
                     ... Show every options issue counts.
+                --filtered-only
+                    ... Print results that matched issues by options.
                 --output-json
                     ... Print results as JSON format.
         """
