@@ -39,9 +39,9 @@ extension Issue {
                 isJson = false
             }
 
-            let issues = try facade.issueService.search(jql: jql)
+            let result = try facade.issueService.search(jql: jql)
 
-            try printIssues(issues, jql: jql, config: config, isJson: isJson, aggregateParameters: [], isAllIssues: true)
+            try printSerchResult(result, jql: jql, config: config, isJson: isJson, aggregateParameters: [], isAllIssues: true)
         }
     }
 }

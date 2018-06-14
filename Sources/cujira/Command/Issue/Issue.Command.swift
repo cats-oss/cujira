@@ -92,12 +92,13 @@ enum Issue {
         }
     }
 
-    static func printIssues(_ issues: [Core.Issue],
-                            jql: String,
-                            config: Config,
-                            isJson: Bool,
-                            aggregateParameters: [AggregateParameter],
-                            isAllIssues: Bool) throws {
+    static func printSerchResult(_ result: SearchResult,
+                                 jql: String,
+                                 config: Config,
+                                 isJson: Bool,
+                                 aggregateParameters: [AggregateParameter],
+                                 isAllIssues: Bool) throws {
+        let issues = result.issues
         if isJson {
             let data: Data
             if aggregateParameters.isEmpty {
@@ -122,6 +123,16 @@ enum Issue {
                     print("IssueType: \(issue.fields.issuetype.name)")
                     print("Status: \(issue.fields.status.name)")
                     print("User: \(issue.fields.assignee.map { $0.name } ?? "--")")
+
+                    issue.fields.fixVersions.forEach { version in
+                        print("Fix Version: \(version.name)")
+                    }
+
+//                    issue.fields.customFields.forEach { cf in
+//                        if let field = result.customFields.first(where: { $0.id == cf.id }) {
+//                            print("\(field.name): \(cf.value)")
+//                        }
+//                    }
                 }
             }
 

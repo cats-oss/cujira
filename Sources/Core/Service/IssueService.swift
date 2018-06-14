@@ -11,24 +11,27 @@ public final class IssueService {
     private let session: JiraSession
     private let issueTypeDataManager: IssueTypeDataManager
     private let statusDataManager: StatusDataManager
+    private let fieldDataManager: FieldDataManager
 
     public init(session: JiraSession,
                 issueTypeDataManager: IssueTypeDataManager,
-                statusDataManager: StatusDataManager) {
+                statusDataManager: StatusDataManager,
+                fieldDataManager: FieldDataManager) {
         self.session = session
         self.issueTypeDataManager = issueTypeDataManager
         self.statusDataManager = statusDataManager
+        self.fieldDataManager = fieldDataManager
     }
 
-    public func search(jql: String, limit: Int = 500) throws -> [Issue] {
-        let feilds = try fetchAllFields()
-        let customFields = feilds.filter { $0.id.hasPrefix("customfield_") }.map { $0.id }
+    public func search(jql: String, limit: Int = 500) throws -> SearchResult {
+        let feilds = try getFields()
+        let customFields = feilds.filter { $0.id.hasPrefix("customfield_") }
 
         func recursiveFetch(startAt: Int, list: [Issue]) throws -> [Issue] {
             let response = try session.send(SearchRequest(jql: jql,
                                                           fieldParameters: [.all, .exceptComment],
                                                           startAt: startAt,
-                                                          customFields: customFields))
+                                                          customFields: customFields.map { $0.id }))
             let values = response.values
             let newList = list + values
             let isLast = values.isEmpty ? true : (response.total ?? 0) == newList.count
@@ -39,7 +42,8 @@ public final class IssueService {
             }
         }
 
-        return try recursiveFetch(startAt: 0, list: [])
+        let issues = try recursiveFetch(startAt: 0, list: [])
+        return SearchResult(issues: issues, customFields: customFields)
     }
 
     // MRAK: - IssueType
@@ -80,7 +84,34 @@ public final class IssueService {
 
     public func fetchAllFields() throws -> [Field] {
         let request = GetAllFieldsRequest()
-        return try session.send(request)
+        let fields = try session.send(request)
+
+        try fieldDataManager.saveFields(fields)
+
+        return fields
+    }
+
+    public func getFields() throws -> [Field] {
+        do {
+            return try fieldDataManager.loadFields()
+        } catch FieldTrait.Error.noFields {
+            return try fetchAllFields()
+        } catch {
+            throw error
+        }
+    }
+
+    public func getField(name: String, useCache: Bool = true) throws -> Field {
+        if useCache {
+            let fields = try getFields()
+            return try fields.first { $0.name == name } ??
+                getField(name: name, useCache: false)
+        } else {
+            let fields = try fetchAllFields()
+            return try fields.first { $0.name == name } ?? {
+                throw FieldTrait.Error.noField(name)
+            }()
+        }
     }
 
     // MARK: - Status

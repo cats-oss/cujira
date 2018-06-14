@@ -23,16 +23,17 @@ public final class Facade {
         let configManager = ConfigManager(workingDirectory: { "\(baseDirectoryPath)" })
         let configService = ConfigService(manager: configManager)
 
-        let subDirectoryPath: () throws -> String = {
+        let workingDirectory: () throws -> String = {
             try "\(baseDirectoryPath)/\(configService.loadConfig().domain)"
         }
 
-        let projectAliasManager = ProjectAliasManager(workingDirectory: subDirectoryPath)
-        let jqlAliasManager = JQLAliasManager(workingDirectory: subDirectoryPath)
-        let boardDataManager = BoardDataManager(workingDirectory: subDirectoryPath)
-        let sprintDataManager = SprintDataManager(workingDirectory: subDirectoryPath)
-        let issueTypeDataManager = IssueTypeDataManager(workingDirectory: subDirectoryPath)
-        let statusDataManager = StatusDataManager(workingDirectory: subDirectoryPath)
+        let projectAliasManager = ProjectAliasManager(workingDirectory: workingDirectory)
+        let jqlAliasManager = JQLAliasManager(workingDirectory: workingDirectory)
+        let boardDataManager = BoardDataManager(workingDirectory: workingDirectory)
+        let sprintDataManager = SprintDataManager(workingDirectory: workingDirectory)
+        let issueTypeDataManager = IssueTypeDataManager(workingDirectory: workingDirectory)
+        let statusDataManager = StatusDataManager(workingDirectory: workingDirectory)
+        let fieldDataManager = FieldDataManager(workingDirectory: workingDirectory)
 
         let session = URLSession.shared
         let jiraSession = JiraSession(session: session,
@@ -42,7 +43,8 @@ public final class Facade {
         let sprintService = SprintService(session: jiraSession, sprintDataManager: sprintDataManager)
         let issueService = IssueService(session: jiraSession,
                                         issueTypeDataManager: issueTypeDataManager,
-                                        statusDataManager: statusDataManager)
+                                        statusDataManager: statusDataManager,
+                                        fieldDataManager: fieldDataManager)
         let projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
         let jqlService = JQLService(aliasManager: jqlAliasManager)
         let boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)

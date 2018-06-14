@@ -72,16 +72,12 @@ extension Issue.Fields: Codable {
                 let container = try decoder.container(keyedBy: AnyCodingKey.self)
                 let key = AnyCodingKey(stringValue: $0)
 
-                guard let id = $0.split(separator: "_").last.map(String.init) else {
-                    return nil
-                }
-
                 if let value = try? container.decode(String.self, forKey: key) {
-                    return CustomField(id: id, value: value)
+                    return CustomField(id: $0, value: value)
                 } else if let value = try? container.decode(Int.self, forKey: key) {
-                    return CustomField(id: id, value: value)
+                    return CustomField(id: $0, value: value)
                 } else if let value = try? container.decode(Bool.self, forKey: key) {
-                    return CustomField(id: id, value: value)
+                    return CustomField(id: $0, value: value)
                 } else {
                     return nil
                 }
