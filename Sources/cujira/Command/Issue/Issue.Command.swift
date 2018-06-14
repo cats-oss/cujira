@@ -90,7 +90,7 @@ enum Issue {
                             config: Config,
                             isJson: Bool,
                             aggregateParameters: [AggregateParameter],
-                            isFilteredOnly: Bool) throws {
+                            isAllIssues: Bool) throws {
         if isJson {
             let data: Data
             if aggregateParameters.isEmpty {
@@ -123,10 +123,10 @@ enum Issue {
             } else {
                 let _filteredIssues = filteredIssues(issues, by: aggregateParameters)
 
-                if isFilteredOnly {
-                    printIssues(_filteredIssues)
-                } else {
+                if isAllIssues {
                     printIssues(issues)
+                } else {
+                    printIssues(_filteredIssues)
                 }
 
                 print("")

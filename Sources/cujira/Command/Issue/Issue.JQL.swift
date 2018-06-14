@@ -41,7 +41,7 @@ extension Issue {
 
             let issues = try facade.issueService.search(jql: jql)
 
-            try printIssues(issues, jql: jql, config: config, isJson: isJson, aggregateParameters: [], isFilteredOnly: false)
+            try printIssues(issues, jql: jql, config: config, isJson: isJson, aggregateParameters: [], isAllIssues: true)
         }
     }
 }
@@ -58,6 +58,9 @@ extension Issue.JQL: UsageDescribable {
 
                 --output-json
                     ... Print results as JSON format.
+
+            Other:
+                JQL feilds reference ... https://confluence.atlassian.com/jiracoreserver073/advanced-searching-fields-reference-861257219.html
         """
     }
 }
@@ -66,9 +69,9 @@ extension Issue.JQL.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noParameter:
-            return "JQL or --registered [JQL_ALIAS] is required parameter."
+            return "[JQL] or --registered [JQL_ALIAS] is required parameter."
         case .noJQLAlias:
-            return "JQL_ALIAS is required paramter."
+            return "[JQL_ALIAS] is required paramter."
         }
     }
 }

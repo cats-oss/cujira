@@ -17,46 +17,46 @@ extension Issue {
         }
 
         fileprivate enum Option {
-            case type(String)
+            case issueType(String)
             case label(String)
             case status(String)
-            case user(String)
+            case assigned(String)
             case json
             case aggregate
-            case filteredOnly
+            case allIssues
 
             init?(_ parser: ArgumentParser) {
                 if let option = parser.shift(), !option.isEmpty {
                     switch option {
-                    case "-t", "--type":
+                    case "--issus-type":
                         if let t = parser.shift(), !t.isEmpty {
-                            self = .type(t)
+                            self = .issueType(t)
                             return
                         }
-                    case "-l", "--label":
+                    case "--label":
                         if let l = parser.shift(), !l.isEmpty {
                             self = .label(l)
                             return
                         }
-                    case "-s", "--status":
+                    case "--status":
                         if let s = parser.shift(), !s.isEmpty {
                             self = .status(s)
                             return
                         }
-                    case "-u", "--user":
+                    case "--assigned":
                         if let u = parser.shift(), !u.isEmpty {
-                            self = .user(u)
+                            self = .assigned(u)
                             return
                         }
                     case "--output-json":
                         self = .json
                         return
 
-                    case "--filtered-only":
-                        self = .filteredOnly
+                    case "--all-issues":
+                        self = .allIssues
                         return
 
-                    case "-a", "--aggregate":
+                    case "--aggregate":
                         self = .aggregate
                         return
 
@@ -73,8 +73,8 @@ extension Issue {
             let jql: String
         }
 
-        private static func typeJQL(from options: [Option], facade: Facade) throws -> JQLContainer? {
-            guard let typeName = options.lazy.compactMap({ $0.type }).first else {
+        private static func issueType(from options: [Option], facade: Facade) throws -> JQLContainer? {
+            guard let typeName = options.lazy.compactMap({ $0.issueType }).first else {
                 return nil
             }
 
@@ -96,8 +96,8 @@ extension Issue {
             return JQLContainer(name: statusName, jql: " AND status = \(status.id)")
         }
 
-        private static func userJQL(from options: [Option]) -> JQLContainer? {
-            return options.lazy.compactMap { $0.user }.first
+        private static func assignedJQL(from options: [Option]) -> JQLContainer? {
+            return options.lazy.compactMap { $0.assigned }.first
                 .map { JQLContainer(name: $0, jql: " AND assignee WAS \'\($0)\'")  }
         }
 
@@ -109,8 +109,8 @@ extension Issue {
             return options.first { $0 == .aggregate } != nil
         }
 
-        private static func isFilteredOnly(from options: [Option]) -> Bool {
-            return options.first { $0 == .filteredOnly } != nil
+        private static func isAllIssues(from options: [Option]) -> Bool {
+            return options.first { $0 == .allIssues } != nil
         }
 
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
@@ -142,31 +142,31 @@ extension Issue {
             }
 
             let options = (0..<5).compactMap { _ in Option(parser) }
-            let _typeJQL = try typeJQL(from: options, facade: facade)
+            let _issueTypeJQL = try issueType(from: options, facade: facade)
             let _labelJQL = labelJQL(from: options)
             let _statusJQL = try statusJQL(from: options, facade: facade)
-            let _userJQL = userJQL(from: options)
+            let _assignedJQL = assignedJQL(from: options)
             let _isJson = isJson(from: options)
             let _isAggregate = isAggregate(from: options)
-            let _isFilteredOnly = isFilteredOnly(from: options)
+            let _isAllIssues = isAllIssues(from: options)
 
             let jql: String
             let aggregateParameters: [AggregateParameter]
             if _isAggregate {
                 jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)"
                 aggregateParameters = [.total,
-                                       _typeJQL.map { AggregateParameter.type($0.name) },
+                                       _issueTypeJQL.map { AggregateParameter.type($0.name) },
                                        _labelJQL.map { AggregateParameter.label($0.name) },
                                        _statusJQL.map { AggregateParameter.status($0.name) },
-                                       _userJQL.map { AggregateParameter.user($0.name) }]
+                                       _assignedJQL.map { AggregateParameter.user($0.name) }]
                     .compactMap { $0 }
             } else {
-                jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(_typeJQL?.jql ?? "")\(_labelJQL?.jql ?? "")\(_statusJQL?.jql ?? "")\(_userJQL?.jql ?? "")"
+                jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)\(_issueTypeJQL?.jql ?? "")\(_labelJQL?.jql ?? "")\(_statusJQL?.jql ?? "")\(_assignedJQL?.jql ?? "")"
                 aggregateParameters = []
             }
             let issues = try facade.issueService.search(jql: jql)
 
-            try printIssues(issues, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters, isFilteredOnly: _isFilteredOnly)
+            try printIssues(issues, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters, isAllIssues: _isAllIssues)
         }
     }
 }
@@ -177,10 +177,10 @@ extension Issue.List.Option: Equatable {
         case (.json, json),
              (.aggregate, .aggregate),
              (.label, .label),
-             (.type, .type),
+             (.issueType, .issueType),
              (.status, .status),
-             (.user, .user),
-             (.filteredOnly, .filteredOnly):
+             (.assigned, .assigned),
+             (.allIssues, .allIssues):
             return true
         default:
             return false
@@ -194,8 +194,8 @@ extension Issue.List.Option: Equatable {
         return nil
     }
 
-    var type: String? {
-        if case .type(let value) = self {
+    var issueType: String? {
+        if case .issueType(let value) = self {
             return value
         }
         return nil
@@ -208,8 +208,8 @@ extension Issue.List.Option: Equatable {
         return nil
     }
 
-    var user: String? {
-        if case .user(let value) = self {
+    var assigned: String? {
+        if case .assigned(let value) = self {
             return value
         }
         return nil
@@ -224,18 +224,18 @@ extension Issue.List: UsageDescribable {
 
             Options:
 
-                -t | --type [ISSUE_TYPE]
+                --issus-type [ISSUE_TYPE]
                     ... Filter issues with a issueType.
-                -l | --label [ISSUE_LABEL]
+                --label [ISSUE_LABEL]
                     ... Filter issues with a issue label.
-                -s | --status [STATUS_NAME]
+                --status [STATUS_NAME]
                     ... Filter issues with a issue status.
-                -u | --user [USER_NAME]
+                --assigned [USER_NAME]
                     ... Filter issues with a user who has assigned.
-                -a | --aggregate
+                --aggregate
                     ... Show every options issue counts.
-                --filtered-only
-                    ... Print results that matched issues by options.
+                --all-issues
+                    ... Print all issues to ignore options. (This option is only available to use `--aggreegate`)
                 --output-json
                     ... Print results as JSON format.
         """
@@ -248,9 +248,9 @@ extension Issue.List.Error: LocalizedError {
         case .noDateRange:
             return "[today], [yyyy/mm/dd] or [SPRINT_NAME] is required parameter."
         case .noProjectAlias:
-            return "PROJECT_ALIAS is required parameter."
+            return "[PROJECT_ALIAS] is required parameter."
         case .notFoundSprint(let param):
-            return "\(param) not found in sprints."
+            return "[\(param)] not found in sprints."
         }
     }
 }
