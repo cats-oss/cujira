@@ -18,10 +18,34 @@ extension Facade {
 }
 
 extension Facade.IssueExtension {
-    public func search(jql: String) throws -> SearchResult {
+    public func search(jql: String) throws -> [IssueResult] {
         let fields = try base.issueService.getFields()
-        let customFields = fields.filter { $0.isCustomField }
-        return try base.issueService.search(jql: jql, customFields: customFields)
+        let customFields = fields.filter { $0.custom }
+        let result = try base.issueService.search(jql: jql, customFields: customFields)
+
+        let issueResults = try result.issues.map { issue -> IssueResult in
+            guard let projectID = Int(issue.fields.project.id) else {
+                return IssueResult(issue: issue, epic: nil, storyPoint: nil)
+            }
+
+            let board = try base.boardService.getBoard(projectID: projectID)
+
+            let epicAndStoryPoint = try issue.fields.customFields
+                .reduce((epic: nil, storyPoint: nil)) { values, cf -> (Epic?, Int?) in
+                    if let field = result.customFields.first(where: { $0.id == cf.id }) {
+                        if field.id == "", let key = cf.value as? String {
+                            return (try base.issueService.getEpic(key: key, boardID: board.id), values.1)
+                        } else if field.id == "", let storyPoint = cf.value as? Int {
+                            return (values.0, storyPoint)
+                        }
+                    }
+                    return values
+                }
+
+            return IssueResult(issue: issue, epic: epicAndStoryPoint.0, storyPoint: epicAndStoryPoint.1)
+        }
+
+        return issueResults
     }
 
     public func issueType(name: String) throws -> IssueType {

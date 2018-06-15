@@ -23,8 +23,4 @@ extension Field {
         public let type: String
         public let system: String?
     }
-
-    var isCustomField: Bool {
-        return id.hasPrefix("customfield_")
-    }
 }

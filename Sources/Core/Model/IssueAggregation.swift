@@ -10,12 +10,12 @@ import Foundation
 /// An issue aggregation result object.
 public struct IssueAggregation: Codable {
     public struct Aggregation: Codable {
-        public let issues: [Issue]
+        public let issueResults: [IssueResult]
         public let name: String
         public let count: Int
 
-        public init(issues: [Issue], name: String, count: Int) {
-            self.issues = issues
+        public init(issueResults: [IssueResult], name: String, count: Int) {
+            self.issueResults = issueResults
             self.name = name
             self.count = count
         }

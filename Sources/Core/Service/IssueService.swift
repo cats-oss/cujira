@@ -14,6 +14,8 @@ public final class IssueService {
     private let fieldDataManager: FieldDataManager
     private let epicDataManager: EpicDataManager
 
+    private var issueTypes: [IssueType]?
+
     public init(session: JiraSession,
                 issueTypeDataManager: IssueTypeDataManager,
                 statusDataManager: StatusDataManager,
@@ -55,10 +57,16 @@ public final class IssueService {
 
         try issueTypeDataManager.saveIssueTypes(types)
 
+        issueTypes = types
+
         return types
     }
 
-    func getIssueTypes() throws -> [IssueType] {
+    func getIssueTypes(useMemoryCache: Bool = true) throws -> [IssueType] {
+        if useMemoryCache, let types = issueTypes {
+            return types
+        }
+
         do {
             return try issueTypeDataManager.loadIssueTypes()
         } catch IssueTypeTrait.Error.noIssueTypes {

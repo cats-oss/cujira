@@ -52,31 +52,29 @@ public final class BoardService {
         }
     }
 
-    /// Get a board with `boardID`.
-    public func getBoard(boardID: Int, useCache: Bool = true) throws -> Board {
+    private func getBoard(where: (Board) throws -> Bool, useCache: Bool) throws -> Board? {
         if useCache {
             let boards = try getBoards()
-            return try boards.first { $0.id == boardID } ??
-                getBoard(boardID: boardID, useCache: false)
+            return try boards.first(where: `where`) ??
+                getBoard(where: `where`, useCache: false)
         } else {
             let boards = try fetchAllBoards()
-            return try boards.first { $0.id == boardID } ?? {
-                throw BoardTrait.Error.noBoardFromBoardID(boardID)
-            }()
+            return try boards.first(where: `where`)
         }
+    }
+
+    /// Get a board with `boardID`.
+    public func getBoard(boardID: Int, useCache: Bool = true) throws -> Board {
+        return try getBoard(where: { $0.id == boardID }, useCache: useCache) ?? {
+            throw BoardTrait.Error.noBoardFromBoardID(boardID)
+        }()
     }
 
     /// Get a board with `projectID`.
     public func getBoard(projectID: Int, useCache: Bool = true) throws -> Board {
-        if useCache {
-            let boards = try getBoards()
-            return try boards.first { $0.location.project?.projectId == projectID } ??
-                getBoard(projectID: projectID, useCache: false)
-        } else {
-            let boards = try fetchAllBoards()
-            return try boards.first { $0.location.project?.projectId == projectID } ?? {
-                throw BoardTrait.Error.noBoardFromProjectID(projectID)
-            }()
-        }
+        return try getBoard(where: { $0.location.project?.projectId == projectID },
+                            useCache: useCache) ?? {
+            throw BoardTrait.Error.noBoardFromProjectID(projectID)
+        }()
     }
 }

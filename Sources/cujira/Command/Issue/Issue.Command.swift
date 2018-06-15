@@ -44,69 +44,68 @@ enum Issue {
 
     private typealias Aggregation = IssueAggregation.Aggregation
 
-    private static func aggregations(issues: [Core.Issue], aggregateParameters: [AggregateParameter]) -> [Aggregation] {
+    private static func aggregations(issueResults: [IssueResult], aggregateParameters: [AggregateParameter]) -> [Aggregation] {
         return aggregateParameters.map {
             switch $0 {
             case .total:
-                return Aggregation(issues: issues, name: "Issues", count: issues.count)
+                return Aggregation(issueResults: issueResults, name: "Issues", count: issueResults.count)
             case .label(let name):
-                let filteredIssues = issues.filter { $0.fields.labels.first { $0 == name } != nil }
+                let filteredIssues = issueResults.filter { $0.issue.fields.labels.first { $0 == name } != nil }
                 let count = filteredIssues.count
-                return Aggregation(issues: filteredIssues, name: name, count: count)
+                return Aggregation(issueResults: filteredIssues, name: name, count: count)
             case .type(let name):
-                let filteredIssues = issues.filter { $0.fields.issuetype.name == name }
+                let filteredIssues = issueResults.filter { $0.issue.fields.issuetype.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issues: filteredIssues, name: name, count: count)
+                return Aggregation(issueResults: filteredIssues, name: name, count: count)
             case .user(let name):
-                let filteredIssues = issues.filter { $0.fields.assignee?.name == name }
+                let filteredIssues = issueResults.filter { $0.issue.fields.assignee?.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issues: filteredIssues, name: name, count: count)
+                return Aggregation(issueResults: filteredIssues, name: name, count: count)
             case .status(let name):
-                let filteredIssues = issues.filter { $0.fields.status.name == name }
+                let filteredIssues = issueResults.filter { $0.issue.fields.status.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issues: filteredIssues, name: name, count: count)
+                return Aggregation(issueResults: filteredIssues, name: name, count: count)
             case .epicLink(let name):
-                let filteredIssues = issues.filter { $0.fields.status.name == name }
+                let filteredIssues = issueResults.filter { $0.issue.fields.status.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issues: filteredIssues, name: name, count: count)
+                return Aggregation(issueResults: filteredIssues, name: name, count: count)
             }
         }
     }
 
-    private static func filteredIssues(_ issues: [Core.Issue], by aggregateParameters: [AggregateParameter]) -> [Core.Issue] {
-        return aggregateParameters.reduce(issues) { result, parameter -> [Core.Issue] in
+    private static func filteredIssueResults(_ issueResults: [IssueResult], by aggregateParameters: [AggregateParameter]) -> [IssueResult] {
+        return aggregateParameters.reduce(issueResults) { result, parameter -> [IssueResult] in
             switch parameter {
             case .total:
                 return result
             case .label(let name):
-                return result.filter { $0.fields.labels.first { $0 == name } != nil }
+                return result.filter { $0.issue.fields.labels.first { $0 == name } != nil }
             case .type(let name):
-                return result.filter { $0.fields.issuetype.name == name }
+                return result.filter { $0.issue.fields.issuetype.name == name }
             case .user(let name):
-                return result.filter { $0.fields.assignee?.name == name }
+                return result.filter { $0.issue.fields.assignee?.name == name }
             case .status(let name):
-                return result.filter { $0.fields.status.name == name }
+                return result.filter { $0.issue.fields.status.name == name }
             case .epicLink(let name):
-                return result.filter { $0.fields.status.name == name }
+                return result.filter { $0.issue.fields.status.name == name }
             }
         }
     }
 
-    static func printSerchResult(_ result: SearchResult,
-                                 jql: String,
-                                 config: Config,
-                                 isJson: Bool,
-                                 aggregateParameters: [AggregateParameter],
-                                 isAllIssues: Bool) throws {
-        let issues = result.issues
+    static func printIssueResults(_ issueResults: [IssueResult],
+                                  jql: String,
+                                  config: Config,
+                                  isJson: Bool,
+                                  aggregateParameters: [AggregateParameter],
+                                  isAllIssues: Bool) throws {
         if isJson {
             let data: Data
             if aggregateParameters.isEmpty {
-                data = try JSONEncoder().encode(issues)
+                data = try JSONEncoder().encode(issueResults)
             } else {
-                let _filteredIssues = filteredIssues(issues, by: aggregateParameters)
-                let _aggregations = aggregations(issues: issues, aggregateParameters: aggregateParameters)
-                let matched = Aggregation(issues: _filteredIssues, name: "Matched Issues", count: _filteredIssues.count)
+                let _filteredIssues = filteredIssueResults(issueResults, by: aggregateParameters)
+                let _aggregations = aggregations(issueResults: issueResults, aggregateParameters: aggregateParameters)
+                let matched = Aggregation(issueResults: _filteredIssues, name: "Matched Issues", count: _filteredIssues.count)
                 let aggregation = IssueAggregation(aggregations: _aggregations + [matched])
                 data = try JSONEncoder().encode(aggregation)
             }
@@ -116,8 +115,9 @@ enum Issue {
         } else {
             print("JQL: \(jql)")
 
-            func printIssues(_ issues: [Core.Issue]) {
-                issues.forEach { issue in
+            func printIssueResults(_ results: [IssueResult]) {
+                results.forEach { result in
+                    let issue = result.issue
                     print("\nSummary: \(issue.fields.summary)")
                     print("URL: https://\(config.domain).atlassian.net/browse/\(issue.key)")
                     print("IssueType: \(issue.fields.issuetype.name)")
@@ -128,28 +128,30 @@ enum Issue {
                         print("Fix Version: \(version.name)")
                     }
 
-//                    issue.fields.customFields.forEach { cf in
-//                        if let field = result.customFields.first(where: { $0.id == cf.id }) {
-//                            print("\(field.name): \(cf.value)")
-//                        }
-//                    }
+                    if let epic = result.epic {
+                        print("Epic Link: \(epic.name)")
+                    }
+
+                    if let storyPoint = result.storyPoint {
+                        print("Story Points: \(storyPoint)")
+                    }
                 }
             }
 
             if aggregateParameters.isEmpty {
-                printIssues(issues)
+                printIssueResults(issueResults)
             } else {
-                let _filteredIssues = filteredIssues(issues, by: aggregateParameters)
+                let _filteredIssues = filteredIssueResults(issueResults, by: aggregateParameters)
 
                 if isAllIssues {
-                    printIssues(issues)
+                    printIssueResults(issueResults)
                 } else {
-                    printIssues(_filteredIssues)
+                    printIssueResults(_filteredIssues)
                 }
 
                 print("")
 
-                let _aggregations = aggregations(issues: issues, aggregateParameters: aggregateParameters)
+                let _aggregations = aggregations(issueResults: issueResults, aggregateParameters: aggregateParameters)
                 _aggregations.forEach {
                     print("Number of \($0.name): \($0.count)")
                 }
