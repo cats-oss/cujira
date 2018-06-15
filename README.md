@@ -1,6 +1,22 @@
 # Command Utility JIRA
 
-![cujira](./Images/cujira_logo.png)
+<p align="center">
+    <img src="./Images/cujira_logo.png" alt="cujira" />
+</p>
+<p align="center">
+  <a href="https://swift.org/package-manager">
+    <img src="https://img.shields.io/badge/SPM-compatible-brightgreen.svg?style=flat" alt="SPM" />
+  </a>
+  <a href="https://github.com/yonaskolb/Mint">
+    <img src="https://img.shields.io/badge/Mint-compatible-brightgreen.svg?style=flat" alt="Mint" />
+  </a>
+  <a href="https://github.com/abema/cujira/releases">
+    <img src="https://img.shields.io/github/release/abema/cujira.svg" alt="Git Version" />
+  </a>
+  <a href="https://github.com/abema/cujira/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-lightgray.svg" alt="license" />
+  </a>
+</p>
 
 ## Usage
 
