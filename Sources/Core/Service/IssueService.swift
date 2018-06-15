@@ -26,10 +26,8 @@ public final class IssueService {
         self.epicDataManager = epicDataManager
     }
 
-    public func search(jql: String, limit: Int = 500) throws -> SearchResult {
-        let feilds = try getFields()
-        let customFields = feilds.filter { $0.id.hasPrefix("customfield_") }
-
+    func search(jql: String, customFields: [Field], limit: Int = 500) throws -> SearchResult {
+        
         func recursiveFetch(startAt: Int, list: [Issue]) throws -> [Issue] {
             let response = try session.send(SearchRequest(jql: jql,
                                                           fieldParameters: [.all, .exceptComment],
@@ -51,7 +49,7 @@ public final class IssueService {
 
     // MRAK: - IssueType
 
-    public func fetchAllIssueTypes() throws -> [IssueType] {
+    func fetchAllIssueTypes() throws -> [IssueType] {
         let request = GetAllIssueTypesRequest()
         let types = try session.send(request)
 
@@ -60,7 +58,7 @@ public final class IssueService {
         return types
     }
 
-    public func getIssueTypes() throws -> [IssueType] {
+    func getIssueTypes() throws -> [IssueType] {
         do {
             return try issueTypeDataManager.loadIssueTypes()
         } catch IssueTypeTrait.Error.noIssueTypes {
@@ -70,7 +68,7 @@ public final class IssueService {
         }
     }
 
-    public func getIssueType(name: String, useCache: Bool = true) throws -> IssueType {
+    func getIssueType(name: String, useCache: Bool = true) throws -> IssueType {
         if useCache {
             let types = try getIssueTypes()
             return try types.first { $0.name == name } ??
@@ -85,7 +83,7 @@ public final class IssueService {
 
     // MARK: - Field
 
-    public func fetchAllFields() throws -> [Field] {
+    func fetchAllFields() throws -> [Field] {
         let request = GetAllFieldsRequest()
         let fields = try session.send(request)
 
@@ -94,7 +92,7 @@ public final class IssueService {
         return fields
     }
 
-    public func getFields() throws -> [Field] {
+    func getFields() throws -> [Field] {
         do {
             return try fieldDataManager.loadFields()
         } catch FieldTrait.Error.noFields {
@@ -104,7 +102,7 @@ public final class IssueService {
         }
     }
 
-    public func getField(name: String, useCache: Bool = true) throws -> Field {
+    func getField(name: String, useCache: Bool = true) throws -> Field {
         if useCache {
             let fields = try getFields()
             return try fields.first { $0.name == name } ??
@@ -119,7 +117,7 @@ public final class IssueService {
 
     // MARK: - Status
 
-    public func fetchAllStatuses() throws -> [Status] {
+    func fetchAllStatuses() throws -> [Status] {
         let request = GetAllStatusesRequest()
         let statues = try session.send(request)
 
@@ -128,7 +126,7 @@ public final class IssueService {
         return statues
     }
 
-    public func getStatuses() throws -> [Status] {
+    func getStatuses() throws -> [Status] {
         do {
             return try statusDataManager.loadStatuses()
         } catch StatusTrait.Error.noStatuses {
@@ -138,7 +136,7 @@ public final class IssueService {
         }
     }
 
-    public func getStatus(name: String, useCache: Bool = true) throws -> Status {
+    func getStatus(name: String, useCache: Bool = true) throws -> Status {
         if useCache {
             let statuses = try getStatuses()
             return try statuses.first { $0.name == name } ??
@@ -153,7 +151,7 @@ public final class IssueService {
 
     // MARK: - Epic
 
-    public func fetchAllEpics(boardID: Int, limit: Int = 1000) throws -> [Epic] {
+    func fetchAllEpics(boardID: Int, limit: Int = 1000) throws -> [Epic] {
 
         func recursiveFetch(startAt: Int, list: [Epic]) throws -> [Epic] {
             let response = try session.send(GetEpicRequest(boardID: boardID, startAt: startAt))
@@ -174,7 +172,7 @@ public final class IssueService {
         return epics
     }
 
-    public func getEpics(boardID: Int) throws -> [Epic] {
+    func getEpics(boardID: Int) throws -> [Epic] {
         do {
             return try epicDataManager.loadEpics()
         } catch EpicTrait.Error.noEpics {
@@ -184,7 +182,7 @@ public final class IssueService {
         }
     }
 
-    public func getEpic(key: String, boardID: Int, useCache: Bool = true) throws -> Epic {
+    func getEpic(key: String, boardID: Int, useCache: Bool = true) throws -> Epic {
         if useCache {
             let epics = try getEpics(boardID: boardID)
             return try epics.first { $0.key == key } ??

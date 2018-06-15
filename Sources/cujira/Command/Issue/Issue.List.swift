@@ -84,7 +84,7 @@ extension Issue {
                 return nil
             }
 
-            let type = try facade.issueService.getIssueType(name: typeName)
+            let type = try facade.issue.issueType(name: typeName)
             return JQLContainer(name: typeName, jql: " AND issuetype = \(type.id)")
         }
 
@@ -98,7 +98,7 @@ extension Issue {
                 return nil
             }
 
-            let status = try facade.issueService.getStatus(name: statusName)
+            let status = try facade.issue.status(name: statusName)
             return JQLContainer(name: statusName, jql: " AND status = \(status.id)")
         }
 
@@ -145,10 +145,7 @@ extension Issue {
                 let toDateString = DateFormatter.core.yyyyMMdd.string(from: toDate)
                 dateRangeJQL = "created >= \'\(second)\' and created <= \'\(toDateString)\'"
             } else {
-                let sprints = try facade.sprintService.getSprints(boardID: projectAlias.boardID)
-                guard let sprint = sprints.first(where: { $0.name.contains(second) }) else {
-                    throw Error.notFoundSprint(second)
-                }
+                let sprint = try facade.sprintService.getSprint(boardID: projectAlias.boardID, name: second)
                 dateRangeJQL = "sprint = \'\(sprint.name)\'"
             }
 
@@ -182,7 +179,7 @@ extension Issue {
                     "\(_epicLink?.jql ?? "")"
                 aggregateParameters = []
             }
-            let result = try facade.issueService.search(jql: jql)
+            let result = try facade.issue.search(jql: jql)
 
             try printSerchResult(result, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters, isAllIssues: _isAllIssues)
         }

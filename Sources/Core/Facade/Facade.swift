@@ -9,7 +9,7 @@ import Foundation
 
 public final class Facade {
     public let sprintService: SprintService
-    public let issueService: IssueService
+    let issueService: IssueService
     public let projectService: ProjectService
     public let jqlService: JQLService
     public let configService: ConfigService

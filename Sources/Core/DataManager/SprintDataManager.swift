@@ -16,6 +16,7 @@ public enum SprintTrait: DataTrait {
     public enum Error: Swift.Error {
         case noSprintsFromBoardID(Int)
         case noSprint(boardID: Int, sprintID: Int)
+        case noSprintName(String)
     }
 }
 
@@ -48,6 +49,8 @@ extension SprintTrait.Error: LocalizedError {
             return "BoardID: \(boardID) not found in Sprints."
         case .noSprint(let boardID, let sprintID):
             return "BoardID: \(boardID), SprintID: \(sprintID) not found in Sprints."
+        case .noSprintName(let name):
+            return "Sprint Name: \(name) not founc in Sprints."
         }
     }
 }

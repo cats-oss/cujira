@@ -47,16 +47,26 @@ public final class SprintService {
         }
     }
 
-    public func getSprint(sprintID: Int, boardID: Int, useCache: Bool = true) throws -> Sprint {
+    private func getSprint(boardID: Int, where: (Sprint) throws -> Bool, useCache: Bool = true) throws -> Sprint? {
         if useCache {
             let sprints = try getSprints(boardID: boardID)
-            return try sprints.first { $0.id == sprintID } ??
-                getSprint(sprintID: sprintID, boardID: boardID, useCache: false)
+            return try sprints.first(where: `where`) ??
+                getSprint(boardID: boardID, where: `where`, useCache: false)
         } else {
             let sprints = try fetchAllSprints(boardID: boardID)
-            return try sprints.first { $0.id == sprintID } ?? {
-                throw SprintTrait.Error.noSprint(boardID: boardID, sprintID: sprintID)
-            }()
+            return try sprints.first(where: `where`)
         }
+    }
+
+    public func getSprint(sprintID: Int, boardID: Int, useCache: Bool = true) throws -> Sprint {
+        return try getSprint(boardID: boardID, where: { $0.id == sprintID }, useCache: useCache) ?? {
+            throw SprintTrait.Error.noSprint(boardID: boardID, sprintID: sprintID)
+        }()
+    }
+
+    public func getSprint(boardID: Int, name: String, useCache: Bool = true) throws -> Sprint {
+        return try getSprint(boardID: boardID, where: { $0.name.contains(name) }, useCache: useCache) ?? {
+            throw SprintTrait.Error.noSprintName(name)
+        }()
     }
 }
