@@ -6,7 +6,7 @@
 //
 
 public struct Board: ListableResponse {
-    public static let key: String = "values"
+    public static let keyOfList: String = "values"
 
     public let id: Int
     public let location: Location

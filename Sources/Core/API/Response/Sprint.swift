@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Sprint: ListableResponse {
-    public static let key: String = "values"
+    public static let keyOfList: String = "values"
 
     public let completeDate: Date?
     public let endDate: Date?

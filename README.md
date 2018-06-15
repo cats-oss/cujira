@@ -1,6 +1,6 @@
-# Command Utility JIRA (cujira)
+# Command Utility JIRA
 
-A description of this package.
+![cujira](./Images/cujira_logo.png)
 
 ## Usage
 
@@ -108,15 +108,15 @@ After checking sprint name, you can get issues with `cujira issue list cujira-bu
 ```
 Options:
 
-    -t | --type [ISSUE_TYPE]
+    --issue-type [ISSUE_TYPE]
         ... Filter issues with a issueType.
-    -l | --label [ISSUE_LABEL]
+    --label [ISSUE_LABEL]
         ... Filter issues with a issue label.
-    -s | --status [STATUS_NAME]
+    --status [STATUS_NAME]
         ... Filter issues with a issue status.
-    -u | --user [USER_NAME]
+    --assigned [USER_NAME]
         ... Filter issues with a user who has assigned.
-    -a | --aggregate
+    --aggregate
         ... Show every options issue counts.
     --output-json
         ... Print results as JSON format.
@@ -125,7 +125,7 @@ Options:
 You can get aggregation of issues.
 
 ```
-$ cujira issue list cujira-bug today --type "Critical Bug" --aggregate
+$ cujira issue list cujira-bug today --issue-type "Critical Bug" --aggregate
 JQL: project = 10002 AND created >= startOfDay()
 
 Summary: All command responses are `Great Scott!!`.

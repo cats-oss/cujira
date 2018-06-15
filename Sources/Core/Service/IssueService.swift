@@ -12,15 +12,18 @@ public final class IssueService {
     private let issueTypeDataManager: IssueTypeDataManager
     private let statusDataManager: StatusDataManager
     private let fieldDataManager: FieldDataManager
+    private let epicDataManager: EpicDataManager
 
     public init(session: JiraSession,
                 issueTypeDataManager: IssueTypeDataManager,
                 statusDataManager: StatusDataManager,
-                fieldDataManager: FieldDataManager) {
+                fieldDataManager: FieldDataManager,
+                epicDataManager: EpicDataManager) {
         self.session = session
         self.issueTypeDataManager = issueTypeDataManager
         self.statusDataManager = statusDataManager
         self.fieldDataManager = fieldDataManager
+        self.epicDataManager = epicDataManager
     }
 
     public func search(jql: String, limit: Int = 500) throws -> SearchResult {
@@ -144,6 +147,52 @@ public final class IssueService {
             let statuses = try fetchAllStatuses()
             return try statuses.first { $0.name == name } ?? {
                 throw StatusTrait.Error.noStatus(name)
+            }()
+        }
+    }
+
+    // MARK: - Epic
+
+    public func fetchAllEpics(boardID: Int, limit: Int = 1000) throws -> [Epic] {
+
+        func recursiveFetch(startAt: Int, list: [Epic]) throws -> [Epic] {
+            let response = try session.send(GetEpicRequest(boardID: boardID, startAt: startAt))
+            let values = response.values
+            let newList = list + values
+            let isLast = values.isEmpty ? true : (response.total ?? 0) == newList.count
+            if isLast || newList.count >= limit {
+                return newList
+            } else {
+                return try recursiveFetch(startAt: newList.count, list: newList)
+            }
+        }
+
+        let epics = try recursiveFetch(startAt: 0, list: [])
+
+        try epicDataManager.saveEpics(epics)
+
+        return epics
+    }
+
+    public func getEpics(boardID: Int) throws -> [Epic] {
+        do {
+            return try epicDataManager.loadEpics()
+        } catch EpicTrait.Error.noEpics {
+            return try fetchAllEpics(boardID: boardID)
+        } catch {
+            throw error
+        }
+    }
+
+    public func getEpic(key: String, boardID: Int, useCache: Bool = true) throws -> Epic {
+        if useCache {
+            let epics = try getEpics(boardID: boardID)
+            return try epics.first { $0.key == key } ??
+                getEpic(key: key, boardID: boardID, useCache: false)
+        } else {
+            let epics = try fetchAllEpics(boardID: boardID)
+            return try epics.first { $0.key == key } ?? {
+                throw EpicTrait.Error.noEpic(key)
             }()
         }
     }

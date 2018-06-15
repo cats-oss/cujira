@@ -14,7 +14,7 @@ public struct Issue: Codable {
 }
 
 extension Issue: ListableResponse {
-    public static let key = "issues"
+    public static let keyOfList = "issues"
 }
 
 extension Issue {

@@ -34,6 +34,7 @@ public final class Facade {
         let issueTypeDataManager = IssueTypeDataManager(workingDirectory: workingDirectory)
         let statusDataManager = StatusDataManager(workingDirectory: workingDirectory)
         let fieldDataManager = FieldDataManager(workingDirectory: workingDirectory)
+        let epicDataManager = EpicDataManager(workingDirectory: workingDirectory)
 
         let session = URLSession.shared
         let jiraSession = JiraSession(session: session,
@@ -44,7 +45,8 @@ public final class Facade {
         let issueService = IssueService(session: jiraSession,
                                         issueTypeDataManager: issueTypeDataManager,
                                         statusDataManager: statusDataManager,
-                                        fieldDataManager: fieldDataManager)
+                                        fieldDataManager: fieldDataManager,
+                                        epicDataManager: epicDataManager)
         let projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
         let jqlService = JQLService(aliasManager: jqlAliasManager)
         let boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)

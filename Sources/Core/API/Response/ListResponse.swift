@@ -6,7 +6,7 @@
 //
 
 public protocol ListableResponse: Codable {
-    static var key: String { get }
+    static var keyOfList: String { get }
 }
 
 public struct ListResponse<T: ListableResponse> {
@@ -39,7 +39,7 @@ extension ListResponse: Decodable {
 
         do {
             let container = try decoder.container(keyedBy: AnyCodingKey.self)
-            self.values = try container.decode([T].self, forKey: AnyCodingKey(stringValue: T.key))
+            self.values = try container.decode([T].self, forKey: AnyCodingKey(stringValue: T.keyOfList))
         }
     }
 }
