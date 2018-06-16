@@ -16,11 +16,15 @@ enum Alias {
 
         case .jql:
             try AliasJQL.run(parser, facade: facade)
+
+        case .customfield:
+            try AliasCustomField.run(parser, facade: facade)
         }
     }
 
     enum Command: String, CommandList {
         case project
         case jql
+        case customfield
     }
 }

@@ -15,6 +15,8 @@ extension Alias.Command {
                 return AliasProject.usageDescription(element.rawValue)
             case .jql:
                 return AliasJQL.usageDescription(element.rawValue)
+            case .customfield:
+                return AliasCustomField.usageDescription(element.rawValue)
             }
         }
         return usageFormatted(root: cmd, cmd: Root.Command.alias, values: values, separator: "\n")
@@ -35,6 +37,15 @@ extension AliasJQL: UsageDescribable {
         return """
             + \(cmd)
                 ... Manage JQL aliases.
+        """
+    }
+}
+
+extension AliasCustomField: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd)
+                ... Manage CustomField aliases.
         """
     }
 }

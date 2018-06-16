@@ -36,6 +36,12 @@ extension Root.Command {
                     + \(element.rawValue)
                         ... Manage aliases.
                 """
+
+            case .field:
+                return """
+                    + \(element.rawValue)
+                        ... Show fields from API or Cache.
+                """
             }
         }
 

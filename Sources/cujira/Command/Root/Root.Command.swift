@@ -26,6 +26,9 @@ enum Root {
 
         case .alias:
             try Alias.run(parser, facade: facade)
+
+        case .field:
+            try Field.run(parser, facade: facade)
         }
     }
 
@@ -35,6 +38,7 @@ enum Root {
         case issue
         case register
         case sprint
+        case field
     }
 
     struct Error: Swift.Error {

@@ -47,12 +47,30 @@ extension Facade.IssueExtension {
 
         return issueResults
     }
+}
 
+// MARK: - IssueType
+
+extension Facade.IssueExtension {
     public func issueType(name: String) throws -> IssueType {
         return try base.issueService.getIssueType(name: name)
     }
+}
 
+// MARK: - 
+
+extension Facade.IssueExtension {
     public func status(name: String) throws -> Status {
         return try base.issueService.getStatus(name: name)
+    }
+}
+
+extension Facade.IssueExtension {
+    public func fields(userCache: Bool = true) throws -> [Field] {
+        if userCache {
+            return try base.issueService.getFields()
+        } else {
+            return try base.issueService.fetchAllFields()
+        }
     }
 }
