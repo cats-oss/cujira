@@ -14,38 +14,38 @@ public enum EpicTrait: DataTrait {
     public static let filename = "epic_data"
 
     public enum Error: Swift.Error {
-        case noEpics
+        case noEpicsFromBoardID(Int)
         case noEpic(String)
     }
 }
 
 extension DataManager where Trait == EpicTrait {
-    func loadEpics() throws -> [Epic] {
-        let epics = try getRawModel() ?? {
-            throw Trait.Error.noEpics
+    func loadEpics(boardID: Int) throws -> [Epic] {
+        let epics = try getRawModel(extraPath: "/\(boardID)") ?? {
+            throw Trait.Error.noEpicsFromBoardID(boardID)
             }()
 
         if epics.isEmpty {
-            throw Trait.Error.noEpics
+            throw Trait.Error.noEpicsFromBoardID(boardID)
         }
 
         return epics
     }
 
-    func saveEpics(_ epics: [Epic]) throws {
+    func saveEpics(_ epics: [Epic], boardID: Int) throws {
         if epics.isEmpty {
-            throw Trait.Error.noEpics
+            throw Trait.Error.noEpicsFromBoardID(boardID)
         }
 
-        try write(epics)
+        try write(epics, extraPath: "/\(boardID)")
     }
 }
 
 extension EpicTrait.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .noEpics:
-            return "Epics not found."
+        case .noEpicsFromBoardID(let boardID):
+            return "BoardID: \(boardID) not found in epics."
         case .noEpic(let name):
             return "\'\(name)\' not found."
         }

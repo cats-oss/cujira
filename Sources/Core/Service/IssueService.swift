@@ -141,15 +141,15 @@ public final class IssueService {
 
         let epics = try recursiveFetch(startAt: 0, list: [])
 
-        try epicDataManager.saveEpics(epics)
+        try epicDataManager.saveEpics(epics, boardID: boardID)
 
         return epics
     }
 
     func getEpics(boardID: Int) throws -> [Epic] {
         do {
-            return try epicDataManager.loadEpics()
-        } catch EpicTrait.Error.noEpics {
+            return try epicDataManager.loadEpics(boardID: boardID)
+        } catch EpicTrait.Error.noEpicsFromBoardID {
             return try fetchAllEpics(boardID: boardID)
         } catch {
             throw error
