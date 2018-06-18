@@ -17,7 +17,7 @@ public final class SprintService {
         self.sprintDataManager = sprintDataManager
     }
 
-    public func fetchAllSprints(boardID: Int) throws -> [Sprint] {
+    func fetchAllSprints(boardID: Int) throws -> [Sprint] {
         func recursiveFetch(startAt: Int, list: [Sprint]) throws -> [Sprint] {
             let response = try session.send(GetAllSprintsRequest(boardId: boardID, startAt: startAt))
             let values = response.values
@@ -37,7 +37,7 @@ public final class SprintService {
         return sprints
     }
 
-    public func getSprints(boardID: Int) throws -> [Sprint] {
+    func getSprints(boardID: Int) throws -> [Sprint] {
         do {
             return try sprintDataManager.loadSprints(boardID: boardID)
         } catch SprintTrait.Error.noSprintsFromBoardID {
@@ -58,13 +58,13 @@ public final class SprintService {
         }
     }
 
-    public func getSprint(sprintID: Int, boardID: Int, useCache: Bool) throws -> Sprint {
+    func getSprint(sprintID: Int, boardID: Int, useCache: Bool) throws -> Sprint {
         return try getSprint(boardID: boardID, where: { $0.id == sprintID }, useCache: useCache) ?? {
             throw SprintTrait.Error.noSprint(boardID: boardID, sprintID: sprintID)
         }()
     }
 
-    public func getSprint(boardID: Int, name: String, useCache: Bool) throws -> Sprint {
+    func getSprint(boardID: Int, name: String, useCache: Bool) throws -> Sprint {
         return try getSprint(boardID: boardID, where: { $0.name.contains(name) }, useCache: useCache) ?? {
             throw SprintTrait.Error.noSprintName(name)
         }()

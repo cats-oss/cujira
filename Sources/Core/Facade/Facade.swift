@@ -8,8 +8,7 @@
 import Foundation
 
 public final class Facade {
-    public let sprintService: SprintService
-
+    let sprintService: SprintService
     let issueService: IssueService
     let fieldService: FieldService
     let boardService: BoardService

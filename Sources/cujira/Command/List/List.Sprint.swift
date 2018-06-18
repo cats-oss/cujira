@@ -36,9 +36,9 @@ extension List {
 
             let sprints: [Core.Sprint]
             if let option = parser.shift(), option == "-f" || option == "--fetch" {
-                sprints = try facade.sprintService.fetchAllSprints(boardID: boardID)
+                sprints = try facade.sprint.sprints(boardID: boardID, useCache: false)
             } else {
-                sprints = try facade.sprintService.getSprints(boardID: boardID)
+                sprints = try facade.sprint.sprints(boardID: boardID, useCache: true)
             }
 
             print("Results:")
