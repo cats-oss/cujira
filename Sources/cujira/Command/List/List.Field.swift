@@ -1,32 +1,15 @@
 //
-//  Field.Command.swift
-//  Core
+//  List.Field.swift
+//  cujira
 //
-//  Created by marty-suzuki on 2018/06/15.
+//  Created by marty-suzuki on 2018/06/18.
 //
 
 import Core
 import Foundation
 
-enum Field {
-    static func run(_ parser: ArgumentParser, facade: Facade) throws {
-        let command: Command = try parser.parse()
-
-        do {
-            switch command {
-            case .list:
-                try List.run(parser, facade: facade)
-            }
-        } catch {
-            throw Root.Error(inner: error, usage: Field.Command.usageDescription(parser.root))
-        }
-    }
-
-    enum Command: String, CommandList {
-        case list
-    }
-
-    enum List {
+extension List {
+    enum Field {
         enum Error: Swift.Error {
             case noParameter
         }
@@ -45,7 +28,7 @@ enum Field {
             } else {
                 fields.forEach { field in
                     print("""
-                        
+
                         id: \(field.id)
                         name: \(field.name)
                         custom: \(field.custom)
@@ -53,5 +36,25 @@ enum Field {
                 }
             }
         }
+    }
+}
+
+extension List.Field: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd)
+                ... Show fields from cache.
+        """
+    }
+
+    static func usageDescriptionAndOptions(_ cmd: String) -> String {
+        return usageDescription(cmd) + """
+
+
+            Options:
+
+                -f | --fetch
+                    ... Fetch from API.
+        """
     }
 }

@@ -21,26 +21,15 @@ extension Root.Command {
                     + \(element.rawValue)
                         ... Show issues from API or Cache.
                 """
-            case .board:
-                return """
-                    + \(element.rawValue)
-                        ... Show boards from API or Cache.
-                """
-            case .sprint:
-                return """
-                    + \(element.rawValue)
-                        ... Show sprints from API or Cache.
-                """
             case .alias:
                 return """
                     + \(element.rawValue)
                         ... Manage aliases.
                 """
-
-            case .field:
+            case .list:
                 return """
                     + \(element.rawValue)
-                        ... Show fields from API or Cache.
+                        ... Show sprint, board or field List from API or Cache.
                 """
             }
         }

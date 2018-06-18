@@ -18,27 +18,19 @@ enum Root {
         case .issue:
             try Issue.run(parser, facade: facade)
 
-        case .board:
-            try Board.run(parser, facade: facade)
-
-        case .sprint:
-            try Sprint.run(parser, facade: facade)
-
         case .alias:
             try Alias.run(parser, facade: facade)
 
-        case .field:
-            try Field.run(parser, facade: facade)
+        case .list:
+            try List.run(parser, facade: facade)
         }
     }
 
     enum Command: String, CommandList {
         case alias
-        case board
         case issue
+        case list
         case register
-        case sprint
-        case field
     }
 
     struct Error: Swift.Error {

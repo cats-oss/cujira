@@ -1,33 +1,17 @@
 //
-//  Board.Command.swift
+//  List.Board.swift
 //  cujira
 //
-//  Created by marty-suzuki on 2018/06/06.
+//  Created by marty-suzuki on 2018/06/18.
 //
 
 import Core
+import Foundation
 
-enum Board {
-    static func run(_ parser: ArgumentParser, facade: Facade) throws {
-        let command: Command = try parser.parse()
-
-        do {
-            switch command {
-            case .list:
-                try List.run(parser, facade: facade)
-            }
-        } catch {
-            throw Root.Error(inner: error, usage: Board.Command.usageDescription(parser.root))
-        }
-    }
-
-    enum Command: String, CommandList {
-        case list
-    }
-
-    enum List {
+extension List {
+    enum Board {
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
-            
+
             let boards: [Core.Board]
             if let option = parser.shift(), option == "-f" || option == "--fetch" {
                 boards = try facade.boardService.fetchAllBoards()
@@ -50,5 +34,25 @@ enum Board {
                 }
             }
         }
+    }
+}
+
+extension List.Board: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd)
+                ... Show boards from cache.
+        """
+    }
+
+    static func usageDescriptionAndOptions(_ cmd: String) -> String {
+        return usageDescription(cmd) + """
+
+        
+            Options:
+
+                -f | --fetch
+                    ... Fetch from API.
+        """
     }
 }

@@ -1,31 +1,15 @@
 //
-//  Sprint.Command.swift
+//  List.Sprint.swift
 //  cujira
 //
-//  Created by marty-suzuki on 2018/06/06.
+//  Created by marty-suzuki on 2018/06/18.
 //
 
 import Core
 import Foundation
 
-enum Sprint {
-    static func run(_ parser: ArgumentParser, facade: Facade) throws {
-        let command: Command = try parser.parse()
-        do {
-            switch command {
-            case .list:
-                try List.run(parser, facade: facade)
-            }
-        } catch {
-            throw Root.Error(inner: error, usage: Sprint.Command.usageDescription(parser.root))
-        }
-    }
-
-    enum Command: String, CommandList {
-        case list
-    }
-
-    enum List {
+extension List {
+    enum Sprint {
         enum Error: Swift.Error {
             case noBoardID
             case noParameter
@@ -74,15 +58,37 @@ enum Sprint {
     }
 }
 
-extension Sprint.List.Error: LocalizedError {
+extension List.Sprint.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noBoardID:
-            return "BOARD_ID is required parameter."
+            return "[BOARD_ID] is required parameter."
         case .noParameter:
-            return "BOARD_ID or --registered [PROJECT_ALIAS] is required parameter."
+            return "[BOARD_ID] or --registered [PROJECT_ALIAS] is required parameter."
         case .noProjectAlias:
-            return "PROJECT_ALIAS is required paramter."
+            return "[PROJECT_ALIAS] is required paramter."
         }
+    }
+}
+
+extension List.Sprint: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd) [BOARD_ID]
+                ... Show sprints from cache with a `BOARD_ID`. Please check BoardIDs with `cujira list board`.
+            + \(cmd) [-r | --registered] [PROJECT_ALIAS]
+                ... Show sprints from cache with a registered `PROJECT_ALIAS`. Please check aliases with `cujira alias project list`.
+        """
+    }
+
+    static func usageDescriptionAndOptions(_ cmd: String) -> String {
+        return usageDescription(cmd) + """
+
+        
+            Options:
+
+                -f | --fetch
+                    ... Fetch from API.
+        """
     }
 }
