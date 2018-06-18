@@ -145,7 +145,7 @@ extension Issue {
                 let toDateString = DateFormatter.core.yyyyMMdd.string(from: toDate)
                 dateRangeJQL = "created >= \'\(second)\' and created <= \'\(toDateString)\'"
             } else {
-                let sprint = try facade.sprintService.getSprint(boardID: projectAlias.boardID, name: second)
+                let sprint = try facade.sprintService.getSprint(boardID: projectAlias.boardID, name: second, useCache: true)
                 dateRangeJQL = "sprint = \'\(sprint.name)\'"
             }
 

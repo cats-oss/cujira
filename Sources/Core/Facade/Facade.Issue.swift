@@ -29,7 +29,7 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
                 return IssueResult(issue: issue, epic: nil, storyPoint: nil)
             }
 
-            let board = try base.boardService.getBoard(projectID: projectID)
+            let board = try base.boardService.getBoard(projectID: projectID, useCache: true)
 
             let epicAndStoryPoint = try issue.fields.customFields
                 .reduce((epic: nil, storyPoint: nil)) { values, cf -> (Epic?, Int?) in
@@ -53,15 +53,15 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
 // MARK: - IssueType
 
 extension FacadeExtension where Trait == IssueFacadeTrait {
-    public func issueType(name: String) throws -> IssueType {
-        return try base.issueService.getIssueType(name: name)
+    public func issueType(name: String, useCache: Bool = true) throws -> IssueType {
+        return try base.issueService.getIssueType(name: name, useCache: useCache)
     }
 }
 
 // MARK: - 
 
 extension FacadeExtension where Trait == IssueFacadeTrait {
-    public func status(name: String) throws -> Status {
-        return try base.issueService.getStatus(name: name)
+    public func status(name: String, useCache: Bool = true) throws -> Status {
+        return try base.issueService.getStatus(name: name, useCache: useCache)
     }
 }

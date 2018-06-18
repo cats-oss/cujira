@@ -62,7 +62,7 @@ public final class IssueService {
         return types
     }
 
-    func getIssueTypes(useMemoryCache: Bool = true) throws -> [IssueType] {
+    func getIssueTypes(useMemoryCache: Bool) throws -> [IssueType] {
         if useMemoryCache, let types = issueTypes {
             return types
         }
@@ -76,9 +76,9 @@ public final class IssueService {
         }
     }
 
-    func getIssueType(name: String, useCache: Bool = true) throws -> IssueType {
+    func getIssueType(name: String, useCache: Bool) throws -> IssueType {
         if useCache {
-            let types = try getIssueTypes()
+            let types = try getIssueTypes(useMemoryCache: true)
             return try types.first { $0.name == name } ??
                 getIssueType(name: name, useCache: false)
         } else {
@@ -110,7 +110,7 @@ public final class IssueService {
         }
     }
 
-    func getStatus(name: String, useCache: Bool = true) throws -> Status {
+    func getStatus(name: String, useCache: Bool) throws -> Status {
         if useCache {
             let statuses = try getStatuses()
             return try statuses.first { $0.name == name } ??

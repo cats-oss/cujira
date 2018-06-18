@@ -64,14 +64,14 @@ public final class BoardService {
     }
 
     /// Get a board with `boardID`.
-    public func getBoard(boardID: Int, useCache: Bool = true) throws -> Board {
+    public func getBoard(boardID: Int, useCache: Bool) throws -> Board {
         return try getBoard(where: { $0.id == boardID }, useCache: useCache) ?? {
             throw BoardTrait.Error.noBoardFromBoardID(boardID)
         }()
     }
 
     /// Get a board with `projectID`.
-    public func getBoard(projectID: Int, useCache: Bool = true) throws -> Board {
+    public func getBoard(projectID: Int, useCache: Bool) throws -> Board {
         return try getBoard(where: { $0.location.project?.projectId == projectID },
                             useCache: useCache) ?? {
             throw BoardTrait.Error.noBoardFromProjectID(projectID)
