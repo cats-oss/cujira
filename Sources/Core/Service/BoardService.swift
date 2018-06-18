@@ -11,6 +11,8 @@ public final class BoardService {
     private let session: JiraSession
     private let boardDataManager: BoardDataManager
 
+    private var boards: [Board]?
+
     public init(session: JiraSession,
                 boardDataManager: BoardDataManager) {
         self.session = session
@@ -18,7 +20,7 @@ public final class BoardService {
     }
 
     /// Fetch all boards recursively.
-    public func fetchAllBoards() throws -> [Board] {
+    func fetchAllBoards() throws -> [Board] {
         func recursiveFetch(startAt: Int, list: [Board]) throws -> [Board] {
             let response = try session.send(GetAllBoardsRequest(startAt: startAt))
             let values = response.values
@@ -42,7 +44,11 @@ public final class BoardService {
     ///
     /// - note: First, trying to get all boards from cache.
     ///         When there are no boards, trying to fetch all boards from API.
-    public func getBoards() throws -> [Board] {
+    func getBoards(useMemoryCache: Bool) throws -> [Board] {
+        if useMemoryCache, let boards = self.boards {
+            return boards
+        }
+
         do {
             return try boardDataManager.loadBoards()
         } catch BoardTrait.Error.noBoards {
@@ -54,7 +60,7 @@ public final class BoardService {
 
     private func getBoard(where: (Board) throws -> Bool, useCache: Bool) throws -> Board? {
         if useCache {
-            let boards = try getBoards()
+            let boards = try getBoards(useMemoryCache: true)
             return try boards.first(where: `where`) ??
                 getBoard(where: `where`, useCache: false)
         } else {
@@ -64,14 +70,14 @@ public final class BoardService {
     }
 
     /// Get a board with `boardID`.
-    public func getBoard(boardID: Int, useCache: Bool) throws -> Board {
+    func getBoard(boardID: Int, useCache: Bool) throws -> Board {
         return try getBoard(where: { $0.id == boardID }, useCache: useCache) ?? {
             throw BoardTrait.Error.noBoardFromBoardID(boardID)
         }()
     }
 
     /// Get a board with `projectID`.
-    public func getBoard(projectID: Int, useCache: Bool) throws -> Board {
+    func getBoard(projectID: Int, useCache: Bool) throws -> Board {
         return try getBoard(where: { $0.location.project?.projectId == projectID },
                             useCache: useCache) ?? {
             throw BoardTrait.Error.noBoardFromProjectID(projectID)

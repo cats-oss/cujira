@@ -14,9 +14,9 @@ extension List {
 
             let boards: [Core.Board]
             if let option = parser.shift(), option == "-f" || option == "--fetch" {
-                boards = try facade.boardService.fetchAllBoards()
+                boards = try facade.board.boards(useCache: false)
             } else {
-                boards = try facade.boardService.getBoards()
+                boards = try facade.board.boards(useCache: true)
             }
 
             print("Results:")

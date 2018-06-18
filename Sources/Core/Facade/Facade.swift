@@ -12,12 +12,12 @@ public final class Facade {
 
     let issueService: IssueService
     let fieldService: FieldService
+    let boardService: BoardService
 
     public let projectService: ProjectService
     public let jqlService: JQLService
     public let configService: ConfigService
-    public let boardService: BoardService
-
+    
     public convenience init() {
         self.init(baseDirectoryPath: DataManagerConst.workingDir)
     }

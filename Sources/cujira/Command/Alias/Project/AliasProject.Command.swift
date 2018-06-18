@@ -58,7 +58,7 @@ enum AliasProject {
                     throw Error.noBoardID
                 }
                 projectID = _projectID
-                boardID = try facade.boardService.getBoard(projectID: _projectID, useCache: true).id
+                boardID = try facade.board.board(projectID: _projectID, useCache: true).id
 
             case "-b", "--board-id":
                 guard let _boardID = parser.shift().flatMap(Int.init) else {
@@ -66,7 +66,7 @@ enum AliasProject {
                 }
                 boardID = _boardID
 
-                let board = try facade.boardService.getBoard(boardID: _boardID, useCache: true)
+                let board = try facade.board.board(boardID: _boardID, useCache: true)
                 guard let _projectID = board.location.project?.projectId else {
                     throw Error.noProjectID
                 }
