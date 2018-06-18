@@ -37,6 +37,8 @@ public final class BoardService {
 
         try boardDataManager.saveBoards(boards)
 
+        self.boards = boards
+
         return boards
     }
 
