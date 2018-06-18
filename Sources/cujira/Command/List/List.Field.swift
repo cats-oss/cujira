@@ -17,9 +17,9 @@ extension List {
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let fields: [Core.Field]
             if let option = parser.shift(), option == "-f" || option == "--fetch" {
-                fields = try facade.issue.fields(userCache: false)
+                fields = try facade.field.fields(useCache: false)
             } else {
-                fields = try facade.issue.fields()
+                fields = try facade.field.fields(useCache: true)
             }
 
             print("Results:")

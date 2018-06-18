@@ -11,10 +11,10 @@ extension AliasCustomField.Command {
     static func usageDescription(_ cmd: String) -> String {
         let values = elements.map { element -> String in
             switch element {
-            case .epiclink:
-                return ""
-            case .storypoint:
-                return ""
+            case .epiclink, .storypoint:
+                return AliasCustomField.UpdateAlias.usageDescription(element.rawValue)
+            case .list:
+                return AliasCustomField.List.usageDescription(element.rawValue)
             }
         }
 
@@ -22,3 +22,20 @@ extension AliasCustomField.Command {
     }
 }
 
+extension AliasCustomField.UpdateAlias: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd) [FIELD_ID]
+                ... Add Custom Field alias with `FIELD_ID`.
+        """
+    }
+}
+
+extension AliasCustomField.List: UsageDescribable {
+    static func usageDescription(_ cmd: String) -> String {
+        return """
+            + \(cmd)
+                ... Show all Field aliases.
+        """
+    }
+}

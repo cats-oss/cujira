@@ -9,7 +9,10 @@ import Foundation
 
 public final class Facade {
     public let sprintService: SprintService
+
     let issueService: IssueService
+    let fieldService: FieldService
+
     public let projectService: ProjectService
     public let jqlService: JQLService
     public let configService: ConfigService
@@ -34,6 +37,7 @@ public final class Facade {
         let issueTypeDataManager = IssueTypeDataManager(workingDirectory: workingDirectory)
         let statusDataManager = StatusDataManager(workingDirectory: workingDirectory)
         let fieldDataManager = FieldDataManager(workingDirectory: workingDirectory)
+        let customFieldAliasManager = CustomFieldAliasManager(workingDirectory: workingDirectory)
         let epicDataManager = EpicDataManager(workingDirectory: workingDirectory)
 
         let session = URLSession.shared
@@ -47,12 +51,18 @@ public final class Facade {
                                         statusDataManager: statusDataManager,
                                         fieldDataManager: fieldDataManager,
                                         epicDataManager: epicDataManager)
+
+        let fieldService = FieldService(session: jiraSession,
+                                        fieldDataManager: fieldDataManager,
+                                        customFieldAliasManager: customFieldAliasManager)
+
         let projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
         let jqlService = JQLService(aliasManager: jqlAliasManager)
         let boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)
 
         self.init(sprintService: sprintService,
                   issueService: issueService,
+                  fieldService: fieldService,
                   projectService: projectService,
                   jqlService: jqlService,
                   configService: configService,
@@ -61,15 +71,25 @@ public final class Facade {
 
     public init(sprintService: SprintService,
                 issueService: IssueService,
+                fieldService: FieldService,
                 projectService: ProjectService,
                 jqlService: JQLService,
                 configService: ConfigService,
                 boardService: BoardService) {
         self.sprintService = sprintService
         self.issueService = issueService
+        self.fieldService = fieldService
         self.projectService = projectService
         self.jqlService = jqlService
         self.configService = configService
         self.boardService = boardService
     }
+}
+
+// MARK: - Extension
+
+public protocol FacadeTrait {}
+
+public struct FacadeExtension<Trait: FacadeTrait> {
+    let base: Facade
 }

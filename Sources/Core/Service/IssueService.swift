@@ -89,40 +89,6 @@ public final class IssueService {
         }
     }
 
-    // MARK: - Field
-
-    func fetchAllFields() throws -> [Field] {
-        let request = GetAllFieldsRequest()
-        let fields = try session.send(request)
-
-        try fieldDataManager.saveFields(fields)
-
-        return fields
-    }
-
-    func getFields() throws -> [Field] {
-        do {
-            return try fieldDataManager.loadFields()
-        } catch FieldTrait.Error.noFields {
-            return try fetchAllFields()
-        } catch {
-            throw error
-        }
-    }
-
-    func getField(name: String, useCache: Bool = true) throws -> Field {
-        if useCache {
-            let fields = try getFields()
-            return try fields.first { $0.name == name } ??
-                getField(name: name, useCache: false)
-        } else {
-            let fields = try fetchAllFields()
-            return try fields.first { $0.name == name } ?? {
-                throw FieldTrait.Error.noField(name)
-            }()
-        }
-    }
-
     // MARK: - Status
 
     func fetchAllStatuses() throws -> [Status] {

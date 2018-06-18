@@ -15,7 +15,8 @@ public enum FieldTrait: DataTrait {
 
     public enum Error: Swift.Error {
         case noFields
-        case noField(String)
+        case noFieldName(String)
+        case noFieldID(String)
     }
 }
 
@@ -46,8 +47,10 @@ extension FieldTrait.Error: LocalizedError {
         switch self {
         case .noFields:
             return "Fields not found."
-        case .noField(let name):
-            return "\'\(name)\' not found."
+        case .noFieldName(let name):
+            return "Name: \'\(name)\' not found."
+        case .noFieldID(let id):
+            return "ID: \'\(id)\' not found."
         }
     }
 }
