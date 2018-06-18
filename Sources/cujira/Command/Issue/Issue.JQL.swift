@@ -16,7 +16,7 @@ extension Issue {
         }
 
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
-            let config = try facade.configService.loadConfig()
+            let config = try facade.config.current(unsafe: false)
 
             guard let first = parser.shift(), !first.isEmpty else {
                 throw Error.noParameter

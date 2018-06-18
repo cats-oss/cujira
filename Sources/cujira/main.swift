@@ -23,7 +23,7 @@ if parser.runVersion(version) {
 let facade = Facade()
 
 // Set tempConfig when executing command with `env CUJIRA_USER_NAME="XXX" CUJIRA_API_KEY="XXX" CUJIRA_DOMAIN="XXX" cujira`.
-facade.configService.setTempConfig(dictionay: ProcessInfo.processInfo.environment)
+facade.config.setTempConfig(withEnvironment: ProcessInfo.processInfo.environment)
 
 do {
     try Root.run(parser, facade: facade)

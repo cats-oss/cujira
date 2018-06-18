@@ -125,7 +125,7 @@ extension Issue {
         }
 
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
-            let config = try facade.configService.loadConfig()
+            let config = try facade.config.current(unsafe: false)
 
             guard let projectAliasName = parser.shift(), !projectAliasName.isEmpty else {
                 throw Error.noProjectAlias

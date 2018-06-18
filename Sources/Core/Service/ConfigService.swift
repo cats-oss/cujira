@@ -22,7 +22,7 @@ public final class ConfigService {
         self.manager = manager
     }
 
-    public func loadConfig(unsafe: Bool = false) throws -> Config {
+    func loadConfig(unsafe: Bool = false) throws -> Config {
         if unsafe {
             let config = try manager.getRawModel()
             return Config(domain: config?.domain ?? "nil",
@@ -39,26 +39,25 @@ public final class ConfigService {
         }
     }
 
-    /// Update cached value of `domain`.
-    public func update(domain: String) throws {
+    func update(domain: String) throws {
         try manager.update(\.domain, domain)
         tempConfig = nil
     }
 
-    /// Update cached value of `apiKey`.
-    public func update(apiKey: String) throws {
+
+    func update(apiKey: String) throws {
         try manager.update(\.apiKey, apiKey)
         tempConfig = nil
     }
 
-    /// Update cached value of `username`.
-    public func update(username: String) throws {
+
+    func update(username: String) throws {
         try manager.update(\.username, username)
         tempConfig = nil
     }
 
-    /// Set tempConfig with Dictionary.
-    public func setTempConfig(dictionay: [String: String]) {
+
+    func setTempConfig(dictionay: [String: String]) {
         guard
             let username = dictionay[Key.username], !username.isEmpty,
             let apikey = dictionay[Key.apikey], !apikey.isEmpty,

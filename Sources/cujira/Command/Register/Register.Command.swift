@@ -47,7 +47,7 @@ enum Register {
                 throw Error.noDomain
             }
 
-            try facade.configService.update(domain: domain)
+            try facade.config.update(domain: domain)
         }
     }
 
@@ -57,7 +57,7 @@ enum Register {
                 throw Error.noApiKey
             }
 
-            try facade.configService.update(apiKey: apiKey)
+            try facade.config.update(apiKey: apiKey)
         }
     }
 
@@ -67,13 +67,13 @@ enum Register {
                 throw Error.noUsername
             }
 
-            try facade.configService.update(username: username)
+            try facade.config.update(username: username)
         }
     }
 
     enum Info {
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
-            let config = try facade.configService.loadConfig(unsafe: true)
+            let config = try facade.config.current(unsafe: true)
 
             print("Config:\n")
             print("\tdomain: \(config.domain)")
