@@ -76,7 +76,7 @@ enum AliasProject {
                 throw Error.invalidParameter
             }
 
-            try facade.projectService.addAlias(name: name, projectID: projectID, boardID: boardID)
+            try facade.project.addAlias(name: name, projectID: projectID, boardID: boardID)
         }
     }
 
@@ -86,13 +86,13 @@ enum AliasProject {
                 throw Error.noName
             }
 
-            try facade.projectService.removeAlias(name: name)
+            try facade.project.removeAlias(name: name)
         }
     }
 
     enum List {
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
-            let aliases = try facade.projectService.loadAliases()
+            let aliases = try facade.project.aliases()
 
             print("Registered Project Aliases:\n")
             aliases.forEach {

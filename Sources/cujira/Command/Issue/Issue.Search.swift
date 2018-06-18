@@ -131,7 +131,7 @@ extension Issue {
                 throw Error.noProjectAlias
             }
 
-            let projectAlias = try facade.projectService.getAlias(name: projectAliasName)
+            let projectAlias = try facade.project.alias(name: projectAliasName)
 
             guard let second = parser.shift(), !second.isEmpty else {
                 throw Error.noDateRange

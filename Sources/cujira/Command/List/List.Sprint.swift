@@ -26,7 +26,7 @@ extension List {
                 guard let name = parser.shift(), !name.isEmpty else {
                     throw Error.noProjectAlias
                 }
-                boardID = try facade.projectService.getAlias(name: name).boardID
+                boardID = try facade.project.alias(name: name).boardID
             } else {
                 guard let _boardID = Int(first) else {
                     throw Error.noBoardID
