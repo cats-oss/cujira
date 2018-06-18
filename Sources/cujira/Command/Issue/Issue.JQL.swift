@@ -27,7 +27,7 @@ extension Issue {
                 guard let name = parser.shift(), !name.isEmpty else {
                     throw Error.noJQLAlias
                 }
-                jql = try facade.jqlService.getAlias(name: name).jql
+                jql = try facade.jql.alias(name: name).jql
             } else {
                 jql = first
             }

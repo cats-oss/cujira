@@ -47,7 +47,7 @@ enum AliasJQL {
                 throw Error.noJQL
             }
 
-            try facade.jqlService.addAlias(name: name, jql: jql)
+            try facade.jql.addAlias(name: name, jql: jql)
         }
     }
 
@@ -57,13 +57,13 @@ enum AliasJQL {
                 throw Error.noName
             }
 
-            try facade.jqlService.removeAlias(name: name)
+            try facade.jql.removeAlias(name: name)
         }
     }
 
     enum List {
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
-            let aliases = try facade.jqlService.loadAliases()
+            let aliases = try facade.jql.aliases()
 
             print("Registered Jira Query Language Aliases:\n")
             aliases.forEach {

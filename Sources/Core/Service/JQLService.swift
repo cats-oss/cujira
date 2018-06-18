@@ -14,19 +14,19 @@ public final class JQLService {
         self.aliasManager = aliasManager
     }
 
-    public func loadAliases() throws -> [JQLAlias] {
+    func loadAliases() throws -> [JQLAlias] {
         return try aliasManager.loadAliases()
     }
 
-    public func getAlias(name: String) throws -> JQLAlias {
+    func getAlias(name: String) throws -> JQLAlias {
         return try aliasManager.getAlias(name: name)
     }
 
-    public func addAlias(name: String, jql: String) throws {
-        return try aliasManager.addAlias(name: name, jql: jql)
+    func addAlias(name: String, jql: String) throws {
+        try aliasManager.addAlias(name: name, jql: jql)
     }
 
-    public func removeAlias(name: String) throws {
+    func removeAlias(name: String) throws {
         try aliasManager.removeAlias(name: name)
     }
 }
