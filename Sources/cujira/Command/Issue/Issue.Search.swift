@@ -1,5 +1,5 @@
 //
-//  Issue.List.swift
+//  Issue.Search.swift
 //  Core
 //
 //  Created by marty-suzuki on 2018/06/12.
@@ -9,7 +9,7 @@ import Foundation
 import Core
 
 extension Issue {
-    enum List {
+    enum Search {
         enum Error: Swift.Error {
             case noDateRange
             case noProjectAlias
@@ -186,8 +186,8 @@ extension Issue {
     }
 }
 
-extension Issue.List.Option: Equatable {
-    static func == (lhs: Issue.List.Option, rhs: Issue.List.Option) -> Bool {
+extension Issue.Search.Option: Equatable {
+    static func == (lhs: Issue.Search.Option, rhs: Issue.Search.Option) -> Bool {
         switch (lhs, rhs) {
         case (.json, json),
              (.aggregate, .aggregate),
@@ -239,7 +239,7 @@ extension Issue.List.Option: Equatable {
     }
 }
 
-extension Issue.List: UsageDescribable {
+extension Issue.Search: UsageDescribable {
     static func usageDescription(_ cmd: String) -> String {
         return """
             + \(cmd) [PROJECT_ALIAS] [today | yyyy/mm/dd | SPRINT_NAME]
@@ -267,7 +267,7 @@ extension Issue.List: UsageDescribable {
     }
 }
 
-extension Issue.List.Error: LocalizedError {
+extension Issue.Search.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noDateRange:

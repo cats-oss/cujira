@@ -13,11 +13,11 @@ enum Issue {
         let command: Command = try parser.parse()
 
         switch command {
-        case .list:
+        case .search:
             do {
-                try List.run(parser, facade: facade)
+                try Search.run(parser, facade: facade)
             } catch {
-                throw Root.Error(inner: error, usage: Issue.List.usageDescription(command.rawValue))
+                throw Root.Error(inner: error, usage: Issue.Search.usageDescription(command.rawValue))
             }
         case .jql:
             do {
@@ -29,7 +29,7 @@ enum Issue {
     }
 
     enum Command: String, CommandList {
-        case list
+        case search
         case jql
     }
 

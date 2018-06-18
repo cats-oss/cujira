@@ -11,8 +11,8 @@ extension Issue.Command {
     static func usageDescription(_ cmd: String) -> String {
         let values = elements.map { element -> String in
             switch element {
-            case .list:
-                return Issue.List.usageDescription(element.rawValue)
+            case .search:
+                return Issue.Search.usageDescription(element.rawValue)
             case .jql:
                 return Issue.JQL.usageDescription(element.rawValue)
             }
