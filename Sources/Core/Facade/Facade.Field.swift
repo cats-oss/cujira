@@ -18,7 +18,7 @@ extension Facade {
 extension FacadeExtension where Trait == FieldFacadeTrait {
     public func fields(useCache: Bool) throws -> [Field] {
         if useCache {
-            return try base.fieldService.getFields()
+            return try base.fieldService.getFields(useMemoryCache: true)
         } else {
             return try base.fieldService.fetchAllFields()
         }

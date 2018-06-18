@@ -24,7 +24,7 @@ extension DataManager where Trait == ProjectAliasTrait {
     func loadAliases() throws -> [ProjectAlias] {
         let rawAliases = try getRawModel() ?? {
             throw Trait.Error.noProjectAliases
-            }()
+        }()
 
         if rawAliases.isEmpty {
             throw Trait.Error.noProjectAliases

@@ -12,6 +12,8 @@ public final class FieldService {
     private let fieldDataManager: FieldDataManager
     private let customFieldAliasManager: CustomFieldAliasManager
 
+    private var fields: [Field]?
+
     init(session: JiraSession,
          fieldDataManager: FieldDataManager,
          customFieldAliasManager: CustomFieldAliasManager) {
@@ -26,10 +28,16 @@ public final class FieldService {
 
         try fieldDataManager.saveFields(fields)
 
+        self.fields = fields
+
         return fields
     }
 
-    func getFields() throws -> [Field] {
+    func getFields(useMemoryCache: Bool) throws -> [Field] {
+        if useMemoryCache, let fields = fields {
+            return fields
+        }
+
         do {
             return try fieldDataManager.loadFields()
         } catch FieldTrait.Error.noFields {
@@ -41,7 +49,7 @@ public final class FieldService {
 
     func getField(name: String, useCache: Bool) throws -> Field {
         if useCache {
-            let fields = try getFields()
+            let fields = try getFields(useMemoryCache: true)
             return try fields.first { $0.name == name } ??
                 getField(name: name, useCache: false)
         } else {
@@ -54,7 +62,7 @@ public final class FieldService {
 
     func getField(id: String, useCache: Bool) throws -> Field {
         if useCache {
-            let fields = try getFields()
+            let fields = try getFields(useMemoryCache: true)
             return try fields.first { $0.id == id } ??
                 getField(id: id, useCache: false)
         } else {

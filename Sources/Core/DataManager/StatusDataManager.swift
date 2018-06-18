@@ -23,7 +23,7 @@ extension DataManager where Trait == StatusTrait {
     func loadStatuses() throws -> [Status] {
         let statuses = try getRawModel() ?? {
             throw Trait.Error.noStatuses
-            }()
+        }()
 
         if statuses.isEmpty {
             throw Trait.Error.noStatuses

@@ -17,7 +17,7 @@ extension Facade {
 
 extension FacadeExtension where Trait == IssueFacadeTrait {
     public func search(jql: String) throws -> [IssueResult] {
-        let fields = try base.fieldService.getFields()
+        let fields = try base.fieldService.getFields(useMemoryCache: true)
         let customFields = fields.filter { $0.custom }
         let result = try base.issueService.search(jql: jql, customFields: customFields)
 
