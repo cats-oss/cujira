@@ -24,12 +24,12 @@ extension FacadeExtension where Trait == FieldFacadeTrait {
         }
     }
 
-    public func fied(id: String, useCache: Bool) throws -> Field {
+    public func field(id: String, useCache: Bool) throws -> Field {
         return try base.fieldService.getField(id: id, useCache: useCache)
     }
 
     public func addAlias(name: FieldAlias.Name, withFieldID id: String) throws {
-        let field = try fied(id: id, useCache: true)
+        let field = try self.field(id: id, useCache: true)
         try base.fieldService.addAlias(name: name, field: field)
     }
 
