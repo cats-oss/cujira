@@ -21,6 +21,8 @@ extension List.Command {
                 return List.Status.usageDescription(element.rawValue)
             case .epic:
                 return List.Epic.usageDescription(element.rawValue)
+            case .issuetype:
+                return List.IssueType.usageDescription(element.rawValue)
             }
         } + ["""
             Options:

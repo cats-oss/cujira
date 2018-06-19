@@ -43,6 +43,12 @@ enum List {
             } catch {
                 throw Root.Error(inner: error, usage: List.Epic.usageDescriptionAndOptions(command.rawValue))
             }
+        case .issuetype:
+            do {
+                try IssueType.run(parser, facade: facade)
+            } catch {
+                throw Root.Error(inner: error, usage: List.IssueType.usageDescriptionAndOptions(command.rawValue))
+            }
         }
     }
 
@@ -50,6 +56,7 @@ enum List {
         case board
         case epic
         case field
+        case issuetype
         case sprint
         case status
     }
