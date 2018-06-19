@@ -66,7 +66,7 @@ enum Issue {
                 let count = filteredIssues.count
                 return Aggregation(issueResults: filteredIssues, name: name, count: count)
             case .epicLink(let name):
-                let filteredIssues = issueResults.filter { $0.issue.fields.status.name == name }
+                let filteredIssues = issueResults.filter { $0.epic?.name == name }
                 let count = filteredIssues.count
                 return Aggregation(issueResults: filteredIssues, name: name, count: count)
             }
@@ -87,7 +87,7 @@ enum Issue {
             case .status(let name):
                 return result.filter { $0.issue.fields.status.name == name }
             case .epicLink(let name):
-                return result.filter { $0.issue.fields.status.name == name }
+                return result.filter { $0.epic?.name == name }
             }
         }
     }
