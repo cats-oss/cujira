@@ -37,11 +37,18 @@ enum List {
             } catch {
                 throw Root.Error(inner: error, usage: List.Status.usageDescriptionAndOptions(command.rawValue))
             }
+        case .epic:
+            do {
+                try Epic.run(parser, facade: facade)
+            } catch {
+                throw Root.Error(inner: error, usage: List.Epic.usageDescriptionAndOptions(command.rawValue))
+            }
         }
     }
 
     enum Command: String, CommandList {
         case board
+        case epic
         case field
         case sprint
         case status

@@ -59,7 +59,19 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
     }
 }
 
-// MARK: - 
+// MARK: - Epic
+
+extension FacadeExtension where Trait == IssueFacadeTrait {
+    public func epics(boardID: Int, useCache: Bool) throws -> [Epic] {
+        if useCache {
+            return try base.issueService.getEpics(boardID: boardID, shouldFetchIfError: true)
+        } else {
+            return try base.issueService.fetchAllEpics(boardID: boardID)
+        }
+    }
+}
+
+// MARK: - Status
 
 extension FacadeExtension where Trait == IssueFacadeTrait {
     public func status(name: String, useCache: Bool = true) throws -> Status {
