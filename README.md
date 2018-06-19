@@ -100,7 +100,7 @@ User: --
 If you want to get issues with `SPRINT_NAME`, check sprints with `cujira list sprint`.
 
 ```
-$ cujira list sprint --registered cujira-bug
+$ cujira list sprint --alias cujira-bug
 
 Results:
 

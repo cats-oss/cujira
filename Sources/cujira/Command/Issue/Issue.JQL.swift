@@ -23,7 +23,7 @@ extension Issue {
             }
 
             let jql: String
-            if first == "-r" || first == "--registered" {
+            if first == "-a" || first == "--alias" {
                 guard let name = parser.shift(), !name.isEmpty else {
                     throw Error.noJQLAlias
                 }
@@ -51,7 +51,7 @@ extension Issue.JQL: UsageDescribable {
         return """
             + \(cmd) [JQL_STRING]
                 ... Show issues with a raw JQL like below. `cujira issue jql "project = 12345 AND issueType = BUG"`.
-            + \(cmd) [-r | --registered] [JQL_ALIAS]
+            + \(cmd) [-a | --alias] [JQL_ALIAS]
                 ... Show issues with a registered `JQL_ALIAS`. Please check aliases with `cujira alias jql list`.
 
             Options:
@@ -69,7 +69,7 @@ extension Issue.JQL.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noParameter:
-            return "[JQL] or --registered [JQL_ALIAS] is required parameter."
+            return "[JQL] or --alias [JQL_ALIAS] is required parameter."
         case .noJQLAlias:
             return "[JQL_ALIAS] is required paramter."
         }

@@ -22,7 +22,7 @@ extension List {
             }
 
             let boardID: Int
-            if first == "-r" || first == "--registered" {
+            if first == "-a" || first == "--alias" {
                 guard let name = parser.shift(), !name.isEmpty else {
                     throw Error.noProjectAlias
                 }
@@ -64,7 +64,7 @@ extension List.Sprint.Error: LocalizedError {
         case .noBoardID:
             return "[BOARD_ID] is required parameter."
         case .noParameter:
-            return "[BOARD_ID] or --registered [PROJECT_ALIAS] is required parameter."
+            return "[BOARD_ID] or --alias [PROJECT_ALIAS] is required parameter."
         case .noProjectAlias:
             return "[PROJECT_ALIAS] is required paramter."
         }
@@ -76,7 +76,7 @@ extension List.Sprint: UsageDescribable {
         return """
             + \(cmd) [BOARD_ID]
                 ... Show sprints from cache with a `BOARD_ID`. Please check BoardIDs with `cujira list board`.
-            + \(cmd) [-r | --registered] [PROJECT_ALIAS]
+            + \(cmd) [-a | --alias] [PROJECT_ALIAS]
                 ... Show sprints from cache with a registered `PROJECT_ALIAS`. Please check aliases with `cujira alias project list`.
         """
     }
