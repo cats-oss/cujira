@@ -44,10 +44,10 @@ In addition, you can check registered information with `cujira register info`.
 
 ### 2. Check ProjectID (or BoardID) and Add `Project Alias`.
 
-You can check ProjectID (or BoardID) with `cujira board list` that shown all boards of your Jira domain.
+You can check ProjectID (or BoardID) with `cujira list board` that shown all boards of your Jira domain.
 
 ```
-$ cujira board list
+$ cujira list board
 
 Results:
 
@@ -81,7 +81,7 @@ $ cujira alias project list
 If you want to get today's issues of project, below command can show them.
 
 ```
-$ cujira issue list cujira-bug today
+$ cujira issue search cujira-bug today
 JQL: project = 10002 AND created >= startOfDay()
 
 Summary: All command responses are `Great Scott!!`.
@@ -97,10 +97,10 @@ Status: Open
 User: --
 ```
 
-If you want to get issues with `SPRINT_NAME`, check sprints with `cujira sprint list`.
+If you want to get issues with `SPRINT_NAME`, check sprints with `cujira list sprint`.
 
 ```
-$ cujira sprint list cujira-bug
+$ cujira list sprint --registered cujira-bug
 
 Results:
 
@@ -115,16 +115,16 @@ Results:
 	endDate: --
 ```
 
-After checking sprint name, you can get issues with `cujira issue list cujira-bug "Sprint 2"`.
+After checking sprint name, you can get issues with `cujira issue search cujira-bug "Sprint 2"`.
 
 ### Additional Usage for getting Issues.
 
-`cujira issue list` has some options.
+`cujira issue search` has some options.
 
 ```
 Options:
 
-    --issue-type [ISSUE_TYPE]
+    --issus-type [ISSUE_TYPE]
         ... Filter issues with a issueType.
     --label [ISSUE_LABEL]
         ... Filter issues with a issue label.
@@ -132,8 +132,12 @@ Options:
         ... Filter issues with a issue status.
     --assigned [USER_NAME]
         ... Filter issues with a user who has assigned.
+    --epic-link [EPIC_LINK]
+        ... Filter issues with a epic link.
     --aggregate
         ... Show every options issue counts.
+    --all-issues
+        ... Print all issues to ignore options. (This option is only available to use `--aggreegate`)
     --output-json
         ... Print results as JSON format.
 ```
@@ -141,7 +145,7 @@ Options:
 You can get aggregation of issues.
 
 ```
-$ cujira issue list cujira-bug today --issue-type "Critical Bug" --aggregate
+$ cujira issue search cujira-bug today --issue-type "Critical Bug" --aggregate
 JQL: project = 10002 AND created >= startOfDay()
 
 Summary: All command responses are `Great Scott!!`.
