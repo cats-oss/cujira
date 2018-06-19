@@ -11,20 +11,19 @@ public final class IssueService {
     private let session: JiraSession
     private let issueTypeDataManager: IssueTypeDataManager
     private let statusDataManager: StatusDataManager
-    private let fieldDataManager: FieldDataManager
     private let epicDataManager: EpicDataManager
 
     private var issueTypes: [IssueType]?
+    private var epics: [Epic]?
+    private var statuses: [Status]?
 
     public init(session: JiraSession,
                 issueTypeDataManager: IssueTypeDataManager,
                 statusDataManager: StatusDataManager,
-                fieldDataManager: FieldDataManager,
                 epicDataManager: EpicDataManager) {
         self.session = session
         self.issueTypeDataManager = issueTypeDataManager
         self.statusDataManager = statusDataManager
-        self.fieldDataManager = fieldDataManager
         self.epicDataManager = epicDataManager
     }
 
@@ -54,23 +53,30 @@ public final class IssueService {
     func fetchAllIssueTypes() throws -> [IssueType] {
         let request = GetAllIssueTypesRequest()
         let types = try session.send(request)
+        self.issueTypes = types
 
         try issueTypeDataManager.saveIssueTypes(types)
 
-        issueTypes = types
+
 
         return types
     }
 
-    func getIssueTypes(useMemoryCache: Bool) throws -> [IssueType] {
-        if useMemoryCache, let types = issueTypes {
+    func getIssueTypes(shouldFetchIfError: Bool) throws -> [IssueType] {
+        if let types = issueTypes {
             return types
         }
 
         do {
-            return try issueTypeDataManager.loadIssueTypes()
+            let types = try issueTypeDataManager.loadIssueTypes()
+            self.issueTypes = types
+            return types
         } catch IssueTypeTrait.Error.noIssueTypes {
-            return try fetchAllIssueTypes()
+            if shouldFetchIfError {
+                return try fetchAllIssueTypes()
+            } else {
+                return []
+            }
         } catch {
             throw error
         }
@@ -78,7 +84,7 @@ public final class IssueService {
 
     func getIssueType(name: String, useCache: Bool) throws -> IssueType {
         if useCache {
-            let types = try getIssueTypes(useMemoryCache: true)
+            let types = try getIssueTypes(shouldFetchIfError: false)
             return try types.first { $0.name == name } ??
                 getIssueType(name: name, useCache: false)
         } else {
@@ -94,17 +100,28 @@ public final class IssueService {
     func fetchAllStatuses() throws -> [Status] {
         let request = GetAllStatusesRequest()
         let statues = try session.send(request)
+        self.statuses = statues
 
         try statusDataManager.saveStatuses(statues)
 
         return statues
     }
 
-    func getStatuses() throws -> [Status] {
+    func getStatuses(shouldFetchIfError: Bool) throws -> [Status] {
+        if let statuses = self.statuses {
+            return statuses
+        }
+
         do {
-            return try statusDataManager.loadStatuses()
+            let statuses = try statusDataManager.loadStatuses()
+            self.statuses = statuses
+            return statuses
         } catch StatusTrait.Error.noStatuses {
-            return try fetchAllStatuses()
+            if shouldFetchIfError {
+                return try fetchAllStatuses()
+            } else {
+                return []
+            }
         } catch {
             throw error
         }
@@ -112,7 +129,7 @@ public final class IssueService {
 
     func getStatus(name: String, useCache: Bool) throws -> Status {
         if useCache {
-            let statuses = try getStatuses()
+            let statuses = try getStatuses(shouldFetchIfError: false)
             return try statuses.first { $0.name == name } ??
                 getStatus(name: name, useCache: false)
         } else {
@@ -140,25 +157,36 @@ public final class IssueService {
         }
 
         let epics = try recursiveFetch(startAt: 0, list: [])
+        self.epics = epics
 
         try epicDataManager.saveEpics(epics, boardID: boardID)
 
         return epics
     }
 
-    func getEpics(boardID: Int) throws -> [Epic] {
+    func getEpics(boardID: Int, shouldFetchIfError: Bool) throws -> [Epic] {
+        if let epics = self.epics {
+            return epics
+        }
+
         do {
-            return try epicDataManager.loadEpics(boardID: boardID)
+            let epics = try epicDataManager.loadEpics(boardID: boardID)
+            self.epics = epics
+            return epics
         } catch EpicTrait.Error.noEpicsFromBoardID {
-            return try fetchAllEpics(boardID: boardID)
+            if shouldFetchIfError {
+                return try fetchAllEpics(boardID: boardID)
+            } else {
+                return []
+            }
         } catch {
             throw error
         }
     }
 
-    func getEpic(key: String, boardID: Int, useCache: Bool = true) throws -> Epic {
+    func getEpic(key: String, boardID: Int, useCache: Bool) throws -> Epic {
         if useCache {
-            let epics = try getEpics(boardID: boardID)
+            let epics = try getEpics(boardID: boardID, shouldFetchIfError: false)
             return try epics.first { $0.key == key } ??
                 getEpic(key: key, boardID: boardID, useCache: false)
         } else {

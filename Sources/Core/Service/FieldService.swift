@@ -13,6 +13,7 @@ public final class FieldService {
     private let customFieldAliasManager: CustomFieldAliasManager
 
     private var fields: [Field]?
+    private var aliases: [FieldAlias]?
 
     init(session: JiraSession,
          fieldDataManager: FieldDataManager,
@@ -25,23 +26,28 @@ public final class FieldService {
     func fetchAllFields() throws -> [Field] {
         let request = GetAllFieldsRequest()
         let fields = try session.send(request)
+        self.fields = fields
 
         try fieldDataManager.saveFields(fields)
-
-        self.fields = fields
 
         return fields
     }
 
-    func getFields(useMemoryCache: Bool) throws -> [Field] {
-        if useMemoryCache, let fields = fields {
+    func getFields(shouldFetchIfError: Bool) throws -> [Field] {
+        if let fields = self.fields {
             return fields
         }
 
         do {
-            return try fieldDataManager.loadFields()
+            let fields = try fieldDataManager.loadFields()
+            self.fields = fields
+            return fields
         } catch FieldTrait.Error.noFields {
-            return try fetchAllFields()
+            if shouldFetchIfError {
+                return try fetchAllFields()
+            } else {
+                return []
+            }
         } catch {
             throw error
         }
@@ -49,7 +55,7 @@ public final class FieldService {
 
     func getField(name: String, useCache: Bool) throws -> Field {
         if useCache {
-            let fields = try getFields(useMemoryCache: true)
+            let fields = try getFields(shouldFetchIfError: false)
             return try fields.first { $0.name == name } ??
                 getField(name: name, useCache: false)
         } else {
@@ -62,7 +68,7 @@ public final class FieldService {
 
     func getField(id: String, useCache: Bool) throws -> Field {
         if useCache {
-            let fields = try getFields(useMemoryCache: true)
+            let fields = try getFields(shouldFetchIfError: false)
             return try fields.first { $0.id == id } ??
                 getField(id: id, useCache: false)
         } else {
@@ -73,15 +79,27 @@ public final class FieldService {
         }
     }
 
+    // - MARK: Alias
+
     func addAlias(name: FieldAlias.Name, field: Field) throws {
         try customFieldAliasManager.addAlias(name: name, field: field)
+        aliases = nil
     }
 
     func getAlias(name: FieldAlias.Name) throws -> FieldAlias {
-        return try customFieldAliasManager.getAlias(name: name)
+        let aliases = try loadAliases()
+        return try aliases.first { $0.name == name } ?? {
+            throw CustomFieldAliasTrait.Error.nameNotFound(name.rawValue)
+        }()
     }
 
     func loadAliases() throws -> [FieldAlias] {
-        return try customFieldAliasManager.loadAliases()
+        if let aliases = self.aliases {
+            return aliases
+        }
+
+        let aliases = try customFieldAliasManager.loadAliases()
+        self.aliases = aliases
+        return aliases
     }
 }

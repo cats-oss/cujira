@@ -34,10 +34,9 @@ public final class BoardService {
         }
 
         let boards = try recursiveFetch(startAt: 0, list: [])
+        self.boards = boards
 
         try boardDataManager.saveBoards(boards)
-
-        self.boards = boards
 
         return boards
     }
@@ -46,15 +45,21 @@ public final class BoardService {
     ///
     /// - note: First, trying to get all boards from cache.
     ///         When there are no boards, trying to fetch all boards from API.
-    func getBoards(useMemoryCache: Bool) throws -> [Board] {
-        if useMemoryCache, let boards = self.boards {
+    func getBoards(shouldFetchIfError: Bool) throws -> [Board] {
+        if let boards = self.boards {
             return boards
         }
 
         do {
-            return try boardDataManager.loadBoards()
+            let boards = try boardDataManager.loadBoards()
+            self.boards = boards
+            return boards
         } catch BoardTrait.Error.noBoards {
-            return try fetchAllBoards()
+            if shouldFetchIfError {
+                return try fetchAllBoards()
+            } else {
+                return []
+            }
         } catch {
             throw error
         }
@@ -62,7 +67,7 @@ public final class BoardService {
 
     private func getBoard(where: (Board) throws -> Bool, useCache: Bool) throws -> Board? {
         if useCache {
-            let boards = try getBoards(useMemoryCache: true)
+            let boards = try getBoards(shouldFetchIfError: false)
             return try boards.first(where: `where`) ??
                 getBoard(where: `where`, useCache: false)
         } else {

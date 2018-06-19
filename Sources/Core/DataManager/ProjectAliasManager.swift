@@ -40,14 +40,6 @@ extension DataManager where Trait == ProjectAliasTrait {
         return aliases
     }
 
-    func getAlias(name: String) throws -> ProjectAlias {
-        let aliases = try loadAliases()
-        guard let index = aliases.index(where: { $0.name == name }) else {
-            throw Trait.Error.nameNotFound(name)
-        }
-        return aliases[index]
-    }
-
     func addAlias(name: String, projectID: Int, boardID: Int) throws {
         let alias = ProjectAlias(name: name, projectID: projectID, boardID: boardID)
         var aliases: [ProjectAlias]

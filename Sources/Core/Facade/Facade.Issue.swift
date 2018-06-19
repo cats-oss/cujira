@@ -17,12 +17,12 @@ extension Facade {
 
 extension FacadeExtension where Trait == IssueFacadeTrait {
     public func search(jql: String) throws -> [IssueResult] {
-        let fields = try base.fieldService.getFields(useMemoryCache: true)
+        let fields = try base.fieldService.getFields(shouldFetchIfError: true)
         let customFields = fields.filter { $0.custom }
         let result = try base.issueService.search(jql: jql, customFields: customFields)
 
-        let epicLink = (try? base.fieldService.getAlias(name: .epiclink))?.field.id ?? ""
-        let storyPoint = (try? base.fieldService.getAlias(name: .storypoint))?.field.id ?? ""
+        let epicLinkID = (try? base.fieldService.getAlias(name: .epiclink))?.field.id ?? ""
+        let storyPointID = (try? base.fieldService.getAlias(name: .storypoint))?.field.id ?? ""
 
         let issueResults = try result.issues.map { issue -> IssueResult in
             guard let projectID = Int(issue.fields.project.id) else {
@@ -34,9 +34,10 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
             let epicAndStoryPoint = try issue.fields.customFields
                 .reduce((epic: nil, storyPoint: nil)) { values, cf -> (Epic?, Int?) in
                     if let field = result.customFields.first(where: { $0.id == cf.id }) {
-                        if field.id == epicLink, let key = cf.value as? String {
-                            return (try base.issueService.getEpic(key: key, boardID: board.id), values.1)
-                        } else if field.id == storyPoint, let storyPoint = cf.value as? Int {
+                        if field.id == epicLinkID, let key = cf.value as? String {
+                            let epic = try base.issueService.getEpic(key: key, boardID: board.id, useCache: true)
+                            return (epic, values.1)
+                        } else if field.id == storyPointID, let storyPoint = cf.value as? Int {
                             return (values.0, storyPoint)
                         }
                     }

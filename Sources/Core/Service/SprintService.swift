@@ -33,23 +33,26 @@ public final class SprintService {
         }
 
         let sprints = try recursiveFetch(startAt: 0, list: [])
+        self.sprints = sprints
 
         try sprintDataManager.saveSprints(sprints, boardID: boardID)
-
-        self.sprints = sprints
 
         return sprints
     }
 
-    func getSprints(boardID: Int, useMemoryCache: Bool) throws -> [Sprint] {
-        if useMemoryCache, let sprints = self.sprints {
+    func getSprints(boardID: Int, shouldFetchIfError: Bool) throws -> [Sprint] {
+        if let sprints = self.sprints {
             return sprints
         }
 
         do {
             return try sprintDataManager.loadSprints(boardID: boardID)
         } catch SprintTrait.Error.noSprintsFromBoardID {
-            return try fetchAllSprints(boardID: boardID)
+            if shouldFetchIfError {
+                return try fetchAllSprints(boardID: boardID)
+            } else {
+                return []
+            }
         } catch {
             throw error
         }
@@ -57,7 +60,7 @@ public final class SprintService {
 
     private func getSprint(boardID: Int, where: (Sprint) throws -> Bool, useCache: Bool) throws -> Sprint? {
         if useCache {
-            let sprints = try getSprints(boardID: boardID, useMemoryCache: true)
+            let sprints = try getSprints(boardID: boardID, shouldFetchIfError: false)
             return try sprints.first(where: `where`) ??
                 getSprint(boardID: boardID, where: `where`, useCache: false)
         } else {

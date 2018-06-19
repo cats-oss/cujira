@@ -47,14 +47,13 @@ public final class Facade {
         let issueService = IssueService(session: jiraSession,
                                         issueTypeDataManager: issueTypeDataManager,
                                         statusDataManager: statusDataManager,
-                                        fieldDataManager: fieldDataManager,
                                         epicDataManager: epicDataManager)
 
         let fieldService = FieldService(session: jiraSession,
                                         fieldDataManager: fieldDataManager,
                                         customFieldAliasManager: customFieldAliasManager)
 
-        let projectService = ProjectService(session: jiraSession, aliasManager: projectAliasManager)
+        let projectService = ProjectService(aliasManager: projectAliasManager)
         let jqlService = JQLService(aliasManager: jqlAliasManager)
         let boardService = BoardService(session: jiraSession, boardDataManager: boardDataManager)
 

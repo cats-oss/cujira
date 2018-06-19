@@ -33,14 +33,6 @@ extension DataManager where Trait == JQLAliasTrait {
         return aliases
     }
 
-    func getAlias(name: String) throws -> JQLAlias {
-        let aliases = try loadAliases()
-        guard let index = aliases.index(where: { $0.name == name }) else {
-            throw Trait.Error.nameNotFound(name)
-        }
-        return aliases[index]
-    }
-
     func addAlias(name: String, jql: String) throws {
         let alias = JQLAlias(name: name, jql: jql)
         var aliases = try getRawModel() ?? [JQLAlias]()

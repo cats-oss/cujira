@@ -18,7 +18,7 @@ extension Facade {
 extension FacadeExtension where Trait == BoardFacadeTrait {
     public func boards(useCache: Bool) throws -> [Board] {
         if useCache {
-            return try base.boardService.getBoards(useMemoryCache: true)
+            return try base.boardService.getBoards(shouldFetchIfError: true)
         } else {
             return try base.boardService.fetchAllBoards()
         }

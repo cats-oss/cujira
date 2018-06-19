@@ -8,28 +8,38 @@
 import Foundation
 
 public final class ProjectService {
-    private let session: JiraSession
     private let aliasManager: ProjectAliasManager
 
-    public init(session: JiraSession,
-                aliasManager: ProjectAliasManager) {
-        self.session = session
+    private var aliases: [ProjectAlias]?
+
+    public init(aliasManager: ProjectAliasManager) {
         self.aliasManager = aliasManager
     }
 
     func loadAliases() throws -> [ProjectAlias] {
-        return try aliasManager.loadAliases()
+        if let aliases = self.aliases {
+            return aliases
+        }
+
+        let aliases = try aliasManager.loadAliases()
+        self.aliases = aliases
+        return aliases
     }
 
     func getAlias(name: String) throws -> ProjectAlias {
-        return try aliasManager.getAlias(name: name)
+        let aliases = try loadAliases()
+        return try aliases.first { $0.name == name } ?? {
+            throw ProjectAliasTrait.Error.nameNotFound(name)
+        }()
     }
 
     func addAlias(name: String, projectID: Int, boardID: Int) throws {
-        return try aliasManager.addAlias(name: name, projectID: projectID, boardID: boardID)
+        try aliasManager.addAlias(name: name, projectID: projectID, boardID: boardID)
+        aliases = nil
     }
 
     func removeAlias(name: String) throws {
         try aliasManager.removeAlias(name: name)
+        aliases = nil
     }
 }

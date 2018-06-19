@@ -18,7 +18,7 @@ extension Facade {
 extension FacadeExtension where Trait == SprintFacadeTrait {
     public func sprints(boardID: Int, useCache: Bool) throws -> [Sprint] {
         if useCache {
-            return try base.sprintService.getSprints(boardID: boardID, useMemoryCache: true)
+            return try base.sprintService.getSprints(boardID: boardID, shouldFetchIfError: true)
         } else {
             return try base.sprintService.fetchAllSprints(boardID: boardID)
         }

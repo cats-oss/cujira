@@ -32,14 +32,6 @@ extension DataManager where Trait == CustomFieldAliasTrait {
         return aliases
     }
 
-    func getAlias(name: FieldAlias.Name) throws -> FieldAlias {
-        let aliases = try loadAliases()
-        guard let index = aliases.index(where: { $0.name == name }) else {
-            throw Trait.Error.nameNotFound(name.rawValue)
-        }
-        return aliases[index]
-    }
-
     func addAlias(name: FieldAlias.Name, field: Field) throws {
         let alias = FieldAlias(name: name, field: field)
         var aliases = try getRawModel() ?? [FieldAlias]()
