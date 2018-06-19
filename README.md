@@ -18,6 +18,16 @@
   </a>
 </p>
 
+## Installation
+
+Clone this repository and run `install.sh`.
+
+```
+$ git clone https://github.com/cats-oss/cujira.git
+$ cd cujira
+$ ./install.sh
+```
+
 ## Usage
 
 ### 1. Register `domain`, `username` and `apikey`.
@@ -157,3 +167,47 @@ User: doc-emmett-brown
 Number of Issues: 2
 Number of Critical Bug: 1
 ```
+
+### Combination Usage with other scripts.
+
+`cujira issue search` command has `--output-json` option.
+It makes easily to handle cujira response in other scripts.
+This is `node.js` sample code.
+
+```javascript
+// sample.js
+var exec = require('child_process').exec;
+
+var COMMAND = 'cujira issue search cujira-bug today --issue-type \"Critical Bug\" --aggregate --output-json';
+
+exec(COMMAND, function(error, stdout, stderr) {
+    var aggregations = JSON.parse(stdout);
+
+    aggregations.forEach(aggregation => {
+        console.log('name: ' + aggregation.name);
+        console.log('count: ' + aggregation.count);
+        aggregation.issueResults.forEach(issueResult => {
+            console.log('\tid: ' + issueResult.issue.id);
+        });
+    });
+});
+```
+
+```
+$ node sample.js
+name: Issues
+count: 2
+  id 19851026
+  id 20151021
+name: Critical Bug
+count: 1
+	id 19851026
+name: Matched Issues
+count: 1
+	id 19851026
+```
+
+## Development
+
+- Xcode 9.3
+- Swift 4.1

@@ -9,21 +9,13 @@ import Foundation
 
 /// An issue aggregation result object.
 public struct IssueAggregation: Codable {
-    public struct Aggregation: Codable {
-        public let issueResults: [IssueResult]
-        public let name: String
-        public let count: Int
+    public let issueResults: [IssueResult]
+    public let name: String
+    public let count: Int
 
-        public init(issueResults: [IssueResult], name: String, count: Int) {
-            self.issueResults = issueResults
-            self.name = name
-            self.count = count
-        }
-    }
-
-    let aggregations: [Aggregation]
-
-    public init(aggregations: [Aggregation]) {
-        self.aggregations = aggregations
+    public init(issueResults: [IssueResult], name: String, count: Int) {
+        self.issueResults = issueResults
+        self.name = name
+        self.count = count
     }
 }

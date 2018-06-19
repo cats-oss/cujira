@@ -42,33 +42,31 @@ enum Issue {
         case epicLink(String)
     }
 
-    private typealias Aggregation = IssueAggregation.Aggregation
-
-    private static func aggregations(issueResults: [IssueResult], aggregateParameters: [AggregateParameter]) -> [Aggregation] {
+    private static func aggregations(issueResults: [IssueResult], aggregateParameters: [AggregateParameter]) -> [IssueAggregation] {
         return aggregateParameters.map {
             switch $0 {
             case .total:
-                return Aggregation(issueResults: issueResults, name: "Issues", count: issueResults.count)
+                return IssueAggregation(issueResults: issueResults, name: "Issues", count: issueResults.count)
             case .label(let name):
                 let filteredIssues = issueResults.filter { $0.issue.fields.labels.first { $0 == name } != nil }
                 let count = filteredIssues.count
-                return Aggregation(issueResults: filteredIssues, name: name, count: count)
+                return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
             case .type(let name):
                 let filteredIssues = issueResults.filter { $0.issue.fields.issuetype.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issueResults: filteredIssues, name: name, count: count)
+                return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
             case .user(let name):
                 let filteredIssues = issueResults.filter { $0.issue.fields.assignee?.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issueResults: filteredIssues, name: name, count: count)
+                return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
             case .status(let name):
                 let filteredIssues = issueResults.filter { $0.issue.fields.status.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issueResults: filteredIssues, name: name, count: count)
+                return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
             case .epicLink(let name):
                 let filteredIssues = issueResults.filter { $0.epic?.name == name }
                 let count = filteredIssues.count
-                return Aggregation(issueResults: filteredIssues, name: name, count: count)
+                return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
             }
         }
     }
@@ -105,9 +103,8 @@ enum Issue {
             } else {
                 let _filteredIssues = filteredIssueResults(issueResults, by: aggregateParameters)
                 let _aggregations = aggregations(issueResults: issueResults, aggregateParameters: aggregateParameters)
-                let matched = Aggregation(issueResults: _filteredIssues, name: "Matched Issues", count: _filteredIssues.count)
-                let aggregation = IssueAggregation(aggregations: _aggregations + [matched])
-                data = try JSONEncoder().encode(aggregation)
+                let matched = IssueAggregation(issueResults: _filteredIssues, name: "Matched Issues", count: _filteredIssues.count)
+                data = try JSONEncoder().encode(_aggregations + [matched])
             }
 
             let jsonString = String(data: data, encoding: .utf8) ?? "{}"
