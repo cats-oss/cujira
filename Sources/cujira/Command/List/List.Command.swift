@@ -31,6 +31,12 @@ enum List {
             } catch {
                 throw Root.Error(inner: error, usage: List.Board.usageDescriptionAndOptions(command.rawValue))
             }
+        case .status:
+            do {
+                try Status.run(parser, facade: facade)
+            } catch {
+                throw Root.Error(inner: error, usage: List.Status.usageDescriptionAndOptions(command.rawValue))
+            }
         }
     }
 
@@ -38,5 +44,6 @@ enum List {
         case board
         case field
         case sprint
+        case status
     }
 }

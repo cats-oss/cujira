@@ -17,6 +17,8 @@ extension List.Command {
                 return List.Board.usageDescription(element.rawValue)
             case .field:
                 return List.Field.usageDescription(element.rawValue)
+            case .status:
+                return List.Status.usageDescription(element.rawValue)
             }
         } + ["""
             Options:
