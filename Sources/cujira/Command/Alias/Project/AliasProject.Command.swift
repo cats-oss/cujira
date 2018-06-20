@@ -22,7 +22,7 @@ enum AliasProject {
                 try List.run(parser, facade: facade)
             }
         } catch {
-            throw Root.Error(inner: error, usage: AliasProject.Command.usageDescription(command.rawValue))
+            throw Root.Error(inner: error, usage: AliasProject.Command.usageDescription(Root.Command.alias.rawValue))
         }
     }
 
