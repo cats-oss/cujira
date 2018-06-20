@@ -8,7 +8,7 @@
 import Core
 
 extension Alias.Command {
-    static func usageDescription(_ cmd: String) -> String {
+    static func usageDescription(_ cmds: [String]) -> String {
         let values = elements.map { element -> String in
             switch element {
             case .project:
@@ -19,7 +19,7 @@ extension Alias.Command {
                 return AliasCustomField.usageDescription(element.rawValue)
             }
         }
-        return usageFormatted(root: cmd, cmd: Root.Command.alias, values: values, separator: "\n")
+        return usageFormatted(cmds: cmds, values: values, separator: "\n")
     }
 }
 

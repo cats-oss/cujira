@@ -8,7 +8,7 @@
 import Core
 
 extension Root.Command {
-    static func usageDescription(_ cmd: String) -> String {
+    static func usageDescription(_ cmds: [String]) -> String {
         let values = elements.map { element -> String in
             switch element {
             case .register:
@@ -34,6 +34,6 @@ extension Root.Command {
             }
         }
 
-        return usageFormatted(root: cmd, cmd: Root.Command?.none, values: values, separator: "\n")
+        return usageFormatted(cmds: cmds, values: values, separator: "\n")
     }
 }

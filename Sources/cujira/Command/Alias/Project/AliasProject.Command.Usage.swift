@@ -8,7 +8,7 @@
 import Core
 
 extension AliasProject.Command {
-    static func usageDescription(_ cmd: String) -> String {
+    static func usageDescription(_ cmds: [String]) -> String {
         let values = elements.map { element -> String in
             switch element {
             case .add:
@@ -20,7 +20,7 @@ extension AliasProject.Command {
             }
         }
 
-        return usageFormatted(root: cmd, cmd: Alias.Command.project, values: values, separator: "\n")
+        return usageFormatted(cmds: cmds, values: values, separator: "\n")
     }
 }
 

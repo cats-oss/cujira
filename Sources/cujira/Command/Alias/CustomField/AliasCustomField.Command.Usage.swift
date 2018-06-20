@@ -8,7 +8,7 @@
 import Core
 
 extension AliasCustomField.Command {
-    static func usageDescription(_ cmd: String) -> String {
+    static func usageDescription(_ cmds: [String]) -> String {
         let values = elements.map { element -> String in
             switch element {
             case .epiclink, .storypoint:
@@ -18,7 +18,7 @@ extension AliasCustomField.Command {
             }
         }
 
-        return usageFormatted(root: cmd, cmd: Alias.Command.customfield, values: values, separator: "\n")
+        return usageFormatted(cmds: cmds, values: values, separator: "\n")
     }
 }
 

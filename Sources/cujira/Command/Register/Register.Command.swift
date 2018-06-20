@@ -24,7 +24,8 @@ enum Register {
                 try Info.run(parser, facade: facade)
             }
         } catch {
-            throw Root.Error(inner: error, usage: Register.Command.usageDescription(parser.root))
+            let usage = Register.Command.usageDescription(parser.commands)
+            throw Root.Error(inner: error, usage: usage)
         }
     }
     

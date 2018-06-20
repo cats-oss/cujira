@@ -22,7 +22,9 @@ enum AliasProject {
                 try List.run(parser, facade: facade)
             }
         } catch {
-            throw Root.Error(inner: error, usage: AliasProject.Command.usageDescription(Root.Command.alias.rawValue))
+            let commands = parser.commands.dropLast().map { $0 }
+            let usage = AliasProject.Command.usageDescription(commands)
+            throw Root.Error(inner: error, usage: usage)
         }
     }
 

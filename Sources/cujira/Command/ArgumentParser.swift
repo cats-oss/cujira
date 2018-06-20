@@ -14,10 +14,10 @@ final class ArgumentParser {
     }
 
     private var remainder: [String]
-    let root: String
+    private(set) var commands: [String]
 
     init(args: [String]) {
-        self.root = args[0]
+        self.commands = [args[0]]
         self.remainder = args.dropFirst().map { $0 }
     }
 
@@ -38,16 +38,21 @@ final class ArgumentParser {
 
     func parse<T: CommandList>() throws -> T {
         guard let string = shift() else {
-            throw Error.shiftFailed(T.usageDescription(root))
+            throw Error.shiftFailed(T.usageDescription(commands))
         }
-        return try T(rawValue: string)
-            ?? { throw Error.unreadString("Command not found.\n\n" + T.usageDescription(root)) }()
+        let command = try T(rawValue: string) ?? {
+            throw Error.unreadString("Command not found.\n\n" + T.usageDescription(commands))
+        }()
+
+        commands.append(command.rawValue)
+
+        return command
     }
 
     func runHelp() -> Bool {
         let isHelp = remainder.first(where: { $0.contains("-h") || $0.contains("--help") }) != nil
         if remainder.isEmpty || isHelp {
-            print(Root.Command.usageDescription(root))
+            print(Root.Command.usageDescription(commands))
             return true
         } else {
             return false

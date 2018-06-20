@@ -8,7 +8,7 @@
 import Foundation
 
 extension List.Command {
-    static func usageDescription(_ cmd: String) -> String {
+    static func usageDescription(_ cmds: [String]) -> String {
         let values = elements.map { element -> String in
             switch element {
             case .sprint:
@@ -31,6 +31,6 @@ extension List.Command {
                     ... Fetch from API.
         """]
 
-        return usageFormatted(root: cmd, cmd: Root.Command.list, values: values, separator: "\n\n")
+        return usageFormatted(cmds: cmds, values: values, separator: "\n\n")
     }
 }

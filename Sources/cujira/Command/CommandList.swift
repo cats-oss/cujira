@@ -11,19 +11,19 @@ protocol UsageDescribable {
     static func usageDescription(_ cmd: String) -> String
 }
 
-protocol CommandList: Enumerable, UsageDescribable {
+protocol CommandList: Enumerable {
     var rawValue: String { get }
     init?(rawValue: String)
-    static func usageFormatted<T: CommandList>(root: String, cmd: T?, values: [String], separator: String) -> String
+    static func usageDescription(_ cmds: [String]) -> String
+    static func usageFormatted(cmds: [String], values: [String], separator: String) -> String
 }
 
 extension CommandList {
-    static func usageFormatted<T: CommandList>(root: String, cmd: T?, values: [String], separator: String) -> String {
-        let cmd = cmd.map { " \($0.rawValue)" } ?? ""
+    static func usageFormatted(cmds: [String], values: [String], separator: String) -> String {
         return """
         Usage:
 
-            $ \(root)\(cmd) [COMMAND]
+            $ \(cmds.joined(separator: " ")) [COMMAND]
 
         Commands:
 

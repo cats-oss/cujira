@@ -22,7 +22,9 @@ enum AliasJQL {
                 try List.run(parser, facade: facade)
             }
         } catch {
-            throw Root.Error(inner: error, usage: AliasJQL.Command.usageDescription(Root.Command.alias.rawValue))
+            let commands = parser.commands.dropLast().map { $0 }
+            let usage = AliasJQL.Command.usageDescription(commands)
+            throw Root.Error(inner: error, usage: usage)
         }
     }
 

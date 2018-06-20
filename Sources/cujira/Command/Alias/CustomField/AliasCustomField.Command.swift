@@ -10,9 +10,9 @@ import Foundation
 
 enum AliasCustomField {
     static func run(_ parser: ArgumentParser, facade: Facade) throws {
-        do {
-            let command: Command = try parser.parse()
+        let command: Command = try parser.parse()
 
+        do {
             switch command {
             case .epiclink:
                 try UpdateAlias.run(parser, facade: facade, dependency: .epiclink)
@@ -22,7 +22,9 @@ enum AliasCustomField {
                 try List.run(parser, facade: facade)
             }
         } catch {
-            throw Root.Error(inner: error, usage: AliasCustomField.Command.usageDescription(Root.Command.alias.rawValue))
+            let commands = parser.commands.dropLast().map { $0 }
+            let usage = AliasCustomField.Command.usageDescription(commands)
+            throw Root.Error(inner: error, usage: usage)
         }
     }
 
