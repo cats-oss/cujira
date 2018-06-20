@@ -256,7 +256,7 @@ extension Issue.Search: UsageDescribable {
                 --assigned [USER_NAME]
                     ... Filter issues with a user who has assigned.
                 --epic-link [EPIC_LINK]
-                    ...
+                    ... Filter issues with a epic link.
                 --aggregate
                     ... Show every options issue counts.
                 --all-issues
