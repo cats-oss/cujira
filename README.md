@@ -207,6 +207,14 @@ count: 1
 	id 19851026
 ```
 
+### Environment Variables
+
+You can run `cujira` with environment variables.
+
+```
+$ env CUJIRA_USER_NAME="XXX" CUJIRA_API_KEY="XXX" CUJIRA_DOMAIN="XXX" cujira
+```
+
 ## Development
 
 - Xcode 9.3
