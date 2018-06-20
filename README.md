@@ -211,3 +211,7 @@ count: 1
 
 - Xcode 9.3
 - Swift 4.1
+
+## Special Thanks
+
+Thanks to [@skskeeee](https://github.com/skskeeee), [my handwriting logo](./Images/cujira_original.jpg) has become a great logo!
