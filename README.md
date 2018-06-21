@@ -217,8 +217,8 @@ $ env CUJIRA_USER_NAME="XXX" CUJIRA_API_KEY="XXX" CUJIRA_DOMAIN="XXX" cujira
 
 ## Development
 
-- Xcode 9.3
-- Swift 4.1
+- Xcode 9.2 or greater
+- Swift 4.0.3 or greater
 
 ## Special Thanks
 
