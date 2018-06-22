@@ -23,10 +23,16 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
 
         let epicLinkID = (try? base.fieldService.getAlias(name: .epiclink))?.field.id ?? ""
         let storyPointID = (try? base.fieldService.getAlias(name: .storypoint))?.field.id ?? ""
+        let browseBaseURLString = try base.configService.browseBaseURLString()
 
         let issueResults = try result.issues.map { issue -> IssueResult in
+            let browseURL = "\(browseBaseURLString)/\(issue.key)"
+
             guard let projectID = Int(issue.fields.project.id) else {
-                return IssueResult(issue: issue, epic: nil, storyPoint: nil)
+                return IssueResult(issue: issue,
+                                   epic: nil,
+                                   storyPoint: nil,
+                                   browseURL: browseURL)
             }
 
             let board = try base.boardService.getBoard(projectID: projectID, useCache: true)
@@ -44,7 +50,10 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
                     return values
                 }
 
-            return IssueResult(issue: issue, epic: epicAndStoryPoint.0, storyPoint: epicAndStoryPoint.1)
+            return IssueResult(issue: issue,
+                               epic: epicAndStoryPoint.0,
+                               storyPoint: epicAndStoryPoint.1,
+                               browseURL: browseURL)
         }
 
         return issueResults

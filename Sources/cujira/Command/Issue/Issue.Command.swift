@@ -116,7 +116,7 @@ enum Issue {
                 results.forEach { result in
                     let issue = result.issue
                     print("\nSummary: \(issue.fields.summary)")
-                    print("URL: https://\(config.domain).atlassian.net/browse/\(issue.key)")
+                    print("URL: \(result.browseURL)")
                     print("IssueType: \(issue.fields.issuetype.name)")
                     print("Status: \(issue.fields.status.name)")
                     print("User: \(issue.fields.assignee.map { $0.name } ?? "--")")

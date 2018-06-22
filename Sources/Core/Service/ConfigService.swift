@@ -17,6 +17,7 @@ public final class ConfigService {
     private let manager: ConfigManager
 
     private var tempConfig: Config?
+    private var _browseBaseURLString: String?
 
     public init(manager: ConfigManager) {
         self.manager = manager
@@ -66,5 +67,18 @@ public final class ConfigService {
             return
         }
         tempConfig = Config(domain: domain, apiKey: apikey, username: username)
+    }
+
+    func browseBaseURLString() throws -> String {
+        let urlString: String
+        if let _urlString = _browseBaseURLString {
+            urlString = _urlString
+        } else {
+            let config = try loadConfig()
+            urlString = "https://\(config.domain).atlassian.net/browse"
+            _browseBaseURLString = urlString
+        }
+
+        return urlString
     }
 }

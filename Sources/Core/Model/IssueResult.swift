@@ -11,4 +11,5 @@ public struct IssueResult: Codable {
     public let issue: Issue
     public let epic: Epic?
     public let storyPoint: Int?
+    public let browseURL: String
 }
