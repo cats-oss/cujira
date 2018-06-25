@@ -12,7 +12,9 @@ extension Issue {
     enum Search {
         enum Error: Swift.Error {
             case noDateRange
-            case noProjectAlias
+            case noFirstParameter
+            case noBoardID
+            case noProjectInBoard(Board)
             case notFoundSprint(String)
         }
 
@@ -127,11 +129,25 @@ extension Issue {
         static func run(_ parser: ArgumentParser, facade: Facade) throws {
             let config = try facade.config.current(unsafe: false)
 
-            guard let projectAliasName = parser.shift(), !projectAliasName.isEmpty else {
-                throw Error.noProjectAlias
+            guard let first = parser.shift(), !first.isEmpty else {
+                throw Error.noFirstParameter
             }
 
-            let projectAlias = try facade.project.alias(name: projectAliasName)
+            let boardID: Int
+            if first == "--board-id" {
+                guard let id = parser.shift().flatMap(Int.init) else {
+                    throw Error.noBoardID
+                }
+                boardID = id
+            } else {
+                let projectAlias = try facade.project.alias(name: first)
+                boardID = projectAlias.boardID
+            }
+
+            let board = try facade.board.board(boardID: boardID, useCache: true)
+            guard let projectID = board.location.project?.projectId else {
+                throw Error.noProjectInBoard(board)
+            }
 
             guard let second = parser.shift(), !second.isEmpty else {
                 throw Error.noDateRange
@@ -145,7 +161,7 @@ extension Issue {
                 let toDateString = DateFormatter.core.yyyyMMdd.string(from: toDate)
                 dateRangeJQL = "created >= \'\(second)\' and created <= \'\(toDateString)\'"
             } else {
-                let sprint = try facade.sprint.sprint(boardID: projectAlias.boardID, name: second, useCache: true)
+                let sprint = try facade.sprint.sprint(boardID: boardID, name: second, useCache: true)
                 dateRangeJQL = "sprint = \'\(sprint.name)\'"
             }
 
@@ -162,7 +178,7 @@ extension Issue {
             let jql: String
             let aggregateParameters: [AggregateParameter]
             if _isAggregate {
-                jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)"
+                jql = "project = \(projectID) AND \(dateRangeJQL)"
                 aggregateParameters = [.total,
                                        _issueTypeJQL.map { AggregateParameter.type($0.name) },
                                        _labelJQL.map { AggregateParameter.label($0.name) },
@@ -171,7 +187,7 @@ extension Issue {
                                        _epicLink.map { AggregateParameter.epicLink($0.name) }]
                     .compactMap { $0 }
             } else {
-                jql = "project = \(projectAlias.projectID) AND \(dateRangeJQL)" +
+                jql = "project = \(projectID) AND \(dateRangeJQL)" +
                     "\(_issueTypeJQL?.jql ?? "")" +
                     "\(_labelJQL?.jql ?? "")" +
                     "\(_statusJQL?.jql ?? "")" +
@@ -244,6 +260,8 @@ extension Issue.Search: UsageDescribable {
         return """
             + \(cmd) [PROJECT_ALIAS] [today | yyyy/mm/dd | SPRINT_NAME]
                 ... Show list of issues with registered `PROJECT_ALIAS`.
+            + \(cmd) [--board-id BOARD_ID] [today | yyyy/mm/dd | SPRINT_NAME]
+                ... Show list of issues with `BOARD_ID`.
 
             Options:
 
@@ -272,8 +290,12 @@ extension Issue.Search.Error: LocalizedError {
         switch self {
         case .noDateRange:
             return "[today], [yyyy/mm/dd] or [SPRINT_NAME] is required parameter."
-        case .noProjectAlias:
-            return "[PROJECT_ALIAS] is required parameter."
+        case .noFirstParameter:
+            return "[PROJECT_ALIAS] or [--board-id BOARD_ID] is required parameter."
+        case .noBoardID:
+            return "[BOARD_ID] is required parameter."
+        case .noProjectInBoard(let board):
+            return "BoardID: \(board.id) has no project"
         case .notFoundSprint(let param):
             return "[\(param)] not found in sprints."
         }
