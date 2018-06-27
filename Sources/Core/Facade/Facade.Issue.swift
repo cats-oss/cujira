@@ -16,7 +16,7 @@ extension Facade {
 }
 
 extension FacadeExtension where Trait == IssueFacadeTrait {
-    public func search(jql: String) throws -> [IssueResult] {
+    public func search(jql: String, boardID: Int?) throws -> [IssueResult] {
         let fields = try base.fieldService.getFields(shouldFetchIfError: true)
         let customFields = fields.filter { $0.custom }
         let result = try base.issueService.search(jql: jql, customFields: customFields)
@@ -35,13 +35,18 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
                                    browseURL: browseURL)
             }
 
-            let board = try base.boardService.getBoard(projectID: projectID, useCache: true)
+            let _boardID: Int?
+            if let bID = boardID {
+                _boardID = bID
+            } else {
+                _boardID = try? base.boardService.getBoard(projectID: projectID, useCache: true).id
+            }
 
             let epicAndStoryPoint = try issue.fields.customFields
                 .reduce((epic: nil, storyPoint: nil)) { values, cf -> (Epic?, Int?) in
                     if let field = result.customFields.first(where: { $0.id == cf.id }) {
-                        if field.id == epicLinkID, let key = cf.value as? String {
-                            let epic = try base.issueService.getEpic(key: key, boardID: board.id, useCache: true)
+                        if let bID = _boardID, field.id == epicLinkID, let key = cf.value as? String {
+                            let epic = try base.issueService.getEpic(key: key, boardID: bID, useCache: true)
                             return (epic, values.1)
                         } else if field.id == storyPointID, let storyPoint = cf.value as? Int {
                             return (values.0, storyPoint)

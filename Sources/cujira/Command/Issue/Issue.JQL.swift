@@ -39,7 +39,7 @@ extension Issue {
                 isJson = false
             }
 
-            let results = try facade.issue.search(jql: jql)
+            let results = try facade.issue.search(jql: jql, boardID: nil)
 
             try printIssueResults(results, jql: jql, config: config, isJson: isJson, aggregateParameters: [], isAllIssues: true)
         }

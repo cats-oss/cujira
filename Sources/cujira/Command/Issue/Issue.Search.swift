@@ -195,7 +195,7 @@ extension Issue {
                     "\(_epicLink?.jql ?? "")"
                 aggregateParameters = []
             }
-            let results = try facade.issue.search(jql: jql)
+            let results = try facade.issue.search(jql: jql, boardID: boardID)
 
             try printIssueResults(results, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters, isAllIssues: _isAllIssues)
         }
