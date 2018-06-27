@@ -10,10 +10,10 @@
   <a href="https://github.com/yonaskolb/Mint">
     <img src="https://img.shields.io/badge/Mint-compatible-brightgreen.svg?style=flat" alt="Mint" />
   </a>
-  <a href="https://github.com/abema/cujira/releases">
-    <img src="https://img.shields.io/github/release/abema/cujira.svg" alt="Git Version" />
+  <a href="https://github.com/cats-oss/cujira/releases">
+    <img src="https://img.shields.io/github/release/cats-oss/cujira.svg" alt="Git Version" />
   </a>
-  <a href="https://github.com/abema/cujira/blob/master/LICENSE">
+  <a href="https://github.com/cats-oss/cujira/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-lightgray.svg" alt="license" />
   </a>
 </p>
