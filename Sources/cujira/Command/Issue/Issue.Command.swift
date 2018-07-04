@@ -40,6 +40,7 @@ enum Issue {
         case user(String)
         case status(String)
         case epicLink(String)
+        case sumamry(String)
     }
 
     private static func aggregations(issueResults: [IssueResult], aggregateParameters: [AggregateParameter]) -> [IssueAggregation] {
@@ -67,6 +68,10 @@ enum Issue {
                 let filteredIssues = issueResults.filter { $0.epic?.name == name }
                 let count = filteredIssues.count
                 return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
+            case .sumamry(let name):
+                let filteredIssues = issueResults.filter { $0.issue.fields.summary.contains(name) }
+                let count = filteredIssues.count
+                return IssueAggregation(issueResults: filteredIssues, name: name, count: count)
             }
         }
     }
@@ -86,6 +91,8 @@ enum Issue {
                 return result.filter { $0.issue.fields.status.name == name }
             case .epicLink(let name):
                 return result.filter { $0.epic?.name == name }
+            case .sumamry(let name):
+                return result.filter { $0.issue.fields.summary.contains(name) }
             }
         }
     }
