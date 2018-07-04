@@ -9,6 +9,8 @@ import Foundation
 import Core
 
 extension Issue {
+    /// - seealso: https://confluence.atlassian.com/jirasoftwarecloud/advanced-searching-764478330.html
+    /// - seealso: https://confluence.atlassian.com/jirasoftwarecloud/advanced-searching-fields-reference-764478339.html
     enum JQL {
         enum Error: Swift.Error {
             case noParameter

@@ -24,6 +24,7 @@ extension Issue {
             case status(String)
             case assigned(String)
             case epicLink(String)
+            case summary(String)
             case json
             case aggregate
             case allIssues
@@ -54,6 +55,11 @@ extension Issue {
                     case "--epic-link":
                         if let e = parser.shift(), !e.isEmpty {
                             self = .epicLink(e)
+                            return
+                        }
+                    case "--summary":
+                        if let s = parser.shift(), !s.isEmpty {
+                            self = .summary(s)
                             return
                         }
                     case "--output-json":
@@ -114,6 +120,11 @@ extension Issue {
                 .map { JQLContainer(name: $0, jql: " AND \'epic link\' = \'\($0)\'")  }
         }
 
+        private static func summary(from options: [Option]) -> JQLContainer? {
+            return options.lazy.compactMap { $0.summary }.first
+                .map { JQLContainer(name: $0, jql: " AND \'summary\' ~ \'\($0)\'")  }
+        }
+
         private static func isJson(from options: [Option]) -> Bool {
             return options.first { $0 == .json } != nil
         }
@@ -171,6 +182,7 @@ extension Issue {
             let _statusJQL = try statusJQL(from: options, facade: facade)
             let _assignedJQL = assignedJQL(from: options)
             let _epicLink = epicLinkJQL(from: options)
+            let _summary = summary(from: options)
             let _isJson = isJson(from: options)
             let _isAggregate = isAggregate(from: options)
             let _isAllIssues = isAllIssues(from: options)
@@ -184,7 +196,8 @@ extension Issue {
                                        _labelJQL.map { AggregateParameter.label($0.name) },
                                        _statusJQL.map { AggregateParameter.status($0.name) },
                                        _assignedJQL.map { AggregateParameter.user($0.name) },
-                                       _epicLink.map { AggregateParameter.epicLink($0.name) }]
+                                       _epicLink.map { AggregateParameter.epicLink($0.name) },
+                                       _summary.map { AggregateParameter.sumamry($0.name) }]
                     .compactMap { $0 }
             } else {
                 jql = "project = \(projectID) AND \(dateRangeJQL)" +
@@ -192,7 +205,8 @@ extension Issue {
                     "\(_labelJQL?.jql ?? "")" +
                     "\(_statusJQL?.jql ?? "")" +
                     "\(_assignedJQL?.jql ?? "")" +
-                    "\(_epicLink?.jql ?? "")"
+                    "\(_epicLink?.jql ?? "")" +
+                    "\(_summary?.jql ?? "")"
                 aggregateParameters = []
             }
             let results = try facade.issue.search(jql: jql, boardID: boardID)
@@ -253,6 +267,13 @@ extension Issue.Search.Option: Equatable {
         }
         return nil
     }
+
+    var summary: String? {
+        if case .summary(let value) = self {
+            return value
+        }
+        return nil
+    }
 }
 
 extension Issue.Search: UsageDescribable {
@@ -275,6 +296,8 @@ extension Issue.Search: UsageDescribable {
                     ... Filter issues with a user who has assigned.
                 --epic-link [EPIC_LINK]
                     ... Filter issues with a epic link.
+                --summary [STRING]
+                    ... Filter issues if summary contains parameter.
                 --aggregate
                     ... Show every options issue counts.
                 --all-issues
