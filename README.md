@@ -223,3 +223,7 @@ $ env CUJIRA_USER_NAME="XXX" CUJIRA_API_KEY="XXX" CUJIRA_DOMAIN="XXX" cujira
 ## Special Thanks
 
 Thanks to [@skskeeee](https://github.com/skskeeee), [my handwriting logo](./Images/cujira_original.jpg) has become a great logo!
+
+## License
+
+cujira is available under the MIT license. See the [LICENSE file](https://github.com/cats-oss/cujira/blob/master/README.md) for more info.
