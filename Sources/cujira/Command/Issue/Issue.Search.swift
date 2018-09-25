@@ -173,7 +173,7 @@ extension Issue {
                 dateRangeJQL = "created >= \'\(second)\' and created <= \'\(toDateString)\'"
             } else {
                 let sprint = try facade.sprint.sprint(boardID: boardID, name: second, useCache: true)
-                dateRangeJQL = "sprint = \'\(sprint.name)\'"
+                dateRangeJQL = "sprint = \(sprint.id)"
             }
 
             let options = (0..<5).compactMap { _ in Option(parser) }
@@ -209,6 +209,9 @@ extension Issue {
                     "\(_summary?.jql ?? "")"
                 aggregateParameters = []
             }
+
+            print(jql)
+
             let results = try facade.issue.search(jql: jql, boardID: boardID)
 
             try printIssueResults(results, jql: jql, config: config, isJson: _isJson, aggregateParameters: aggregateParameters, isAllIssues: _isAllIssues)
@@ -286,7 +289,7 @@ extension Issue.Search: UsageDescribable {
 
             Options:
 
-                --issus-type [ISSUE_TYPE]
+                --issue-type [ISSUE_TYPE]
                     ... Filter issues with a issueType.
                 --label [ISSUE_LABEL]
                     ... Filter issues with a issue label.
