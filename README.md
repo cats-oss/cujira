@@ -16,6 +16,9 @@
   <a href="https://github.com/cats-oss/cujira/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-lightgray.svg" alt="license" />
   </a>
+  <a href="https://developer.apple.com/swift/">
+    <img alt="Platform" src="https://img.shields.io/badge/Swift-4.0%20%7C%204.1%20%7C%204.2-orange.svg"/>
+  </a>
 </p>
 
 ## Installation
