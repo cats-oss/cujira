@@ -92,8 +92,13 @@ extension Issue {
                 return nil
             }
 
-            let type = try facade.issue.issueType(name: typeName)
-            return JQLContainer(name: typeName, jql: " AND issuetype = \(type.id)")
+            let types = try facade.issue.issueTypes(name: typeName)
+            if types.isEmpty {
+                return nil
+            } else {
+                let jql = types.map { "issuetype = \($0.id)" }.joined(separator: " OR ")
+                return JQLContainer(name: typeName, jql: " AND (\(jql)")
+            }
         }
 
         private static func labelJQL(from options: [Option]) -> JQLContainer? {
@@ -209,8 +214,6 @@ extension Issue {
                     "\(_summary?.jql ?? "")"
                 aggregateParameters = []
             }
-
-            print(jql)
 
             let results = try facade.issue.search(jql: jql, boardID: boardID)
 

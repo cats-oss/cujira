@@ -95,6 +95,21 @@ public final class IssueService {
         }
     }
 
+    func getIssueTypes(name: String, useCache: Bool) throws -> [IssueType] {
+        if useCache {
+            let types = try getIssueTypes(shouldFetchIfError: false)
+            let filteredTypes = types.filter { $0.name == name }
+            if filteredTypes.isEmpty {
+                return try getIssueTypes(name: name, useCache: false)
+            } else {
+                return filteredTypes
+            }
+        } else {
+            let types = try fetchAllIssueTypes()
+            return types.filter { $0.name == name }
+        }
+    }
+
     // MARK: - Status
 
     func fetchAllStatuses() throws -> [Status] {

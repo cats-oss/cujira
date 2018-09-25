@@ -72,6 +72,10 @@ extension FacadeExtension where Trait == IssueFacadeTrait {
         return try base.issueService.getIssueType(name: name, useCache: useCache)
     }
 
+    public func issueTypes(name: String, useCache: Bool = true) throws -> [IssueType] {
+        return try base.issueService.getIssueTypes(name: name, useCache: useCache)
+    }
+
     public func issueTypes(useCache: Bool) throws -> [IssueType] {
         if useCache {
             return try base.issueService.getIssueTypes(shouldFetchIfError: true)
