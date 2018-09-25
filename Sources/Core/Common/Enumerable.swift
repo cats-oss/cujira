@@ -7,6 +7,15 @@
 
 import Foundation
 
+#if swift(>=4.2)
+public protocol Enumerable: CaseIterable {}
+
+extension Enumerable {
+    public static var elements: AllCases {
+        return allCases
+    }
+}
+#else
 public protocol Enumerable {
     associatedtype Element = Self
 }
@@ -36,3 +45,4 @@ extension Enumerable where Element: Hashable {
         return self.elements.count
     }
 }
+#endif
