@@ -97,7 +97,7 @@ extension Issue {
                 return nil
             } else {
                 let jql = types.map { "issuetype = \($0.id)" }.joined(separator: " OR ")
-                return JQLContainer(name: typeName, jql: " AND (\(jql)")
+                return JQLContainer(name: typeName, jql: " AND (\(jql))")
             }
         }
 
